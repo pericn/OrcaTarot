@@ -4,7 +4,7 @@
 
 公开源码仓库：https://github.com/pericn/OrcaTarot
 
-仓库保存源码与原始素材，生成的 HTML 不进入日常 Git 历史。协作约定见 [AGENTS.md](AGENTS.md)。当前先保留原模板结构，CSS/JS 拆分是后续工作。
+仓库保存源码与原始素材，生成的 HTML 不进入日常 Git 历史。协作约定见 [AGENTS.md](AGENTS.md)，沙箱/本地/线上三方能力边界见 [docs/SANDBOX_BOUNDARY.md](docs/SANDBOX_BOUNDARY.md)。当前先保留原模板结构，CSS/JS 拆分是后续工作（拆分前提见 SANDBOX_BOUNDARY 第 5 节）。
 
 ## 文件结构
 
@@ -13,7 +13,10 @@ OrcaTarot/
 ├── README.md                ← 本文件
 ├── requirements.txt         ← 构建依赖
 ├── AGENTS.md                ← Codex / Workbuddy 协作约定
-├── docs/                    ← 交接基线与发布说明
+├── docs/                    ← 交接基线、发布记录、环境边界
+│   ├── HANDOFF_BASELINE.json
+│   ├── RELEASES.md
+│   └── SANDBOX_BOUNDARY.md  ← 沙箱/本地/线上能力边界（协作前必读）
 ├── dist/                    ← 构建输出，不提交 Git
 │   └── soul-toolkit.html     ← 单文件成品，可直接部署
 └── src/                     ← 源码
