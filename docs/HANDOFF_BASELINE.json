@@ -1,0 +1,18 @@
+{
+  "handoff_date": "2026-10-20",
+  "source": "Workbuddy sandbox export supplied by owner",
+  "delivered_html": {
+    "file": "soul-toolkit.html",
+    "bytes": 4697450,
+    "sha256": "62dac790e1acf29acbf92dd5dbb67452a37d1c779f5cb15365819e0d87a27c76"
+  },
+  "reported_live_url": "https://a17db079dfdd07afb.app.workbuddy.host",
+  "live_content_verified": false,
+  "notes": [
+    "Imported original template and 85 PNG assets as the source baseline.",
+    "Delivered HTML is preserved locally and excluded from routine source commits.",
+    "Template matches delivered HTML when the generated IMG map is removed.",
+    "Initial local rebuild differed only in LOGO and LOGO_D encoded image bytes; exact cause not yet established.",
+    "src/cards/manifest.json is a legacy partial catalog (50 entries), not the build source of truth."
+  ]
+}

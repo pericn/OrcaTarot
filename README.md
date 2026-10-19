@@ -1,42 +1,62 @@
-# 灵匣 · Tarot de Marseille — 项目说明
+# OrcaTarot · 灵匣 · Tarot de Marseille
 
 微信马赛塔罗网页小工具。单文件交付（`soul-toolkit.html`，约 4.5 MB），所有卡牌图、UI 素材、logo 均以 WebP base64 内联，无任何外部依赖，可直接部署到任意静态托管。
+
+公开源码仓库：https://github.com/pericn/OrcaTarot
+
+仓库保存源码与原始素材，生成的 HTML 不进入日常 Git 历史。协作约定见 [AGENTS.md](AGENTS.md)。当前先保留原模板结构，CSS/JS 拆分是后续工作。
 
 ## 文件结构
 
 ```
-lingxia-toolkit/
+OrcaTarot/
 ├── README.md                ← 本文件
-├── soul-toolkit.html        ← 成品（构建产物，可直接部署）
+├── requirements.txt         ← 构建依赖
+├── AGENTS.md                ← Codex / Workbuddy 协作约定
+├── docs/                    ← 交接基线与发布说明
+├── dist/                    ← 构建输出，不提交 Git
+│   └── soul-toolkit.html     ← 单文件成品，可直接部署
 └── src/                     ← 源码
     ├── template.html        ← 唯一源模板（所有改动都在这里）
     ├── build.py             ← 构建脚本：模板 + 素材 → 成品
     ├── dl_cards.py          ← 历史脚本：卡牌原图下载
     ├── export_b64.py        ← 历史脚本：base64 导出
-    └── cards/               ← 82 个素材（78 张牌 + 4 张 iOS 引导截图 + logo）
+    └── cards/               ← 85 张 PNG（78 张牌 + 3 张引导 + 牌背 + 3 张 logo 素材）
 ```
 
 ## 构建
 
 ```bash
-cd src
-python3 build.py
+python3 -m pip install -r requirements.txt
+python3 src/build.py
 ```
 
-产物写到 `../soul-toolkit.html`（相对 src 的上一级，即本目录）。构建流程：
+默认产物写到 `dist/soul-toolkit.html`，同时生成 `.sha256` 校验文件。脚本从自身位置定位源码和素材，在任意工作目录运行均可。Workbuddy 需要指定发布路径时：
+
+```bash
+python3 src/build.py --output /workspace/soul-toolkit.html
+```
+
+构建流程：
 
 1. 扫描 `cards/*.png`，转 WebP → base64
-2. 普通牌图缩放到 750px 宽、q=80；`ios_` 前缀的引导截图**不缩放**、q=88（保 UI 文字清晰）
-3. 注入 `template.html` 的 `__IMAGES_JSON__` 占位符
+2. 普通牌图缩放到 280px 宽、q=80；`ios_` 前缀的引导截图**不缩放**、q=88（保 UI 文字清晰）
+3. 校验完整牌组与必需素材，再注入 `template.html` 的 `__IMAGES_JSON__` 占位符
 4. 同时注入牌背、logo 的 base64
 
 改完 `template.html` 后必须重新 build，成品才会变。
+
+## 自动构建与交付
+
+main 更新、PR 或手动触发会运行 GitHub Actions，生成带源码 commit 标识的构建包，临时产物保留 14 天。Workbuddy 从通过检查的 main 构建中下载 HTML，核对 SHA-256 后用原机制发布。PR 构建仅用于预览，不代表正式版本。
+
+正式发布时应另行将 HTML、校验文件与源码 commit 归档到 GitHub Release；当前尚未建立 Release。发布记录见 [docs/RELEASES.md](docs/RELEASES.md)。
 
 ## 本地测试
 
  Safari 打不开 file:// 的引导弹框问题，用以下任一方式：
 
-- **地址栏强制预览**：`soul-toolkit.html#guide`（打开即弹引导，跳过 iOS UA 检测和记忆）
+- **地址栏强制预览**：`dist/soul-toolkit.html#guide`（打开即弹引导，跳过 iOS UA 检测和记忆）
 - **牌匾三击**：成品页连续点顶部"灵匣"牌匾 3 次，随时弹出引导
 - **桌面浏览器**：Chromium headless + `--allow-file-access-from-files` 可跑断言测试（375×667 视口模拟 iPhone SE）
 
@@ -81,6 +101,6 @@ python3 build.py
 | `lx-guide-done` | 引导已看过（GKEY，只自动弹一次） |
 | `lx-visited` | 换牌阵入口弹跳只播一次（VKEY） |
 
-## 线上地址
+## 线上地址（原 README 提供，建仓时未重新发布）
 
 https://a17db079dfdd07afb.app.workbuddy.host （重复发布保持同一链接）

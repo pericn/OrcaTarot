@@ -1,11 +1,24 @@
 #!/usr/bin/env python3
-import os, io, json, base64
+import os, io, json, base64, argparse, hashlib
+from pathlib import Path
 from PIL import Image
 
-CARD_DIR = "/root/.codebuddy/artifact/2f8a7d30-9c21-4f0b-1d41-8976718ce000/cards"
-TEMPLATE = "/root/.codebuddy/artifact/2f8a7d30-9c21-4f0b-1d41-8976718ce000/template.html"
-OUT = "/workspace/soul-toolkit.html"
+ROOT = Path(__file__).resolve().parent.parent
+parser = argparse.ArgumentParser(description="构建可交给 Workbuddy 发布的单文件 HTML")
+parser.add_argument("--output", type=Path, default=ROOT / "dist" / "soul-toolkit.html")
+args = parser.parse_args()
+CARD_DIR = ROOT / "src" / "cards"
+TEMPLATE = ROOT / "src" / "template.html"
+OUT = args.output.resolve()
 W = 280
+
+required = ({f"M{i:02d}" for i in range(22)} |
+            {f"{suit}_{rank}" for suit in ("coin", "cup", "sword", "wand")
+             for rank in ([f"{i:02d}" for i in range(1, 11)] + ["page", "knight", "queen", "king"])} |
+            {"card-back", "logo_src", "ios_menu", "ios_share", "ios_webapp"})
+missing = sorted(key for key in required if not (CARD_DIR / f"{key}.png").is_file())
+if missing:
+    raise SystemExit("缺少构建素材：" + ", ".join(missing))
 
 IMG = {}
 sizes = []
@@ -79,13 +92,15 @@ if os.path.exists(os.path.join(CARD_DIR, "logo_src.png")):
 
 with open(TEMPLATE, encoding="utf-8") as f:
     html = f.read()
-assert "__IMAGES_JSON__" in html, "marker missing"
+if html.count("const IMG = __IMAGES_JSON__;") != 1:
+    raise SystemExit("模板必须恰好包含一个 const IMG = __IMAGES_JSON__; 标记")
 html = html.replace("const IMG = __IMAGES_JSON__;",
                      "const IMG = " + json.dumps(IMG, ensure_ascii=False, separators=(",", ":")) + ";")
+OUT.parent.mkdir(parents=True, exist_ok=True)
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html)
 print("written:", OUT, round(os.path.getsize(OUT)/1024/1024, 2), "MB")
-# sanity: every deck key must have an image
-missing = [k for k in ["M00","M21","coin_01","coin_10","coin_page","coin_king",
-                        "cup_07","sword_04","wand_09","BACK"] if k not in IMG]
-print("sample missing keys:", missing)
+digest = hashlib.sha256(OUT.read_bytes()).hexdigest()
+checksum = OUT.with_name(OUT.name + ".sha256")
+checksum.write_text(f"{digest}  {OUT.name}\n", encoding="utf-8")
+print("sha256:", digest)
