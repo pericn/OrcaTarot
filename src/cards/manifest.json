@@ -1,0 +1,302 @@
+{
+ "M03": {
+  "title": "III. L'Imperatrice 皇后",
+  "suit": "major",
+  "file": "M03.png",
+  "bytes": 165763
+ },
+ "M04": {
+  "title": "IIII. L'Empereur 皇帝",
+  "suit": "major",
+  "file": "M04.png",
+  "bytes": 156032
+ },
+ "M01": {
+  "title": "I. Le Bateleur 魔术师",
+  "suit": "major",
+  "file": "M01.png",
+  "bytes": 164346
+ },
+ "M00": {
+  "title": "O. Le Mat 愚者",
+  "suit": "major",
+  "file": "M00.png",
+  "bytes": 152158
+ },
+ "M02": {
+  "title": "II. La Papesse 女祭司",
+  "suit": "major",
+  "file": "M02.png",
+  "bytes": 173280
+ },
+ "M05": {
+  "title": "V. Le Pape 教皇",
+  "suit": "major",
+  "file": "M05.png",
+  "bytes": 172985
+ },
+ "M06": {
+  "title": "VI. Lamovrevx 恋人",
+  "suit": "major",
+  "file": "M06.png",
+  "bytes": 167044
+ },
+ "M07": {
+  "title": "VII. Le Chariot 战车",
+  "suit": "major",
+  "file": "M07.png",
+  "bytes": 197822
+ },
+ "M08": {
+  "title": "VIII. La Justice 正义",
+  "suit": "major",
+  "file": "M08.png",
+  "bytes": 163923
+ },
+ "M09": {
+  "title": "VIIII. L'hermite 隐者",
+  "suit": "major",
+  "file": "M09.png",
+  "bytes": 146668
+ },
+ "M10": {
+  "title": "X. La Rove de Fortvne 命运之轮",
+  "suit": "major",
+  "file": "M10.png",
+  "bytes": 153886
+ },
+ "M11": {
+  "title": "XI. La Force 力量",
+  "suit": "major",
+  "file": "M11.png",
+  "bytes": 164440
+ },
+ "M12": {
+  "title": "XII. Le Pendu 吊人",
+  "suit": "major",
+  "file": "M12.png",
+  "bytes": 131398
+ },
+ "M13": {
+  "title": "XIII. La Mort 死亡",
+  "suit": "major",
+  "file": "M13.png",
+  "bytes": 146574
+ },
+ "M15": {
+  "title": "XV. Le Diable 恶魔",
+  "suit": "major",
+  "file": "M15.png",
+  "bytes": 157866
+ },
+ "M14": {
+  "title": "XIIII. Temperance 节制",
+  "suit": "major",
+  "file": "M14.png",
+  "bytes": 164689
+ },
+ "M17": {
+  "title": "XVII. Le Toille 星星",
+  "suit": "major",
+  "file": "M17.png",
+  "bytes": 150635
+ },
+ "M16": {
+  "title": "XVI. La Maison Diev 高塔",
+  "suit": "major",
+  "file": "M16.png",
+  "bytes": 159749
+ },
+ "M19": {
+  "title": "XVIIII. Le Solell 太阳",
+  "suit": "major",
+  "file": "M19.png",
+  "bytes": 156285
+ },
+ "M21": {
+  "title": "XXI. Le Monde 世界",
+  "suit": "major",
+  "file": "M21.png",
+  "bytes": 203607
+ },
+ "M18": {
+  "title": "XVIII. La Lune 月亮",
+  "suit": "major",
+  "file": "M18.png",
+  "bytes": 184239
+ },
+ "M20": {
+  "title": "XX. Le Jugement 审判",
+  "suit": "major",
+  "file": "M20.png",
+  "bytes": 176457
+ },
+ "coin_01": {
+  "title": "Coins.钱币-VIIII",
+  "suit": "coin",
+  "file": "coin_01.png",
+  "bytes": 120475
+ },
+ "coin_king": {
+  "title": "Coins.钱币-King.国王",
+  "suit": "coin",
+  "file": "coin_king.png",
+  "bytes": 178821
+ },
+ "coin_knight": {
+  "title": "Coins.钱币-Knight.骑士",
+  "suit": "coin",
+  "file": "coin_knight.png",
+  "bytes": 173837
+ },
+ "coin_page": {
+  "title": "Coins.钱币-Page-侍从",
+  "suit": "coin",
+  "file": "coin_page.png",
+  "bytes": 158723
+ },
+ "coin_05": {
+  "title": "Coins.钱币-V",
+  "suit": "coin",
+  "file": "coin_05.png",
+  "bytes": 152427
+ },
+ "coin_queen": {
+  "title": "Coins.钱币-Queen.皇后",
+  "suit": "coin",
+  "file": "coin_queen.png",
+  "bytes": 166631
+ },
+ "coin_10": {
+  "title": "Coins.钱币-X",
+  "suit": "coin",
+  "file": "coin_10.png",
+  "bytes": 171760
+ },
+ "cup_01": {
+  "title": "Cups.圣杯-VIIII",
+  "suit": "cup",
+  "file": "cup_01.png",
+  "bytes": 155992
+ },
+ "cup_knight": {
+  "title": "Cups.圣杯-Knight.骑士",
+  "suit": "cup",
+  "file": "cup_knight.png",
+  "bytes": 161250
+ },
+ "cup_king": {
+  "title": "Cups.圣杯-King.国王",
+  "suit": "cup",
+  "file": "cup_king.png",
+  "bytes": 168755
+ },
+ "cup_page": {
+  "title": "Cups.圣杯-Page-侍从",
+  "suit": "cup",
+  "file": "cup_page.png",
+  "bytes": 148824
+ },
+ "cup_queen": {
+  "title": "Cups.圣杯-Queen.皇后",
+  "suit": "cup",
+  "file": "cup_queen.png",
+  "bytes": 171347
+ },
+ "cup_05": {
+  "title": "Cups.圣杯-V",
+  "suit": "cup",
+  "file": "cup_05.png",
+  "bytes": 143171
+ },
+ "cup_10": {
+  "title": "Cups.圣杯-X",
+  "suit": "cup",
+  "file": "cup_10.png",
+  "bytes": 115378
+ },
+ "sword_01": {
+  "title": "Swords.宝剑-VIIII",
+  "suit": "sword",
+  "file": "sword_01.png",
+  "bytes": 155145
+ },
+ "sword_king": {
+  "title": "Swords.宝剑-King.国王",
+  "suit": "sword",
+  "file": "sword_king.png",
+  "bytes": 170920
+ },
+ "sword_knight": {
+  "title": "Swords.宝剑-Knight.骑士",
+  "suit": "sword",
+  "file": "sword_knight.png",
+  "bytes": 179027
+ },
+ "sword_queen": {
+  "title": "Swords.宝剑-Queen.皇后",
+  "suit": "sword",
+  "file": "sword_queen.png",
+  "bytes": 176117
+ },
+ "sword_05": {
+  "title": "Swords.宝剑-V",
+  "suit": "sword",
+  "file": "sword_05.png",
+  "bytes": 95747
+ },
+ "sword_page": {
+  "title": "Swords.宝剑-Page-侍从",
+  "suit": "sword",
+  "file": "sword_page.png",
+  "bytes": 166048
+ },
+ "sword_10": {
+  "title": "Swords.宝剑-X",
+  "suit": "sword",
+  "file": "sword_10.png",
+  "bytes": 118183
+ },
+ "wand_01": {
+  "title": "Wands.权杖-VIIII",
+  "suit": "wand",
+  "file": "wand_01.png",
+  "bytes": 131094
+ },
+ "wand_king": {
+  "title": "Wands.权杖-King.国王",
+  "suit": "wand",
+  "file": "wand_king.png",
+  "bytes": 189978
+ },
+ "wand_knight": {
+  "title": "Wands.权杖-Knight.骑士",
+  "suit": "wand",
+  "file": "wand_knight.png",
+  "bytes": 180604
+ },
+ "wand_page": {
+  "title": "Wands.权杖-Page-侍从",
+  "suit": "wand",
+  "file": "wand_page.png",
+  "bytes": 161846
+ },
+ "wand_queen": {
+  "title": "Wands.权杖-Queen.皇后",
+  "suit": "wand",
+  "file": "wand_queen.png",
+  "bytes": 175920
+ },
+ "wand_05": {
+  "title": "Wands.权杖-V",
+  "suit": "wand",
+  "file": "wand_05.png",
+  "bytes": 91898
+ },
+ "wand_10": {
+  "title": "Wands.权杖-X",
+  "suit": "wand",
+  "file": "wand_10.png",
+  "bytes": 100066
+ }
+}

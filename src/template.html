@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="灵匣">
+<title>灵匣 · Tarot de Marseille</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20240%20240%22%3E%3Cstyle%3E%40media%20%28prefers-color-scheme%3Adark%29%7B.bg%7Bfill%3A%23191410%7D.rg%7Bstroke%3A%238a9660%7D.fc%7Bfill%3A%23d9a94e%7D.ra%7Bstroke%3A%23d9a94e%7D.rb%7Bstroke%3A%23c1553a%7D.fd%7Bstroke%3A%23191410%7D%7D%3C%2Fstyle%3E%3Cg%20transform%3D%22translate%28120%2C120%29%20scale%281.0500%29%20translate%28-120%2C-120%29%22%3E%3Crect%20class%3D%22bg%22%20width%3D%22240%22%20height%3D%22240%22%20fill%3D%22%23f0e5cc%22%2F%3E%3Ccircle%20class%3D%22rg%22%20cx%3D%22120%22%20cy%3D%22120%22%20r%3D%2286%22%20fill%3D%22none%22%20stroke%3D%22%235f6b3c%22%20stroke-width%3D%224.6%22%20stroke-dasharray%3D%226%2012%22%20opacity%3D%22.85%22%2F%3E%3Ccircle%20class%3D%22fc%22%20cx%3D%22120%22%20cy%3D%22120%22%20r%3D%2233%22%20fill%3D%22%23b8802a%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke-width%3D%228.5%22%20stroke-linecap%3D%22round%22%3E%3Cg%20transform%3D%22rotate%280.0%20120%20120%29%22%3E%3Cpath%20class%3D%22ra%22%20stroke%3D%22%23b8802a%22%20d%3D%22M120%2084%20L120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%2822.5%20120%20120%29%22%3E%3Cpath%20class%3D%22rb%22%20stroke%3D%22%2396351f%22%20d%3D%22M120%2084%20C112%2075%20128%2069%20120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%2845.0%20120%20120%29%22%3E%3Cpath%20class%3D%22ra%22%20stroke%3D%22%23b8802a%22%20d%3D%22M120%2084%20L120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%2867.5%20120%20120%29%22%3E%3Cpath%20class%3D%22rb%22%20stroke%3D%22%2396351f%22%20d%3D%22M120%2084%20C112%2075%20128%2069%20120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%2890.0%20120%20120%29%22%3E%3Cpath%20class%3D%22ra%22%20stroke%3D%22%23b8802a%22%20d%3D%22M120%2084%20L120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28112.5%20120%20120%29%22%3E%3Cpath%20class%3D%22rb%22%20stroke%3D%22%2396351f%22%20d%3D%22M120%2084%20C112%2075%20128%2069%20120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28135.0%20120%20120%29%22%3E%3Cpath%20class%3D%22ra%22%20stroke%3D%22%23b8802a%22%20d%3D%22M120%2084%20L120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28157.5%20120%20120%29%22%3E%3Cpath%20class%3D%22rb%22%20stroke%3D%22%2396351f%22%20d%3D%22M120%2084%20C112%2075%20128%2069%20120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28180.0%20120%20120%29%22%3E%3Cpath%20class%3D%22ra%22%20stroke%3D%22%23b8802a%22%20d%3D%22M120%2084%20L120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28202.5%20120%20120%29%22%3E%3Cpath%20class%3D%22rb%22%20stroke%3D%22%2396351f%22%20d%3D%22M120%2084%20C112%2075%20128%2069%20120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28225.0%20120%20120%29%22%3E%3Cpath%20class%3D%22ra%22%20stroke%3D%22%23b8802a%22%20d%3D%22M120%2084%20L120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28247.5%20120%20120%29%22%3E%3Cpath%20class%3D%22rb%22%20stroke%3D%22%2396351f%22%20d%3D%22M120%2084%20C112%2075%20128%2069%20120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28270.0%20120%20120%29%22%3E%3Cpath%20class%3D%22ra%22%20stroke%3D%22%23b8802a%22%20d%3D%22M120%2084%20L120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28292.5%20120%20120%29%22%3E%3Cpath%20class%3D%22rb%22%20stroke%3D%22%2396351f%22%20d%3D%22M120%2084%20C112%2075%20128%2069%20120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28315.0%20120%20120%29%22%3E%3Cpath%20class%3D%22ra%22%20stroke%3D%22%23b8802a%22%20d%3D%22M120%2084%20L120%2054%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22rotate%28337.5%20120%20120%29%22%3E%3Cpath%20class%3D%22rb%22%20stroke%3D%22%2396351f%22%20d%3D%22M120%2084%20C112%2075%20128%2069%20120%2054%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3Cg%20class%3D%22fd%22%20fill%3D%22none%22%20stroke%3D%22%233a2c1c%22%20stroke-width%3D%226.2%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M108%20116.5%20q4.5%20-4%209%200%22%2F%3E%3Cpath%20d%3D%22M123%20116.5%20q4.5%20-4%209%200%22%2F%3E%3Cpath%20d%3D%22M110%20129.5%20q10%206%2020%200%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAm20lEQVR4nO2dd3wTR97/Z9W7LctVxr0XgjEGTDHFlIBpRxJILhx3yV3ucuWXyz2XcAQIFy4JLeWXXJLrl+RJLwRCiRN6B0MAY8cYd0suclexulYr6flDjiyk3dVKWhUTvV/8sTvanRmLj2ZnZ74FUsmugwgR0KCEugMRwpeIOCJgEhFHBEwi4oiASUQcETCJiCMCJhFxRMAkIo4ImETEEQGTiDgiYBIRRwRMIuKIgElEHBEwiYgjAiYRcUTAJCKOCJhExBEBk4g4ImASEUcETGih7kDIkA32qrUa2AybzCYLYpk1dRbWlSq1ymJB+FwBg8EIZg9Dzg9XHMcvnewb6nOc4ojjSv2VG421AAABj58Ul1RRVpEgSghGF0PN3flYMZqMHd0dHT2dONfw2FyCtam16u8PNC2SVovF4m//Jgh328hRU1fT3NliHxKSE5KzUjKxruTz+ATr1Bq0zqdxMXH+9HACcbeJ41rDNY1u7P9SNiiDYRhropCfmZ8gShTwBXwOl88T4NSZl54n5AvVOnXvgCwmSkin0bGuvN5443Z7Y35GQVF2IZdDdGQKW6C7zKnpmwtHaxtrHacbVm1IT04jsX6FSh4TLcL69MMjH3bJuu3HxTnFleUL+Vyi41MYcrfNOXLTcwEAGZMyls5Z8uh9j5CrDAAAjjL0Br1DGQCAFkkzlTqxB+YJ1nv5qOL6rev3zlmKdUFWSuYff/YHNpsTzF7Z0eg1CaL4QfmQ/bQou4jDYge/GyQyYcQxqhk9deVUU0czAEAULSormoZ1ZUiUAQBIECU8tu4xhUre2HG7sf329Humh6QbJDIx5hw9Az3vH/zAcSrgCZ74yf8LYX9+IEyMOUdibCKfy3OcWizIiGIkhP3xE4lM8nH1J4pRZag74oGJMXIAAOqb6786W81kMOdPnzd98sQesf/+yd+VoyoAwNzS2fNnLAhxb7CZMOIAAJy9embGPTM5IZpSkMXF2ovnvj3vOBUJRb9+8PEQ9geHifFYsbNg5sKJrgwAQE5qTrwo3nFanFMUws7gM5FGjoBis1kMyj4AAFsohiBqoJu7Unfl1JXT4njxo/c9Eui2fCaMxNHe3XH91rWHqh4KftPDbRekNR9bTDoAAJXJTZ/1cFxORaAbVaoVVotVJIwNdEM+Ey6Plcs3L3/29Wcd3Z1nrp4JctMWs6Hr8od2ZQAALCadtOYjBNYHul2hICaclQHCRBwnLp84c/Ws/fjyzctSmTSYrWsGWhHY4FxiMen1I13B7EN4EvoVUo1O811Lg+M0ih/FJWxp4YJuZER27RqVxkgpn8ng8zzfAAAAAHWQgA0q4u3COp2io0PV1S2eWiKYNIn4jTj0DfXFRseG1vYs9OLgc/k/Wb3h/UMfwDCcnpy+dsla37Ykhpuazr6426zTAQDq3v9g7uanE4qLye4sCg0ff9rw+T77cS0A0x//Zc7yZX7WOaIY+bj6k4SY+AeXPxhCfYTFYyVBlLBh5cOVMxduWPWwb8owGwwXXnrFrgwAgEmjOff8TnlbG6ndREEp7XIow07dBx/6WadGp/n0m09NJlN3f8+n33wKw7CfFfpMWIgDACCOF+NYcXpk4GadUalyLkFg+PSOF1Td3Rh3kMNIU5NLiVlvUPfJ/Kmzf7hvVDNmmNjT3/v50c/NiNmfCn0mXMThL1SUlQmzTnf6ub9oBwcD16wF7WdtMZn8qTM3PW/98nU02thfRKVSgc3mT4U+c5eII7msNCYLxVzUqFTVvPbXwLWLKg4qk+lntTlpOevuXQdBUG56zvpl6+n00Ew77hJxUKi0ii2b2cJo94+Gm1v6amvdy0nBakbcC6lkTCEzUzJ/snrDumXrqGiDYnAIqjjOXTt3ozFQ/0/c2NhFO59nRUW5f1T//kcBatSCNhug+T1y2ElNSiWlHp8JnjgkvZKLNy4evXD09NXTAWpCIE6ufGEHneu6TKKUSrsuXQpEi/L2DvdCKoMccYScIIlDrVXvP34AAAgAUHPzyo3GGwFqKDo1dcqGH7uXN3z0KenTOoNCOfhdg0shLyGerJEj5ARDHDab7eCpgyZ4bA6fFJc4JX9K4JrLXFRJ57gulqj7+rTDw+Q21Hz4iHthxqJKclsJIcEQBwRBhVmF9mM+l/fg8gdpxGz2zUa1bkRqs3nnfkhjMjMXLXIvV/f0eFUPPkMNt5oOHnIvz5hHaDvXZkV0I1LEpPGtdWmv1LcbvSJIy+dlxWUZKZlfn62uLK8k5gpm6762r6/uKwAAkx9bsHwzK8oL3+W4/PyWI1+5FI729IqnYdqse4W6t/fCS6+4l4tyc3iJiR5vN6j6mo++YtKMAACSp65OKXuAeNND8qHDpw8Pyod+8cDPE2M9t+UPwZuQiqJiNq7ZmJyQTORi2c0jdmUAAEyakYZDO/RyL7ZJ+eIk90LDnUuoPqOR9Z3c/pxJg/Kjz1gw3+PtennXrcMv2JUBAJDdPNxX76pjLHoHZP/Z91+7a8yhUweJ9thXwnGdw2xQ9dw44FxiMekaq3frRqQEa0B9obWRsQitHRg4sW27EU1nwsyM7HuX4N+uG5E2Vu922I7Y6blxADFqsW5xRhyflBA7ZmI4olQE2vYlHMVhVA8Bm9Wl0GLS3/56j25EQqQGiIryd1kQlAUrr9CNDJ/a9mejSuX+EZXBqNi8iYI7l9INdzZV77aYXC0EbBbEqCG0xk+hUFZXrnacNrS6viuRSziKgytKo7NR3N4tJv3tr3Zrh1CWFlygUFBWFa2IX3E1DArlyW3P6eRylOZotIpnNvES8GZF2qGO29V7XKyK7DC5MVwRUZ/e+Jj4WVPLAbCVFpU+HmCz9XAUB4XGLKjaTGWizFstZmNT9R7NYLuHGugov2CbP0FXbLZzO3fp0PbwICpl3tbN4tJSnLs1Q21N1XssZqP7R1QmN2/50xDFizeDitK5G9dsXF6xjBng1bZwFAcAgBOTUrRyK42BYtthQUzN37ykHcYbPyAK2t/lxyJY08FDig6UOEEQlVKxeZMHZQy2Nn/9sgVB2aqlMXlFK7dyhN4Zj9HpjOCsrAdEHLfabjVLWvyshBOTUrBiC7o+zMam6r2awVaseyk0Ml/RzQZD/cefonwAQXOf+uOkGTNw7tUMtjZV70UdM2hMXuHKLZyYFLL6STrkiwNBkOOXTuw/tv+9g+8PjvhlS8GNTfdNH6gjh17ho2/q0K1Gq9ntTQeC5j79VMpsPAMluzKsFtTNuXBXBgiEOK41XDMYDQCA3oHebxu+9bM2HH1YLeam6r3qPldbrLEb3aaHQ42N6t5eH/owUFfnXjh5/brUOXjKUPc1YSqDwQ5/ZQDSxWFGzFfqr4xVTaHMn+55UcgjHvRx9GVUfcTn57mU2KzWk9uf66m54m0H+utd3xiZfH7R+vtxblH3NTUdfRlLGQUrJoAyAOniGFYMO2Z9JQUlAtxAbMTB0YfNgqDqI3sZSvQfo1J1Ye/L53futlq8WPNADK4rE9zEBJwljVHZraajL9vQmrArgxubTrz1EEKyOMTx4ic3/n7lgqr4mLhZJb4bDLvjUR+jslvOhXEFBalzZqNW1XvtetvR445TBjva/RrnQkGK6698tKsb691nVHar+eirQVaGETbW1NW8vf8dq9vioT+QP+egUqlT8kt+uf6X0XyUNWx/wNdH89FXXfQx9dGfYlnsafvGYxdz49Jpd66pMLhCbly64zRqkut+kAWGNX397tWOKcOKsqASOGU0tt9+44M3T185MzA80CrBfIPzgTBd58ACTx9WS/PRV5XddU4Xxy18bjuq65swMwMxaYdbz0uvfNR5/h0GLwaCxr4KCKLQWbzO8+9Ir3w03HoeMWmj3EYOAID7xpuyuy74ygAACAXR5u9fpuqa60msOYy87ImjG5E2Ve9GXYqGKJTcJX8QppY4SvQj8vN7X1K0jS+qsgTcnB9l6xSd7js4KEAUTnRG875mxDRuaM4WRq/6x99oLJajRNld13ridZsVpcIgzDPe3v/OwPAAAACCoP/52R/YJEUxDNnIYTYYRppbhhpuDd66NdrTi2rjjwXu+GFtPfG68/jBiRUt3fVi7vLl9kcMhQmJJlt08nZCygAA2Kx6ZUdMIYCoY5OMSdPLlr6811kZCul10pWhHRhoOVItPXcBMaIsoLlQWjh1rLM2m2zQL5cqZ0LjK9tS/XXt2++6fJsMPo+fmJg4ZUrW0sW8+Hise+1wY9Pzq/7U9PVeC+z63dms1pbjr+ct/R9h6pgxotmkFuYhqRDdrKYwBBQAQd52mCemcxNpplErlUkRTxHSmOOzUWV3XevJN1Hnp1QGq2DFMz4oQ9XVdXLbdlirAwBwRKJ5W59B9cpxUJBV0DPQm52alZmSyWKwcK70ihA8VgwK5cFf/spmwfvhJk0tya2qSp7uwXBLO9TR9DXW4jS3ZP1LNBZ/qPmM9PKHqEsOPgNR6ZlzH4nLrTAb1XWf/8l9Fx6MjRnPcGMzvK1c2Sk59ecdsHbcwoPOYVe98To3NtjBPEIwcshbWvCVAQDov1nXf7MufV7FjN/9BseYmxefVVC1GVUfiEk30nFlVNao7CLfU8ZmMXec+4+6r4kjSiVXGfLW1tN/edHhEW7HrDf0XLqcv2Y11l0BghxxKNVKoUBI9GrCo7r0/AWlRFKxeRNO0AscfchuHjYbRon2ynuG2y4yelFW+XybZ+hH5I37vug4ddqKapSEus8cYEh4rJgR80v/fTmKH5WVmnVPbnFygocNaP2I/OBjvyJeP4PHXbD92di8XJxrcJ4vQYa4MiwwbJArdAq5bmBA3trecfKUFcPihMZirfzbmxxRDMl99QQJ4mjravv8m7EYFQtnLpg9FX1d0pnad/4X1ekDCyqDPnfTJvwpiG5E0vT1S8iYeabNBgAEvJ54+oQNfN8QjcUvqNrEFaU7fzxY39Bz9YpueEQvl5tG1UaVCksEqEAUytxNT6XMKiexx0Sb9l8cJy6f/Pa7sd3Xn9//aFIciuW3O/K2tqHG2zaLNTo9FTGYDEqloqNdev4i6gshAACiUMqffCJj/jycOmG9aqjlbF99tcVsDJYyxqDQmOKSFfF5CxicaEehXq6ofefd7kuXfa6WyqDP2/JM0tQS/3voAyTMObr7xwKkMBgMgsoAAIhyckQ5OS6FUzZuvP3FgdZvvnG/3ma11rz2VwhA6fMxvYZoDI6i87rVbAqyMgAAVsSkkNwQT65ylEjOnf/2b3+3wL6/JdFYrIXPPRtXUEBGB32BhGnO9OKy/Mw8BoMxKdHfWGkcUUzZ448t+ssOFlowBQDA5df/2rjvizFrUJtN2z/gHLunt/ZLvSKwoXxw0Mu7emu/tB8rOyVX33jLH2WwoqKW7NkVQmUActc51NpRAY+czTZt/8DJZ7fr5QrUT7nx8by4OGWX1L5MxBeLl+x6AaIidZ//yWb11//AHyAqvWTdHipDUP3EH3RDQ75VwoqKyl1RlbtiOcMtXIBHVJrR5s6mvqG+vqG++5bcJ44X+9YHO+G7t6IbHDyxdbsezRXAnfR5FXFT6PLOq4HulUficuYOf2fuPO1LmAl+UlLhfWszFsyj0DFzDOLTKmndd+wL+/GK+VUlBSW+1WMn9KEmseAmJCze/eLp7c9pBz3/BKXnL0BsDkQL9lTDncGmC9IzKDuCDD4vLi+PJYxmRUWruroQvQGi05g8HpMvYAqjhCkp0RnpRPxs8YmPHTeOHFL4OHQ5CF9xAAB48fFL9+w6uX0HEdtPWGdlRoUsQtJ4N9RW930WYUbG4l0v0NkBT/kWzY9iMhgmGAYAyFWEBl0cwt2egyUULt2zK6l0Kv5lEAXQuWHxt9B5FIhyhzggKqX8id8GQRl2YqJjAAB0Gp1gnAscwnfOcQc2W8O+LxpQnUcAYAq4okKEJQqXUVDTbR5pRBwLNtN++Yu8FVX4t5CIXDnCZLJ4HKLRvXGYIOIAAACgGxzsPH22v65eOzBgNuh5CQnCzIzksmmjQ8f1ivCKY89gJ7M4MxQdndlLFydOCWAYo4AykcSBCqxX1X70e+LX22y2bztgySDSr7IgFpAYTU0RUefkMelOk1kzYrvYYuqVWwZUFhoVJEVTM+LpM7LpkDeGIGU/+yeNMbHzSoXLUOwzSqkXO/JG2LrvikEyNL61IRmySIYst3vNP57DEfKoAACl1vLJJf2IZnzeoDFYWvstrf3mdeVsFoPozEbVUx+bRab9ffDxSxz1zXXHL59kM1ksJnv1wlXOqcuCho7wA0Wtt75zVqtGS7IzorH964RuwzwOZAMfXtDDaPtikiHLP09qf7GQy2cTeifSDXX8oMVhNBlhGIZheFSjtgHPPuz2PGoEo9h4gEJh8eMZXCGiJ2qxcabRiKoMO7AFHKszwghAVYYdtR6caYRXlxF674D1owAAWKc0aoYAxm6iV9BYvODknxtv0Z+bYSezFCbdQ6wI5zxqZMGJSQaE99gkwx5W1vtVCLBB+BVKPVXiwKge+m7/Fr2CNHNfAACVyc2YvTE227NRBCn4JQ6Lk10CfojusTxqaM4E/qBXyCg0ooHGFxSyDl8fswaKF1DKsuhMOlQnNTumIDOymDYAvm0f2y3LTKBOSaMbYduNTvOQ2vp9JUTjpRhG+6xmv9InuGMx6SSX3xemlVLppFkR4+CXOKL4gjTxWBQRGm5IDN2wFNXNxH+sCFGfhpJ0BgCgpQ/JS6JNSR979ZicymgfMN+QmJOjqbPzGQAADhMaUFpLM+nZiWMbHGVZjJtSc2ufuXAS/Z40olokXRl2LCa9XtHLT8gOROUuBOlVVt3XdLt6dxAa+iFQuGKLQIy5la/Rad744E378eypsxbOXOhzQ0FacmYLkyC/V3NRIf5YCTIUqo87q/hAFCpbiGdR5fysp/hnlhwkcdDZ0WnlP/bBmwgfBjeaLSQU9Tb4sIVi1JiIfgFBabM20NHCAjhAnBz8/dxeCd4iWGLhkihxkZnwmycRODEpkkvv6YYJBScNMhxhSsHyP+kVvsQSwoLOiWJHe7Dfgc3jkzC6r3YhdoK6QsqOFnv827yFwSE50ANZ0DlRNBYfZ3IQIDgszozJ042w0WgyeuFMhMaEXz7nxmd5dX2TzFxda4jiUIon0UuzGExc+yATYqvtgBt6zGqDdVUpOy/Zix8iRxSaPEvRguglczxE2SbIhBdHdIoXe54ao/XLqwbECvQma7/SdL7JVJrJKM9l8Fmucy+NwXKlzVzbCZu+f4Lv/9bw5HIq1+1KVCAKNTqlhHjHwpOJKg6LCW47fnzodlNsdjaDnQwbCC1EdgwgiNNCtgkBNa1wTSvMoAEuE+IwIasNGGCb3mSD3RZCEQvoHEImpxJ6OeKKsnprrsuuX1dJpdrBQTqHy0tISCotyaxcyI2LI/pHhpqJumV/8933mg4dth9DFIqoiCZI9Tzmd40g753F3l/xxC8qOckxnn9OhhGLvBHAWnTfzOJ19xc/tB4/hH6Y4K84LtZelA3KVGoljyPYsOphsrqFj6Kt/eimzXcUQbbURVwa0/OrcvuA+UyjqV/p3U5YkpBSWczMSvCsP4vZ1nVCB2x4PRHlZM/f+gxL6NdsMQj4q1+pTNol6wYAGAgEoCEFs8Fw9W//cC21QYjeSmN63rHMTqRnJ9J75MjlVrhVZrbhbrNBwJYnppfnMlJjiX5RZq0FXxkAAHlb+4ltf170/A5OrIhgtSHBX3HECGLs4tAZ9EaTkcX0d0NIOzCglEhVPT0m5ahJozZpNDbEQuOwhelpEIWqVyp6Ll9xDmwyBgQYPC9W2FJEtAdn0RQ6y9VWuK4LNiOu9zKooCSDUZ5Dj+Z6t0XOIHa9pq/vxJZtS3bvDGd9+PtYudZw7filE/bjB6sezE717sXSgRVBOk6eaj50RNOPEsLRI5mLKmPyzAqf4rRYbTYDPPYPAoDNgNgMiMWAKD6t54oyZw7WGgk6T3Pj4hbtfN5jjKtQ4e/IkRQnBgCwmCxxgpjpU5puxGRq++Zo8+EjBl8D13Pj48t+9RisG1J03/QhbwYFgrhMiEtK6hIISp2xflIpTdHRoR0YBABQGfSotDRNr8xsQNmU1g0Pn9i8ZfHOF1GT0vmASjPKZbHpdHL2m0h4W1GqFUKBj3FFtP0Dp/68Q+dHxlcKjXbvy7uFGZkAgN4bXzpcmUPCpNK1k6attR+rursRvUGUkw1RqVYL0vjFgYZPPkO9i8Hjznry98nTy/zvwL6j+1qlbQmi+OSE5OXzlvtZGwkbbz4rQynpPLppsz/KAACUbNxgVwYAILl0TbRTBNIgE50yJbl0zfhpampsfh5EpQIAKFTa5AfXz3ryCdQbYa3u3M7d1/7xL2Wnv5tE0r4uAMCgfKh/ZMDPqkAIF8EGb9069/xOxJvwoy7E5GRPXr/eOdyP2aAWJOVpBtsQkzbIITqoTI5AnI8Y1ThbphkLF9hs4Mobb6J+2nbseNux4wKxOK6oQJiZwY1LGO3qgqiUhOLimGxCM7n+4X74++8zJZGErAyhEUdPzZWLr7zqMaYgKmxhdHxhUeq8uSkz70iRpBuRNB991WxQAwAgANmALZj6sJj03Vc/6284WrDsaQ52Nr/MygU0JvPSq/8fK4CRuq9P7RSX3U7h/WtLNv7EYx/au8dTm6UnE80oiEMIVkh1I8Nf/fb3WCGLqQxG5qJKYXoaNy6OGx/HjY/HCm7vjHvAuCCKw+Zsk0ylswqqNvNwtwNl12sv7NmLHjUQg7Xv/pftadHMCBslPZKOnk6pTPL4+l/5Py0NgTiaDh2++e577uU0BqPgR2tyV1Ux+d7ZyGCFEqTQmFa0tHskgtoElc4qXLkVP6Cgor3jwt6Xic+35m17ZtL06b510mdCEd0SzXaNxmItfGHH5IcfIksZAICUaWtZUeS8IqLCEaU5z0AdWMzGJk/5s2Oys6reeA0rI4w7UCj+p0LQpPvOJFMgWLJnV1yea+Itj+Aog8rkxOVWFP9ohzDNQ/gG3xCmTS1a/Wx8bgWVieIQi8CGpurd+PlN6Wz23E1PVWzZnFjiweqAxmDEuWUlCwIkP1Zkg7KGtltzS+fghwBQSqTnXtxlD+kUlTJpwbNb3fP1eUQ73IEaGB8AACCKc2B8RdeNvrojo70dZr2VGUXxyh/agc1mM6utdD4lSpwnLlnlsCNRdte1HH8NKzB+YdUz3Di8mPZ2dIOD7cdPDnz3nWZgANbcsTkgmDRp9pNPxOQEwxfBBdLE0T/cf+DElyq1CgCwqLyyvMRDUFWzwdBTc5XKoKWUl/uQBtarlCu64eHr//6v7Np1AACFBmLvYfKSvGvRqEQGrpusMKDS6ZmLKksffYTKHJ/uKaTX2069RVZKDQsMaweHjKMqyAboPJ4ww4t7yYU0cRhNxtfee91qtQIAhILo3/z4N779QInglTLMev3hX//OpFY7SugcVt4DeXrCyXi4MZmtB9tMTo62fLF47tN/FGaOx70PbTKeAEHanIPFZOVnjD0XlWqVpBcluTcp4CqD6qIMAIBCInFWBgDArDdy+XPKNr6VNf+xxMn3ijJncmNTKXQmADYAbBQ6kxubKsqcmTj53qz5j5VtfIvDm2260wVb09d3bPOW5iNfOUqEqSW5S/4AUVC2ZO3zD/z5aXhC5oR0asHY1I9Go45q1fgX+wa+MvKXPSV0Wz5nCVDM00d7emhMXlzuvPTyDdmVv0Zgg9VsAgACALKaTRbYlL3w8fTyDXG582hMnlKKsqptNZtr3363++L47qswtSR/2VPB14dOT6ZvujNkiiN9Unq6OG3e9IonNjzhEAqJ4CmDSstf9lRUcrH7R4JksXvGFo1s3OZUOyQxqe9YbzCqB7XDUsepKBczYcOt/QecT6OSi4OsD/mo4vX3//rliS/7hlzXVf2H5FfZDas3VEyr4LDJD3eEr4yCZZtQlQEAgCgUvtjVWUbVOy4OvRwlIrZxdPy7Tp9XIZ5Wilq5SiLpq73DiGRMH2gmooHQx5WbNQCA2x1N7x743xZJC4k1g/APNWnHozJwfIesFkQ76LpFSeeMy5fKRAnGAjl5ukIUyoLt2+Y+/RSTz3e/0j3/eVRyccGyTUHQh0an+a71O/sxh8XOTiP5dXcCiANHGRQqHV8ZAICGTz43613vTbxnsrfdSJ07u/KFv7gv7yqlKHGnBOKCgmWbUH2p7frQK3q87YA7NXU1VuvY+sqc0tlUtMeZP4S7ODwoY8VmfGV0X6ppvHNaYCdxitfiAAAI09OEblkaVRIp6sUCcUHBis1Y+rj9FQn6mFZcVpI/hUalcNmcaUUk2Aq5ENbiwFEGlc4qWLGZn4CX26v74uWLr7zqvnZJZTASitAnKB7huKVotCIIjPG+wE/IxdSHSeu/PkRRMSsWrPjtw7+7b+l9+JGVfCN8xeGnMmTXay+9hr6qPWXjBuf1Ta9AHbpxbAPs+kCN0kSKPgAAfC4/NSkgfrnBEIcJ9nrf3KDqu129C10ZNGZ+1SZeHJ7BxEB9/YU9e1GNiRKKivJXrfS2Pw4gGso3hrrP7ICfkJtftYlKQ7FgRkzaxq92GUd9MbgPAgEXh1Qm/ddn/7p804s8Zzabpf3U31F31Oz5Wvnxrvm/nBlpbjm3cw+qKQ0/Kali8ybiPXGHgjZyWK0eEvrx43MKVjxDRcsVbTHp2s78ExAI1Bl8AiuOw6cPf3TkY41Oe+HGBaWaqOeBbliqQ8vGRWVyClZswTey0o/Iz7ywE9XMjJuQsHjnCwwByusocSAa2qOdwBYNLz6rcMVWGgPltVk3LNHJwyt2u53AisNhqYYgloMnD1o8/cLG7mKj/P9RGawiT9tXVgtyYe9LLumc7bCioxc//xw7xl/3VFQHaJuN0N/FjU0vXLkVdfzAj+QUKgIrjsqZCwW8sf/pvqH+ji484xcHTH58YuFi5xIqk1u0chuO4a6dtm+Oy9va3ctZ0dFLdr3og8mIOxQqyjdmGiW6kcQRpRWt3EZl3pG8LWnyMueEozgYTAEJ14lFYMXBZDBXV64GwMZgMNYteyA3A+/9wpn0OT8Vl4xNG5n82MlrdnhUBgCg8xRKZjWmQLBkF2kuZazoaPfCUZkX+xocUdrkNX9m8sZcZJOnrkorJxSdoLO3860P32qVthJvy08C7pqQJk5bMmdJdmpOTJR3Q3rq9PVJk5fBWgVHlEIk4Le6t1cpcds+haAFz24hSxkAgKg0lJfGoVuNLn4S+LCikkoefFmv6GHyY2lMQnMgpVq5//gB2Gzed/SL6ZPLls5ZSrw5nwnGq+yMyTO8VYYdOkvAjU0nGAq+88xZ98LCtWtw9lR9IGoSirNQ+7FjLiYjHoEoNG5sBkFlWKyWL47tdzgstXd3IN64NfhM+C6CeYfNJkETR/ZSckKnOeAlJrjHbbLA5uZDR8htyBlJr3RIPp7q8YGl9+MHEyeLu0QcxtFRdyf9mOws/5NxugBRKAX3obgjNB06PHS7idy2HGSnZq1d8iMajQaA7YF77w9aXpu7RBwWBCUxeIzbJhkpZC9ezBS4OtdYEeTcCzvVMjJD0jpTmFX4yNqfLatYnpcRPB+FEIvDaCInWJTVhCIOOisg2TopdHr+mlXu5WaD4dSzz2kHBwPRKAAgQZQwrQjd5ihAhFIcrdKWNz96ixT7NtSRg8YOVFKSnGX30lgolRuUqlPPPoeYAuuDGTRCJo7vWhv2Hd0Pw/DHX33SP+zvzpPVjDJ7D1yeXwaXO+fppyhou+S64eGBm3UBajfIhEwc39aPWdeZYNOHhz/s7CG0eIoFjY2y50kPgCmrg+Sy0nnbnkF3x6IENTRI4AiZODas+kmscGyV0IwgiIXQ9gQWguRJ7m+YgfYVE5eWztu62SVCBEck8ifL8JmrZ85fP+9318ghZOJgs9gb1/w0NSkFAPCjRWty0/1dqip/4nesqHEXlckPPxQE/1JxaemCbVsdhsd0LnfupqfcPSGIYEbMB04cuHyz5sL1i/XN9aR200dCH95aKpOmJ6eTUpXVbO66dJkjjBHmZDI4XM83AAAAGOmoaT/tGvU2u/I3xLPCwmpNd02NzWZLLivzLa6oRqfZd2xf/9C4lfyj9z0ijic5/Yi3hD4CN1nKAABQ6PSMBfO9vQs1qbhXmcYZAn72vX5tdiAWRKFSOE7Lp8xIjCN5+c4H7pJFMH/gxqa5+JhAFCo3loSYWsQRCoT3LVkLAKDRqGsWrV40azEFCv1/TegfKzgYTAaFSpGcEPAsbgO3T0gvfzhmjQxB6bM3uhiUBIcbjTcmJU5KEJFgd0IKYS2OQ6cO3WprnDll5vyyCrKi8mKhV8oQgxoQy6P2AyF8xdEiafni2H77cRRfUDWvKjMlIHslEbAI/YMNi9qmm47jUY269rYvQe/DCo1Oc/zScb3B92xAQSb0bytY/LjqoRuNN05fPWM3cqksXxTqHvmOSjN6ufbizaZ6AACCmKvmrwh1jwgRvuIAAEwrmpaVknXw1KHkeLFvtmThgBE2/vuzf5m/t9262VRfUjA15GsYRAhrcQAAogXRj6z9mQ8+c+EDi8Eqyi6q+37Rk8fhGoNrRO4z4S4OO0wG5oI0DMNvH3gnJy1ncm5x+LwEujBr6uy65no2i1VWXFZ+TznDp8Q0wSd831YIUt9U99W5r+3H6eK0heULQzJiwzBssVnYaHFg7LR1taUlpU0UWdiZGCMHDjeb6xzH0r4utVYdTHEMK4ZlgzJpX1djW2PlzIWzpmJux+Sk4fn3hicTWxxmxGxxCv3JYDDyM/OD1rreoP/35/9xnLZIW3HEMRGZ2OKg0+i/uP/nPQM9tzuaZIO98bhzjuqz1R09HQJeFJ/D5XMFC8sX0mnoeWLNiFmtHdXodGrtKI1KK8wuRL2Mw+bECWOHlSP2U9mgTKPT8Ll+OWqHFRNbHHZSElOIJCbqH+7X6LQa3Vhk8aVzMfdR3/7iHblKbj9Oik/CEgcAIEWcaheHMCq6KKswHHbLSORuEAdBBp38ggQ8vMQdNCfjUJ0BLwTslLx7slIyEmMTBTyUULgTnR+KOPRGQ3FO0YB8YEQhBwDgJ3Vw9idTa/D8HCfEWpbPTPhXWR9QqpUWxBIb4xr6zUF9c71KMwpBgMPm8jm8YPoRhRU/RHFEIMhdNYGKQC4RcUTAJCKOCJhExBEBk4g4ImASEUcETCLiiIBJRBwRMImIIwImEXFEwCQijgiYRMQRAZOIOCJgEhFHBEwi4oiASUQcETCJiCMCJhFxRMAkIo4ImPwfhe+aMdw2EIcAAAAASUVORK5CYII=">
+<style>
+  :root{
+    --paper:#f0e5cc; --paper2:#e5d8b6; --card:#f8f0dc;
+    --ink:#3a2c1c; --ink-soft:#7d6b52; --line:#c6b18c;
+    /* 四色版墨：赭石 / 茜草 / 靛蓝 / 苔绿 —— 只用于装饰与状态，不参与大面积背景 */
+    --ochre:#b8802a; --madder:#96351f; --indigo:#3c4f74; --moss:#5f6b3c;
+    --accent:var(--madder); --gold:var(--ochre);
+    --shadow:0 12px 26px rgba(46,32,14,.22), 0 2px 6px rgba(46,32,14,.14);
+    --serif:'Songti SC','STSong','Noto Serif CJK SC','Source Han Serif SC','SimSun','NSimSun',Georgia,'Times New Roman',serif;
+    --latin:Georgia,'Palatino Linotype','Book Antiqua',serif;
+  }
+  [data-theme="dark"]{
+    --paper:#191410; --paper2:#211a12; --card:#261f15;
+    --ink:#e8dcbc; --ink-soft:#a08e70; --line:#4a3d28;
+    --ochre:#d9a94e; --madder:#c1553a; --indigo:#7d95c2; --moss:#8a9660;
+    --shadow:0 12px 26px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  [hidden]{display:none !important}
+  html,body{margin:0;padding:0;overscroll-behavior:none}
+  body{
+    font-family:var(--serif);
+    color:var(--ink);min-height:100vh;
+    background:
+      radial-gradient(1100px 640px at 50% -12%, rgba(255,250,232,.55), transparent 62%),
+      linear-gradient(165deg,var(--paper),var(--paper2));
+    background-attachment:fixed;
+    padding:calc(28px + env(safe-area-inset-top)) 20px calc(14px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");}
+  .wrap{max-width:460px;margin:0 auto;position:relative;z-index:2}
+
+  header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:10px}
+  /* Logo = 项目名本身：手刻双线牌匾，字为宋体，随主题取色 */
+  .brand{margin:0;display:flex;flex-direction:column;gap:4px;font-weight:400}
+  .mark{width:106px;height:38px;display:block;color:var(--ink);overflow:visible}
+  .mark .lg-out,.mark .lg-in{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linejoin:round}
+  .mark .lg-in{stroke-width:.7;opacity:.5}
+  .mark .lg-t{fill:currentColor}
+  .brand p{margin:0;font-family:var(--latin);font-size:8.5px;letter-spacing:3.4px;
+    color:var(--ink-soft);text-indent:2px}
+  .theme-btn{border:1px solid var(--ink);background:transparent;color:var(--ink);
+    width:36px;height:36px;border-radius:1px;font-size:15px;cursor:pointer;transition:.15s;font-family:inherit;
+    position:relative}
+  .theme-btn::after{content:'';position:absolute;inset:3px;border:1px solid currentColor;opacity:.35}
+  .theme-btn:active{background:var(--ink);color:var(--paper)}
+
+  .orn{display:flex;align-items:center;gap:10px;margin:12px 0 0;color:var(--ochre);font-size:11px}
+  .orn::before,.orn::after{content:'';flex:1;height:1px;background:var(--line);opacity:.75}
+  .orn i{font-style:normal;letter-spacing:2px}
+
+  /* ---------- 牌阵指示器（换牌阵入口） ---------- */
+  .sp-ind{display:flex;align-items:center;gap:10px;margin:14px auto 0;padding:10px 18px;
+    background:transparent;border:1px solid var(--line);border-radius:1px;
+    font:inherit;font-size:13px;letter-spacing:3px;color:var(--ink);cursor:pointer;transition:.15s;
+    position:relative}
+  .sp-ind::after{content:'';position:absolute;inset:3px;border:1px solid var(--line);opacity:.45;pointer-events:none}
+  .sp-ind .sp-ico{width:20px;height:14px;flex:none;color:var(--ochre)}
+  .sp-ind .sp-ico rect{fill:none;stroke:currentColor;stroke-width:1.5}
+  .sp-ind .sp-arr{width:12px;height:8px;flex:none;color:var(--ochre)}
+  .sp-ind:active{border-color:var(--ink);background:var(--card)}
+  .sp-ind.bounce{animation:spBounce .55s cubic-bezier(.2,.9,.3,1) .9s 1 both}
+  @keyframes spBounce{0%,100%{transform:translateY(0)}45%{transform:translateY(-3px)}}
+  .sp-tip{margin:8px 0 0;text-align:center;font-size:11px;letter-spacing:3px;
+    color:var(--ink-soft);opacity:.8}
+  .sp-tip b{color:var(--ochre);font-weight:400}
+
+  section{padding-top:4px}
+  #draw{display:flex;flex-direction:column;min-height:calc(100vh - 168px)}
+  #reveal{display:none;flex-direction:column;min-height:calc(100vh - 168px)}
+  #reveal:not([hidden]){display:flex}
+
+  /* ---------- S1 牌位 ---------- */
+  .slotstage{position:relative;padding:6px 0 2px}
+  /* 木刻太阳：手凿放射光芒，四色套印，压在牌位之后，不能抢牌 */
+  .sunmark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:min(348px,104%);opacity:.13;pointer-events:none}
+  [data-theme="dark"] .sunmark{opacity:.15}
+  .sunmark .s-face,.sunmark .s-eye,.sunmark .s-mouth{stroke:var(--ochre)}
+  .sunmark .s-ray-a{stroke:var(--ochre)}
+  .sunmark .s-ray-b{stroke:var(--madder)}
+  .sunmark .s-ring{stroke:var(--moss)}
+  .sunmark .s-star{stroke:var(--indigo)}
+  .sunmark path,.sunmark circle{fill:none;stroke-width:1.6;stroke-linecap:round}
+  .slots{display:grid;gap:14px;max-width:356px;margin:2px auto 32px;position:relative}
+  .slots[data-n="1"]{grid-template-columns:minmax(0,150px);justify-content:center}
+  .slots[data-n="2"]{grid-template-columns:repeat(2,minmax(0,150px));justify-content:center}
+  .slots[data-n="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .slots[data-n="5"]{grid-template-columns:repeat(5,minmax(0,1fr));max-width:420px;gap:10px}
+  .slot{position:relative;width:100%}
+  .slot::before{content:'';display:block;padding-top:188.5%}
+  .ph{position:absolute;inset:0;border:1px solid var(--line);outline:1px solid var(--line);
+    outline-offset:3px;border-radius:5px;display:grid;place-items:center;
+    color:var(--line);transition:border-color .25s,outline-color .25s}
+  .ph span{font-size:15px;font-style:normal;opacity:.75}
+  .slot.next .ph{border-color:var(--gold);outline-color:var(--gold)}
+  .slotcard{position:absolute;inset:0;border-radius:5px;overflow:hidden;box-shadow:var(--shadow)}
+  .slotcard img{width:100%;height:100%;display:block}
+
+  /* ---------- S1 扇形牌阵（贴底） ---------- */
+  .fanzone{position:sticky;bottom:0;z-index:6;margin-top:auto;display:flex;flex-direction:column;
+    background:var(--paper2);
+    margin-left:-20px;margin-right:-20px;
+    margin-bottom:calc(-14px - env(safe-area-inset-bottom));
+    padding:4px 20px calc(10px + env(safe-area-inset-bottom));
+    transition:opacity .35s ease,transform .35s ease}
+  .fanzone.exit{opacity:0;transform:translateY(28px)}
+  .fanzone::before{content:'';position:absolute;left:0;right:0;top:-36px;height:36px;
+    background:linear-gradient(180deg,rgba(0,0,0,0),var(--paper2));pointer-events:none}
+  .fanprompt{text-align:center;font-size:12.5px;letter-spacing:3px;color:var(--ink-soft);
+    padding:2px 0 6px;position:relative;z-index:2}
+  .fanprompt b{color:var(--accent);font-weight:600;padding:0 1px}
+  .fan-mid{position:absolute;left:50%;top:28px;bottom:54px;width:1px;pointer-events:none;z-index:1;
+    background:linear-gradient(to bottom,transparent,var(--line) 15%,var(--line) 85%,transparent);opacity:.55}
+  #fanWrap{flex:1;position:relative;min-height:210px;max-height:330px;overflow-x:scroll;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;user-select:none;-webkit-user-select:none;touch-action:pan-x}
+  #fanWrap::-webkit-scrollbar{display:none}
+  #fanTrack{position:relative;height:100%}
+  .fcard{position:absolute;top:7%;width:84px;height:158px;transform-origin:50% 135%;
+    touch-action:manipulation}
+  .fcard-i{width:100%;height:100%;border-radius:5px;overflow:hidden;box-shadow:var(--shadow);
+    animation:fanIn .5s cubic-bezier(.2,.85,.3,1) backwards;animation-delay:var(--d,0ms)}
+  @keyframes fanIn{from{opacity:0;transform:translateY(54px) scale(.84)}to{opacity:1;transform:none}}
+  .fcard img{width:100%;height:100%;display:block;pointer-events:none}
+  .fcard.gone{display:none}
+  #bdayEmpty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:16px;min-height:210px}
+  #bdayEmpty p{margin:0;font-size:12.5px;letter-spacing:3px;color:var(--ink-soft);text-align:center}
+
+  /* ---------- S2 翻牌屏 ---------- */
+  .rv-prompt{text-align:center;font-size:12.5px;letter-spacing:3px;color:var(--ink-soft);
+    padding:14px 0 20px;min-height:44px}
+  .rv-row{display:flex;flex-wrap:wrap;justify-content:center;gap:44px 14px;max-width:460px;margin:0 auto}
+  .rv-row.pre .rcard{opacity:0}
+  .rcard{position:relative;width:128px;transition:opacity .3s ease}
+  .rcard::before{content:'';display:block;padding-top:188.5%}
+  .rv-row[data-n="1"] .rcard{width:200px}
+  .rv-row[data-n="2"]{flex-wrap:nowrap;width:100%}
+  .rv-row[data-n="2"] .rcard{width:150px;flex:0 1 150px;min-width:0}
+  .rv-row[data-n="3"]{flex-wrap:nowrap;width:100%}
+  .rv-row[data-n="3"] .rcard{flex:1 1 0;width:auto;min-width:0}
+  .rv-row[data-n="5"]{width:100%}
+  .rv-row[data-n="5"] .rcard{width:auto;flex:0 1 calc((100% - 28px)/3);min-width:0}
+  .rcard.guide::after{content:'';position:absolute;inset:-7px;border:1px solid var(--accent);
+    border-radius:9px;pointer-events:none;animation:gp 1.7s ease-in-out infinite}
+  @keyframes gp{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:.9;transform:scale(1.03)}}
+
+  .flip{position:absolute;inset:0;cursor:pointer}
+  .flip-inner{position:absolute;inset:0;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;
+    transition:transform .65s cubic-bezier(.35,.1,.2,1)}
+  .rcard.flipped .flip-inner{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    border-radius:5px;overflow:hidden;box-shadow:var(--shadow)}
+  .face.front{transform:rotateY(180deg)}
+  .face img{width:100%;height:100%;object-fit:cover;display:block}
+  .face.front img.rev{transform:rotate(180deg)}
+
+  .rname{position:absolute;left:-4px;right:-4px;top:calc(100% + 7px);text-align:center;
+    font-size:10.5px;color:var(--ink-soft);letter-spacing:1px;
+    opacity:0;transform:translateY(4px);transition:.45s ease .3s}
+  .rcard.flipped .rname{opacity:1;transform:none}
+  .rrev{position:absolute;left:-4px;right:-4px;top:calc(100% + 23px);text-align:center;
+    font-size:9.5px;color:var(--accent);letter-spacing:3px;
+    opacity:0;transition:.45s ease .35s}
+  .rcard.flipped.rev .rrev{opacity:1}
+
+  .rv-hidden{margin-top:42px;display:flex;flex-direction:column;align-items:center;
+    animation:hIn .5s cubic-bezier(.2,.9,.3,1) both}
+  @keyframes hIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .rvh-cap{font-size:10px;letter-spacing:5px;color:var(--ink-soft);margin-bottom:10px}
+  .rcard.hs{width:92px}
+  .rcard.hs .rname{font-size:10px}
+
+  .rv-acts{display:flex;gap:12px;justify-content:center;margin-top:auto;padding-top:44px}
+  .rv-acts .btn{flex:0 0 auto;width:auto;padding:13px 24px;font-size:13px;letter-spacing:3px;text-indent:3px}
+  .rv-acts .btn.appear{animation:ap .35s cubic-bezier(.2,.9,.3,1) both}
+  @keyframes ap{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .btn{display:block;flex:1;padding:14px 0;background:transparent;border:1px solid var(--ink);
+    outline:1px solid var(--line);outline-offset:3px;color:var(--ink);font:inherit;font-size:15px;
+    letter-spacing:9px;text-indent:9px;cursor:pointer;transition:.15s;border-radius:2px;position:relative}
+  .btn:active{background:var(--ink);color:var(--paper)}
+  .btn.sm{flex:0 0 auto;width:auto;padding:14px 16px;font-size:13px;letter-spacing:2px;text-indent:2px}
+  .btn:disabled{opacity:.35;pointer-events:none}
+  .btn.pulse::after{content:'';position:absolute;inset:-2px;border:1px solid var(--accent);
+    border-radius:2px;opacity:0;pointer-events:none;animation:ring .6s ease-out}
+  @keyframes ring{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.16)}}
+
+  /* ---------- 开关 ---------- */
+  /* 开关：方形字模，不用胶囊拨钮 */
+  .sw{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:12px;color:var(--ink);letter-spacing:1px}
+  .sw input{display:none}
+  .sw i{width:38px;height:18px;border-radius:0;border:1px solid var(--ink);
+    background:transparent;position:relative;transition:.2s;display:inline-block}
+  .sw i::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:0;
+    background:var(--ink);transition:.2s}
+  .sw input:checked + i{border-color:var(--madder)}
+  .sw input:checked + i::after{transform:translateX(20px);background:var(--madder)}
+
+  /* ---------- 牌阵选择面板 ---------- */
+  #spreadOv{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;justify-content:flex-end}
+  #spreadOv .bd{position:absolute;inset:0;background:rgba(20,14,6,.55);animation:fade .25s ease both}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sh-sheet{position:relative;background:var(--paper);border-top:1px solid var(--ink);
+    border-radius:2px 2px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));
+    max-height:84vh;overflow-y:auto;animation:shIn .32s cubic-bezier(.2,.9,.3,1) both}
+  @keyframes shIn{from{transform:translateY(70px);opacity:.4}to{transform:none;opacity:1}}
+  .sh-title{text-align:center;font-size:13px;letter-spacing:5px;color:var(--ink-soft);margin:0 0 14px}
+  .sp-row{width:100%;border:1px solid transparent;border-radius:1px;margin-bottom:4px}
+  .sp-head{display:flex;align-items:center;gap:14px;width:100%;padding:12px;background:transparent;
+    border:none;border-radius:1px;cursor:pointer;font:inherit;color:var(--ink);text-align:left}
+  .sp-row.on{border-color:var(--line);background:var(--card)}
+  .sp-row.on .sp-head{color:var(--ink)}
+  /* 四种牌阵各用一色版墨，功能即色彩 */
+  .sp-row[data-s="1"] .sp-dia{color:var(--ochre)}
+  .sp-row[data-s="2"] .sp-dia{color:var(--madder)}
+  .sp-row[data-s="3"] .sp-dia{color:var(--indigo)}
+  .sp-row[data-s="bday"] .sp-dia{color:var(--moss)}
+  .sp-dia{width:40px;height:14px;flex:none}
+  .sp-dia rect,.sp-dia circle{fill:none;stroke:currentColor;stroke-width:1.5}
+  .sp-t{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+  .sp-t b{font-size:14.5px;letter-spacing:2px;font-weight:600}
+  .sp-t i{font-size:11px;color:var(--ink-soft);font-style:normal;letter-spacing:1px}
+  .sp-row.on .sp-t i{color:var(--accent);opacity:.75}
+  .bday-form{margin:2px 12px 12px;display:flex;flex-direction:column;gap:10px}
+  .bf-row{display:flex;gap:8px}
+  .bf-row input{flex:1;min-width:0;font:inherit;font-size:16px;padding:9px 10px;
+    border:1px solid var(--ink);background:var(--card);color:var(--ink);border-radius:3px}
+  .bf-row input.bad{border-color:var(--accent)}
+  .bf-err{margin:0;font-size:11.5px;color:var(--accent);letter-spacing:1px}
+  .sh-opts{display:flex;gap:24px;justify-content:center;margin-top:14px;padding-top:15px;
+    border-top:1px solid var(--line)}
+
+  /* ---------- 分享预览浮层 ---------- */
+  #shareOv{position:fixed;inset:0;z-index:80;background:rgba(20,14,6,.92);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:26px;animation:fade .25s ease both}
+  .sh-card{max-width:100%;max-height:76vh;overflow:auto;-webkit-overflow-scrolling:touch;
+    box-shadow:0 18px 50px rgba(0,0,0,.5);border-radius:3px}
+  .sh-card img{display:block;width:100%;height:auto}
+  .sh-hint{color:#d8c9a8;font-size:12.5px;letter-spacing:2px;margin:20px 0 16px;text-align:center}
+  #shareOv .btn.sm{border-color:#d8c9a8;color:#d8c9a8;outline-color:rgba(216,201,168,.35);width:150px}
+  #shareOv .btn.sm:active{background:#d8c9a8;color:#241a0e}
+
+  .flyghost img{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* ---------- 历史抽卡记录 ---------- */
+  #historyOv{position:fixed;inset:0;z-index:95;display:flex;flex-direction:column;
+    background:linear-gradient(165deg,var(--paper),var(--paper2));
+    padding:calc(16px + env(safe-area-inset-top)) 20px calc(14px + env(safe-area-inset-bottom));
+    animation:fade .25s ease both}
+  .hd-head{display:flex;align-items:center;gap:12px;padding-bottom:13px;
+    border-bottom:1px solid var(--line);flex:none}
+  .hd-head .sh-title{margin:0;flex:1;text-align:left;padding-left:2px}
+  .hd-close{width:34px;height:34px;border:1px solid var(--ink);background:transparent;color:var(--ink);
+    font:inherit;font-size:17px;line-height:1;cursor:pointer;border-radius:1px;position:relative;
+    flex:none;padding:0;transition:.15s}
+  .hd-close::after{content:'';position:absolute;inset:3px;border:1px solid currentColor;opacity:.35}
+  .hd-close:active{background:var(--ink);color:var(--paper)}
+  .hd-list{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    display:flex;flex-direction:column;gap:12px;padding:16px 2px 18px}
+  .hd-empty{margin:auto;text-align:center;color:var(--ink-soft)}
+  .hd-empty p{margin:0}
+  .hd-empty .hd-e-orn{font-size:20px;color:var(--ochre);margin-bottom:14px}
+  .hd-empty .hd-e-t{font-size:13px;letter-spacing:4px}
+  .hd-empty .hd-e-s{font-size:11px;letter-spacing:2px;margin-top:10px;opacity:.75}
+  .hd-item{border:1px solid var(--line);outline:1px solid var(--line);outline-offset:3px;
+    background:var(--card);padding:11px 13px 12px;border-radius:2px;flex:none;
+    animation:hIn .3s cubic-bezier(.2,.9,.3,1) both}
+  .hd-meta{display:flex;align-items:center;gap:10px}
+  .hd-date{flex:1;font-size:11px;color:var(--ink-soft);letter-spacing:1px;min-width:0}
+  .hd-spread{font-size:10px;letter-spacing:2px;flex:none}
+  .hd-del{width:28px;height:28px;border:1px solid var(--line);background:transparent;
+    color:var(--ink-soft);font:inherit;font-size:14px;line-height:1;cursor:pointer;
+    border-radius:1px;padding:0;flex:none;transition:.15s}
+  .hd-del:active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .hd-share{width:28px;height:28px;border:1px solid var(--line);background:transparent;
+    color:var(--ink-soft);font:inherit;font-size:12px;line-height:1;cursor:pointer;
+    border-radius:1px;padding:0;flex:none;transition:.15s}
+  .hd-share:active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .hd-cards{display:flex;gap:6px;margin:9px 0 7px;flex-wrap:wrap}
+  .hd-thumb{width:30px;border-radius:2px;overflow:hidden;position:relative;
+    box-shadow:0 2px 5px rgba(46,32,14,.25);background:var(--card)}
+  .hd-thumb::before{content:'';display:block;padding-top:188.5%}
+  .hd-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .hd-thumb img.rev{transform:rotate(180deg)}
+  .hd-thumb.hid{outline:1px dashed var(--accent);outline-offset:1px}
+  .hd-names{font-size:10.5px;color:var(--ink-soft);letter-spacing:.5px;line-height:1.65}
+  .hd-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding-top:12px;border-top:1px solid var(--line);flex:none}
+  .hd-count{font-size:11px;color:var(--ink-soft);letter-spacing:2px}
+  .hd-foot .btn{flex:0 0 auto;width:auto;padding:11px 18px;font-size:12px;
+    letter-spacing:3px;text-indent:3px}
+
+  /* ---------- 添加到主屏幕引导（iOS Safari 首次） ---------- */
+  #guideOv{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+    padding:18px;background:rgba(20,14,6,.72);animation:fade .3s ease both}
+  .gd-card{position:relative;width:100%;max-width:340px;max-height:94vh;overflow-y:auto;
+    overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    background:linear-gradient(165deg,var(--paper),var(--paper2));
+    border:1px solid var(--ink);outline:1px solid var(--line);outline-offset:4px;
+    border-radius:2px;padding:calc(18px + env(safe-area-inset-top)) 18px calc(14px + env(safe-area-inset-bottom));
+    animation:shIn .35s cubic-bezier(.2,.9,.3,1) both}
+  .gd-close{position:absolute;top:calc(9px + env(safe-area-inset-top));right:9px;width:28px;height:28px;
+    border:1px solid var(--line);background:transparent;color:var(--ink-soft);font:inherit;font-size:15px;
+    line-height:1;cursor:pointer;border-radius:1px;padding:0;flex:none}
+  .gd-close:active{background:var(--ink);color:var(--paper)}
+  .gd-kicker{margin:0;text-align:center;font-size:9px;letter-spacing:4px;color:var(--ink-soft);opacity:.7}
+  .gd-title{margin:4px 0 0;text-align:center;font-size:18px;font-weight:400;letter-spacing:3px;color:var(--ink)}
+  .gd-sub{margin:4px 0 0;text-align:center;font-size:11.5px;letter-spacing:1px;color:var(--ink-soft);line-height:1.7}
+  .gd-steps{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+  .gd-step{border:1px solid var(--line);border-radius:1px;padding:10px 12px 11px;background:var(--card)}
+  .gd-s-t{margin:0 0 8px;font-size:12px;letter-spacing:.5px;color:var(--ink);line-height:1.7}
+  .gd-s-t b{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
+    border:1px solid var(--ochre);color:var(--ochre);border-radius:50%;font-size:11px;
+    font-weight:400;margin-right:7px;vertical-align:1px}
+  .gd-s-t em{font-style:normal;color:var(--ochre);border-bottom:1px solid var(--ochre);padding-bottom:1px}
+  .gd-img{display:flex;justify-content:center}
+  /* 真实截图：圆角容器 */
+  .gd-img-shot{position:relative;max-width:190px;margin:0 auto;border-radius:10px;overflow:hidden;background:#fff;
+    border:1px solid var(--line)}
+  .gd-img-shot img{display:block;width:100%;height:auto}
+  /* 开关警示注记 */
+  .gd-warn{margin:9px 0 0;font-size:11px;letter-spacing:.5px;color:var(--ochre);line-height:1.65}
+  .gd-done{border-color:var(--moss)}
+  .gd-done .gd-s-t{margin-bottom:7px}
+  .gd-done em{color:var(--moss);border-color:var(--moss)}
+  #guideOv .btn{margin:12px auto 0;width:auto;min-width:150px;padding:11px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1 class="brand">
+      <svg class="mark" id="brandLogo" viewBox="0 0 136 48" role="img" aria-label="灵匣">
+        <path class="lg-out" d="M3 4.4 L45 2.6 L89 4.2 L129 2.8 L130.6 23 L129.4 43 L89 44.2 L45 42.6 L2.6 43.8 L2 22.6 Z"/>
+        <path class="lg-in" d="M8.4 9.4 L45 8 L88 9.4 L123.6 8.2 L124.6 22.8 L123.8 38 L88 39 L45 37.6 L7.6 38.6 L7 22.4 Z"/>
+        <g transform="translate(42.133,33.152) scale(0.1015625,-0.1015625)"><path class="lg-t" d="M165 194Q160 190 159.0 189.5Q158 189 157.0 189.0Q156 189 155.0 189.0Q154 189 152.5 188.5Q151 188 150.5 187.5Q150 187 147.5 186.0Q145 185 138.0 184.5Q131 184 113.5 183.5Q96 183 80.0 182.5Q64 182 64.5 182.5Q65 183 65.0 180.0Q65 177 65.0 176.0Q65 175 65.5 174.0Q66 173 66.5 172.5Q67 172 68.0 171.0Q69 170 69.5 170.0Q70 170 77.0 170.0Q84 170 88.5 170.5Q93 171 98.5 171.0Q104 171 107.0 171.5Q110 172 112.5 172.0Q115 172 121.0 172.5Q127 173 132.0 173.0Q137 173 145.0 173.5Q153 174 153.5 174.0Q154 174 155.0 173.0Q156 172 157.0 171.0Q158 170 158.0 169.5Q158 169 158.0 167.0Q158 165 158.0 160.5Q158 156 157.5 155.5Q157 155 147.5 154.5Q138 154 133.5 154.0Q129 154 121.0 153.5Q113 153 108.0 152.5Q103 152 97.5 152.0Q92 152 85.0 151.5Q78 151 75.0 150.5Q72 150 67.5 149.5Q63 149 59.5 149.0Q56 149 51.5 149.0Q47 149 42.0 149.5Q37 150 36.0 150.0Q35 150 34.5 149.0Q34 148 33.0 147.0Q32 146 32.0 145.0Q32 144 33.0 141.0Q34 138 35.0 134.5Q36 131 37.0 130.5Q38 130 42.5 131.0Q47 132 55.0 134.0Q63 136 82.0 138.0Q101 140 117.5 141.0Q134 142 154 143L156 140Q159 137 159.5 134.5Q160 132 158.5 130.0Q157 128 156.0 126.5Q155 125 152.5 124.5Q150 124 143.5 124.0Q137 124 134.0 124.0Q131 124 127.5 124.0Q124 124 123.0 123.5Q122 123 121.0 122.5Q120 122 116.5 121.5Q113 121 109.5 121.0Q106 121 103.0 120.5Q100 120 96.5 120.0Q93 120 92.5 119.5Q92 119 91.5 118.5Q91 118 88.5 118.0Q86 118 84.0 118.0Q82 118 77.0 118.0Q72 118 69.0 117.5Q66 117 65.5 116.0Q65 115 64.0 114.0Q63 113 63.5 110.5Q64 108 65.0 107.5Q66 107 66.5 106.0Q67 105 67.5 105.0Q68 105 80.0 106.0Q92 107 95.5 107.0Q99 107 99.0 107.0Q99 107 101.0 105.5Q103 104 106 100V88Q106 60 104.5 56.0Q103 52 96.0 45.0Q89 38 84.5 33.5Q80 29 79.0 28.5Q78 28 71.0 24.5Q64 21 60.0 18.5Q56 16 49.5 13.5Q43 11 39.5 9.5Q36 8 30.0 6.0Q24 4 22.5 3.0Q21 2 21.0 0.5Q21 -1 21.0 -2.5Q21 -4 22.5 -4.5Q24 -5 26.5 -5.0Q29 -5 34.5 -4.0Q40 -3 55.0 2.5Q70 8 75.5 11.5Q81 15 82.5 16.0Q84 17 86.0 18.0Q88 19 89.5 19.5Q91 20 96.5 22.0Q102 24 110.5 32.5Q119 41 122.0 47.5Q125 54 125.5 56.0Q126 58 128.5 60.5Q131 63 132.0 63.0Q133 63 134.0 63.0Q135 63 136.5 60.5Q138 58 139.0 55.5Q140 53 142.0 46.0Q144 39 147.5 35.0Q151 31 158.5 26.5Q166 22 167.5 20.5Q169 19 171.5 17.5Q174 16 175.0 15.0Q176 14 179.5 11.0Q183 8 187.5 6.0Q192 4 194.0 4.0Q196 4 197.0 4.0Q198 4 200.5 5.0Q203 6 206.0 7.0Q209 8 211.5 9.5Q214 11 218.0 12.5Q222 14 224.0 14.5Q226 15 230.5 16.0Q235 17 235.5 17.0Q236 17 236.0 19.0Q236 21 236.0 22.0Q236 23 234.5 24.0Q233 25 230.5 25.0Q228 25 227.0 25.0Q226 25 221.5 26.0Q217 27 212.0 28.5Q207 30 202.0 31.0Q197 32 192.5 33.5Q188 35 187.0 35.0Q186 35 185.0 35.0Q184 35 182.5 36.0Q181 37 180.0 37.5Q179 38 178.5 39.0Q178 40 175.5 41.5Q173 43 171.0 44.0Q169 45 164.5 47.5Q160 50 157.0 53.0Q154 56 152.5 58.5Q151 61 150.0 63.0Q149 65 149.0 65.0Q149 65 150.0 66.0Q151 67 151.5 67.5Q152 68 154.0 69.0Q156 70 158.0 70.5Q160 71 161.5 71.5Q163 72 166.0 73.0Q169 74 170.0 74.5Q171 75 172.0 75.5Q173 76 175.5 76.5Q178 77 179.0 77.0Q180 77 183.5 77.0Q187 77 188.0 78.0Q189 79 189.0 82.5Q189 86 189.0 89.5Q189 93 188.5 93.5Q188 94 185.0 96.0Q182 98 179.0 100.5Q176 103 176.0 104.0Q176 105 178.0 108.5Q180 112 182.0 115.0Q184 118 184.5 120.0Q185 122 185.0 126.0Q185 130 185.0 132.5Q185 135 185.0 135.5Q185 136 186.0 137.0Q187 138 188.5 139.0Q190 140 190.0 140.0Q190 140 196.0 139.5Q202 139 210.5 138.5Q219 138 219.0 138.0Q219 138 220.5 139.5Q222 141 224.5 143.5Q227 146 226.5 147.5Q226 149 220.5 153.5Q215 158 211.5 160.5Q208 163 206.0 163.0Q204 163 201.0 161.0Q198 159 194.0 155.5Q190 152 187.0 154.5Q184 157 184.0 163.0Q184 169 184.0 171.5Q184 174 184.0 174.5Q184 175 185.5 177.0Q187 179 188.5 181.0Q190 183 190.5 185.5Q191 188 190.0 189.5Q189 191 188.0 192.5Q187 194 181.5 196.5Q176 199 174.5 199.0Q173 199 172.0 199.0Q171 199 170.0 198.5Q169 198 167.0 196.0Q165 194 165 194ZM157 111Q159 110 160.0 109.0Q161 108 161.5 107.5Q162 107 162.5 106.0Q163 105 163.0 104.5Q163 104 162.0 101.0Q161 98 159.5 94.5Q158 91 156.0 89.0Q154 87 148.5 83.5Q143 80 139.5 78.0Q136 76 135.5 76.0Q135 76 134.0 77.0Q133 78 131.5 79.0Q130 80 130.0 86.0Q130 92 131.5 94.0Q133 96 134.0 97.5Q135 99 135.5 101.5Q136 104 135.0 106.0Q134 108 132.5 110.0Q131 112 132.5 112.5Q134 113 139.5 113.0Q145 113 148.0 113.0Q151 113 152.5 113.0Q154 113 155.5 112.0Q157 111 157 111ZM75 87Q74 86 73.0 84.0Q72 82 71.0 80.5Q70 79 68.5 77.0Q67 75 65.5 72.5Q64 70 62.5 68.5Q61 67 58.0 63.0Q55 59 54.5 58.0Q54 57 54.0 53.0Q54 49 54.5 45.5Q55 42 56.0 40.5Q57 39 59.0 39.0Q61 39 64.0 39.0Q67 39 72.0 43.0Q77 47 79.5 51.0Q82 55 83.0 57.0Q84 59 84.0 59.0Q84 59 84.0 65.5Q84 72 83.5 76.0Q83 80 83.0 83.0Q83 86 82.5 86.5Q82 87 81.0 87.5Q80 88 78.5 88.0Q77 88 76.0 87.5Q75 87 75 87Z"/></g>
+        <g transform="translate(66.895,33.152) scale(0.1015625,-0.1015625)"><path class="lg-t" d="M50 198Q42 194 41.5 193.0Q41 192 43.5 187.5Q46 183 50 177L49 123Q49 93 49.0 73.0Q49 53 49.0 44.0Q49 35 48 1L51 -2Q55 -6 57.5 -6.0Q60 -6 62.5 -3.5Q65 -1 67.5 1.0Q70 3 70.5 4.0Q71 5 72.0 9.5Q73 14 73.5 15.5Q74 17 75.0 19.0Q76 21 76.5 21.5Q77 22 80 24L103 23Q116 23 122.5 23.0Q129 23 130.5 23.0Q132 23 134.5 23.5Q137 24 157.0 23.5Q177 23 189.0 22.0Q201 21 208.5 21.0Q216 21 216.5 21.0Q217 21 217.0 24.5Q217 28 217.0 30.0Q217 32 216.5 33.0Q216 34 214.5 36.0Q213 38 208.5 43.5Q204 49 202.5 49.0Q201 49 196.0 45.5Q191 42 189.5 40.5Q188 39 186.0 37.5Q184 36 183.5 36.0Q183 36 182.0 35.5Q181 35 166.5 35.5Q152 36 150.5 36.5Q149 37 148.5 37.5Q148 38 147.5 39.5Q147 41 147.0 48.0Q147 55 147.0 59.5Q147 64 147.0 68.5Q147 73 147.0 74.0Q147 75 146.5 78.0Q146 81 147.5 82.5Q149 84 153.5 84.0Q158 84 160.0 84.5Q162 85 164.0 85.0Q166 85 166.5 84.5Q167 84 168.0 84.0Q169 84 170.5 81.5Q172 79 172.0 77.0Q172 75 172.0 72.5Q172 70 174.0 68.5Q176 67 178.0 67.0Q180 67 182.5 67.0Q185 67 187.0 68.5Q189 70 191.0 74.0Q193 78 196 84L195 109Q195 130 195.0 133.0Q195 136 195.5 137.5Q196 139 197.0 141.0Q198 143 198.0 146.5Q198 150 197.5 151.5Q197 153 195.5 154.5Q194 156 190.0 158.5Q186 161 184.0 161.0Q182 161 180.5 161.0Q179 161 178.5 160.5Q178 160 175.5 157.5Q173 155 167 149H137Q107 150 107.0 150.0Q107 150 104.5 151.0Q102 152 99.5 153.5Q97 155 94.0 155.5Q91 156 87.5 154.5Q84 153 80.5 152.0Q77 151 76.5 150.0Q76 149 78.5 146.0Q81 143 83.5 140.5Q86 138 86.5 135.0Q87 132 86.5 127.0Q86 122 85.5 120.0Q85 118 85.0 110.0Q85 102 85.0 94.5Q85 87 85.0 74.0Q85 61 85.0 60.5Q85 60 86.0 59.0Q87 58 88.5 56.5Q90 55 92.0 55.0Q94 55 97.0 58.0Q100 61 102.5 63.5Q105 66 106.0 68.5Q107 71 107.0 74.0Q107 77 107.0 79.0Q107 81 108.5 82.0Q110 83 113.5 83.0Q117 83 121.5 83.0Q126 83 126.0 83.0Q126 83 126.0 71.5Q126 60 126.0 51.0Q126 42 126.0 41.0Q126 40 125.0 39.5Q124 39 123.5 38.0Q123 37 121.0 37.0Q119 37 109.5 37.0Q100 37 89.0 37.0Q78 37 77.5 37.0Q77 37 76.0 38.0Q75 39 74.5 39.5Q74 40 73.5 41.0Q73 42 73.0 43.0Q73 44 73.0 44.5Q73 45 73.0 59.5Q73 74 73.0 91.0Q73 108 72.5 137.5Q72 167 72.0 168.5Q72 170 73.0 170.5Q74 171 74.5 172.0Q75 173 78.5 173.0Q82 173 111.5 173.5Q141 174 171.0 174.0Q201 174 204.0 174.0Q207 174 208.0 175.0Q209 176 211.5 177.5Q214 179 213.5 181.0Q213 183 209.5 186.5Q206 190 202.0 195.0Q198 200 196.5 200.0Q195 200 191.0 196.5Q187 193 183.0 190.0Q179 187 178.5 186.5Q178 186 165.5 186.5Q153 187 147.0 187.0Q141 187 130.0 187.0Q119 187 112.0 187.5Q105 188 80 188L77 191Q66 200 63.0 201.0Q60 202 55.0 200.0Q50 198 50 198ZM169 136Q172 133 172.0 130.5Q172 128 170.5 126.5Q169 125 167.5 123.5Q166 122 157.5 121.5Q149 121 147.5 122.5Q146 124 144.5 125.0Q143 126 143.0 129.0Q143 132 144.5 134.0Q146 136 147.5 137.0Q149 138 149.5 138.0Q150 138 154.0 138.0Q158 138 161.5 138.0Q165 138 165.5 138.0Q166 138 167.5 137.0Q169 136 169 136ZM123 135Q124 134 124.5 133.0Q125 132 125.0 130.5Q125 129 125.0 126.0Q125 123 123.5 122.0Q122 121 119.0 121.0Q116 121 112.5 121.0Q109 121 108.0 122.0Q107 123 107.0 125.5Q107 128 107.0 130.5Q107 133 109.0 135.0Q111 137 114.0 137.0Q117 137 118.5 137.0Q120 137 121.0 136.5Q122 136 122.5 135.5Q123 135 123 135ZM124 110Q127 106 127.0 102.5Q127 99 125.5 97.0Q124 95 122.5 93.5Q121 92 116.5 92.0Q112 92 110.0 93.5Q108 95 105.5 97.5Q103 100 105.0 104.5Q107 109 110.5 110.0Q114 111 117.0 111.5Q120 112 120.5 112.0Q121 112 122.5 111.0Q124 110 124 110ZM167 111Q170 110 171.0 107.5Q172 105 171.5 103.5Q171 102 171.0 101.0Q171 100 170.5 99.0Q170 98 169.0 97.5Q168 97 166.5 95.5Q165 94 164.5 94.0Q164 94 160.5 94.0Q157 94 154.0 94.0Q151 94 150.0 94.0Q149 94 148.0 95.0Q147 96 145.5 98.0Q144 100 144.5 104.0Q145 108 147.5 109.5Q150 111 151.0 111.5Q152 112 158.5 112.0Q165 112 166.0 111.5Q167 111 167 111Z"/></g>
+      </svg>
+      <p>TAROT&nbsp;DE&nbsp;MARSEILLE</p>
+    </h1>
+    <button class="theme-btn" id="historyBtn" aria-label="抽卡记录">历</button>
+    <button class="theme-btn" id="themeBtn">☾</button>
+  </header>
+
+  <div class="orn"><i>❦</i></div>
+
+  <!-- ========== S1 抽牌屏 ========== -->
+  <section id="draw">
+    <button class="sp-ind" id="spreadInd">
+      <svg class="sp-ico" viewBox="0 0 20 14" aria-hidden="true"><rect x="0" y="1" width="5.5" height="12" rx="1"/><rect x="7.25" y="1" width="5.5" height="12" rx="1"/><rect x="14.5" y="1" width="5.5" height="12" rx="1"/></svg>
+      <span id="spreadName">三张牌阵</span>
+      <svg class="sp-arr" viewBox="0 0 12 8" aria-hidden="true"><path d="M1.5 1.5 L6 6 L10.5 1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <p class="sp-tip">点这里 · <b>换 牌 阵</b></p>
+
+    <div class="slotstage">
+      <svg class="sunmark" id="sunmark" viewBox="0 0 240 240" aria-hidden="true"></svg>
+      <div class="slots" id="slots" data-n="3"></div>
+    </div>
+
+    <div class="fanzone" id="fanzone">
+      <div class="fanprompt" id="fanPrompt"></div>
+      <div class="fan-mid" id="fanMid"></div>
+      <div id="fanWrap"><div id="fanTrack"></div></div>
+      <div id="bdayEmpty" hidden>
+        <p>生日牌阵 · 填写生日后发牌</p>
+        <button class="btn sm" id="bdayGo">填写生日</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== S2 翻牌屏 ========== -->
+  <section id="reveal" hidden>
+    <div class="rv-prompt" id="rvPrompt">点牌 · 逐张揭示</div>
+    <div class="rv-row pre" id="rvRow" data-n="3"></div>
+    <div class="rv-hidden" id="rvHidden" hidden>
+      <div class="rvh-cap">隐 藏 牌</div>
+      <div class="rcard hs" id="hCard"></div>
+    </div>
+    <div class="rv-acts">
+      <button class="btn sm" id="reShuffle">重新洗牌</button>
+      <button class="btn sm" id="shareBtn" hidden>分享截图</button>
+    </div>
+  </section>
+</div>
+
+<!-- ========== 牌阵选择面板 ========== -->
+<div id="spreadOv" hidden>
+  <div class="bd" id="spreadBd"></div>
+  <div class="sh-sheet">
+    <p class="sh-title">选 择 牌 阵</p>
+
+    <div class="sp-row" data-s="1">
+      <button class="sp-head">
+        <svg class="sp-dia" viewBox="0 0 40 14"><rect x="15" y="0" width="10" height="14" rx="0.6"/></svg>
+        <span class="sp-t"><b>单牌阵</b><i>1 张</i></span>
+      </button>
+    </div>
+    <div class="sp-row" data-s="2">
+      <button class="sp-head">
+        <svg class="sp-dia" viewBox="0 0 40 14"><rect x="10" y="0" width="10" height="14" rx="0.6"/><rect x="22" y="0" width="10" height="14" rx="0.6"/></svg>
+        <span class="sp-t"><b>双牌阵</b><i>2 张</i></span>
+      </button>
+    </div>
+    <div class="sp-row" data-s="3">
+      <button class="sp-head">
+        <svg class="sp-dia" viewBox="0 0 40 14"><rect x="4" y="0" width="9" height="14" rx="0.6"/><rect x="16" y="0" width="9" height="14" rx="0.6"/><rect x="28" y="0" width="9" height="14" rx="0.6"/></svg>
+        <span class="sp-t"><b>三张牌阵</b><i id="sp3Sub">3 张 · 含隐藏牌</i></span>
+      </button>
+    </div>
+    <div class="sp-row" id="bdayRow" data-s="bday">
+      <button class="sp-head" id="bdayHead">
+        <svg class="sp-dia" viewBox="0 0 40 14">
+          <circle cx="8" cy="3.5" r="2.4"/><circle cx="20" cy="3.5" r="2.4"/><circle cx="32" cy="3.5" r="2.4"/>
+          <circle cx="14" cy="10.5" r="2.4"/><circle cx="26" cy="10.5" r="2.4"/>
+        </svg>
+        <span class="sp-t"><b>生日牌阵</b><i>5 张 · 需填生日</i></span>
+      </button>
+      <div class="bday-form" id="bdayForm" hidden>
+        <div class="bf-row">
+          <input id="bY" type="number" inputmode="numeric" placeholder="年" min="1900" max="2100" aria-label="出生年">
+          <input id="bM" type="number" inputmode="numeric" placeholder="月" min="1" max="12" aria-label="出生月">
+          <input id="bD" type="number" inputmode="numeric" placeholder="日" min="1" max="31" aria-label="出生日">
+        </div>
+        <button class="btn sm" id="bStart">开始发牌</button>
+        <p class="bf-err" id="bErr" hidden></p>
+      </div>
+    </div>
+
+    <div class="sh-opts">
+      <label class="sw"><span>逆位</span><input type="checkbox" id="tRev"><i></i></label>
+      <label class="sw"><span>小阿尔卡纳</span><input type="checkbox" id="tMinor" checked><i></i></label>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 分享预览浮层 ========== -->
+<div id="shareOv" hidden>
+  <div class="sh-card"><img id="shareImg" alt="分享截图"></div>
+  <p class="sh-hint">长按图片保存到相册 · 或发送给朋友</p>
+  <button class="btn sm" id="shareClose">关闭</button>
+</div>
+
+<!-- ========== 添加到主屏幕引导（仅 iOS Safari 首次） ========== -->
+<div id="guideOv" hidden>
+  <div class="gd-card">
+    <button class="gd-close" id="guideClose" aria-label="关闭引导">×</button>
+    <p class="gd-kicker">A D D &nbsp; T O &nbsp; H O M E</p>
+    <h2 class="gd-title">把灵匣放到桌面上</h2>
+    <p class="gd-sub">以后像 App 一样，点一下就开</p>
+    <ol class="gd-steps">
+      <li class="gd-step">
+        <p class="gd-s-t"><b>1</b>点屏幕最下面的<em>更多</em>按钮，再点<em>共享</em></p>
+        <div class="gd-img gd-img-shot">
+          <img id="gdImgMenu" src="" alt="Safari 菜单里的共享">
+        </div>
+      </li>
+      <li class="gd-step">
+        <p class="gd-s-t"><b>2</b>在菜单里找到<em>添加到主屏幕</em>，点这一行</p>
+        <div class="gd-img gd-img-shot">
+          <img id="gdImgShot" src="" alt="共享菜单里的添加到主屏幕">
+        </div>
+      </li>
+      <li class="gd-step gd-done">
+        <p class="gd-s-t"><b>3</b>打开<em>作为网页 App 打开</em>开关，再点<em>添加</em></p>
+        <div class="gd-img gd-img-shot">
+          <img id="gdImgWebapp" src="" alt="作为网页 App 打开开关">
+        </div>
+        <p class="gd-warn">不开这个开关，加的只是书签，点开还在 Safari 里</p>
+      </li>
+    </ol>
+    <button class="btn" id="guideOk">好 的</button>
+  </div>
+</div>
+
+<!-- ========== 历史抽卡记录（iOS webapp 全屏页） ========== -->
+<div id="historyOv" hidden>
+  <div class="hd-head">
+    <p class="sh-title">抽 卡 记 录</p>
+    <button class="hd-close" id="historyClose" aria-label="关闭记录">×</button>
+  </div>
+  <div class="hd-list" id="historyList"></div>
+  <div class="hd-foot">
+    <span class="hd-count" id="historyCount"></span>
+    <button class="btn sm" id="historyClear" hidden>清 空</button>
+  </div>
+</div>
+
+<script>
+const IMG = __IMAGES_JSON__;
+
+/* ---------- 主题 ---------- */
+const root=document.documentElement, themeBtn=document.getElementById('themeBtn');
+const th=localStorage.getItem('lx-theme');
+if(th){root.setAttribute('data-theme',th);themeBtn.textContent=th==='dark'?'☀':'☾';}
+themeBtn.onclick=()=>{const n=root.getAttribute('data-theme')==='dark'?'light':'dark';
+  root.setAttribute('data-theme',n);localStorage.setItem('lx-theme',n);themeBtn.textContent=n==='dark'?'☀':'☾';
+};
+
+/* ---------- Logo：手刻双线牌匾（DOM 与分享长图共用同一路径） ---------- */
+const LG_OUT='M3 4.4 L45 2.6 L89 4.2 L129 2.8 L130.6 23 L129.4 43 L89 44.2 L45 42.6 L2.6 43.8 L2 22.6 Z';
+const LG_IN='M8.4 9.4 L45 8 L88 9.4 L123.6 8.2 L124.6 22.8 L123.8 38 L88 39 L45 37.6 L7.6 38.6 L7 22.4 Z';
+/* 「灵」「匣」二字固定字形：润植家康熙字典美化体轮廓（UPM 256，基线 y=0 向上为正）。
+   三个绘制点用 translate+scale 排入各自坐标系，SVG 与 canvas 同源同形，任何设备渲染一致。 */
+const G_LING='M165 194Q160 190 159.0 189.5Q158 189 157.0 189.0Q156 189 155.0 189.0Q154 189 152.5 188.5Q151 188 150.5 187.5Q150 187 147.5 186.0Q145 185 138.0 184.5Q131 184 113.5 183.5Q96 183 80.0 182.5Q64 182 64.5 182.5Q65 183 65.0 180.0Q65 177 65.0 176.0Q65 175 65.5 174.0Q66 173 66.5 172.5Q67 172 68.0 171.0Q69 170 69.5 170.0Q70 170 77.0 170.0Q84 170 88.5 170.5Q93 171 98.5 171.0Q104 171 107.0 171.5Q110 172 112.5 172.0Q115 172 121.0 172.5Q127 173 132.0 173.0Q137 173 145.0 173.5Q153 174 153.5 174.0Q154 174 155.0 173.0Q156 172 157.0 171.0Q158 170 158.0 169.5Q158 169 158.0 167.0Q158 165 158.0 160.5Q158 156 157.5 155.5Q157 155 147.5 154.5Q138 154 133.5 154.0Q129 154 121.0 153.5Q113 153 108.0 152.5Q103 152 97.5 152.0Q92 152 85.0 151.5Q78 151 75.0 150.5Q72 150 67.5 149.5Q63 149 59.5 149.0Q56 149 51.5 149.0Q47 149 42.0 149.5Q37 150 36.0 150.0Q35 150 34.5 149.0Q34 148 33.0 147.0Q32 146 32.0 145.0Q32 144 33.0 141.0Q34 138 35.0 134.5Q36 131 37.0 130.5Q38 130 42.5 131.0Q47 132 55.0 134.0Q63 136 82.0 138.0Q101 140 117.5 141.0Q134 142 154 143L156 140Q159 137 159.5 134.5Q160 132 158.5 130.0Q157 128 156.0 126.5Q155 125 152.5 124.5Q150 124 143.5 124.0Q137 124 134.0 124.0Q131 124 127.5 124.0Q124 124 123.0 123.5Q122 123 121.0 122.5Q120 122 116.5 121.5Q113 121 109.5 121.0Q106 121 103.0 120.5Q100 120 96.5 120.0Q93 120 92.5 119.5Q92 119 91.5 118.5Q91 118 88.5 118.0Q86 118 84.0 118.0Q82 118 77.0 118.0Q72 118 69.0 117.5Q66 117 65.5 116.0Q65 115 64.0 114.0Q63 113 63.5 110.5Q64 108 65.0 107.5Q66 107 66.5 106.0Q67 105 67.5 105.0Q68 105 80.0 106.0Q92 107 95.5 107.0Q99 107 99.0 107.0Q99 107 101.0 105.5Q103 104 106 100V88Q106 60 104.5 56.0Q103 52 96.0 45.0Q89 38 84.5 33.5Q80 29 79.0 28.5Q78 28 71.0 24.5Q64 21 60.0 18.5Q56 16 49.5 13.5Q43 11 39.5 9.5Q36 8 30.0 6.0Q24 4 22.5 3.0Q21 2 21.0 0.5Q21 -1 21.0 -2.5Q21 -4 22.5 -4.5Q24 -5 26.5 -5.0Q29 -5 34.5 -4.0Q40 -3 55.0 2.5Q70 8 75.5 11.5Q81 15 82.5 16.0Q84 17 86.0 18.0Q88 19 89.5 19.5Q91 20 96.5 22.0Q102 24 110.5 32.5Q119 41 122.0 47.5Q125 54 125.5 56.0Q126 58 128.5 60.5Q131 63 132.0 63.0Q133 63 134.0 63.0Q135 63 136.5 60.5Q138 58 139.0 55.5Q140 53 142.0 46.0Q144 39 147.5 35.0Q151 31 158.5 26.5Q166 22 167.5 20.5Q169 19 171.5 17.5Q174 16 175.0 15.0Q176 14 179.5 11.0Q183 8 187.5 6.0Q192 4 194.0 4.0Q196 4 197.0 4.0Q198 4 200.5 5.0Q203 6 206.0 7.0Q209 8 211.5 9.5Q214 11 218.0 12.5Q222 14 224.0 14.5Q226 15 230.5 16.0Q235 17 235.5 17.0Q236 17 236.0 19.0Q236 21 236.0 22.0Q236 23 234.5 24.0Q233 25 230.5 25.0Q228 25 227.0 25.0Q226 25 221.5 26.0Q217 27 212.0 28.5Q207 30 202.0 31.0Q197 32 192.5 33.5Q188 35 187.0 35.0Q186 35 185.0 35.0Q184 35 182.5 36.0Q181 37 180.0 37.5Q179 38 178.5 39.0Q178 40 175.5 41.5Q173 43 171.0 44.0Q169 45 164.5 47.5Q160 50 157.0 53.0Q154 56 152.5 58.5Q151 61 150.0 63.0Q149 65 149.0 65.0Q149 65 150.0 66.0Q151 67 151.5 67.5Q152 68 154.0 69.0Q156 70 158.0 70.5Q160 71 161.5 71.5Q163 72 166.0 73.0Q169 74 170.0 74.5Q171 75 172.0 75.5Q173 76 175.5 76.5Q178 77 179.0 77.0Q180 77 183.5 77.0Q187 77 188.0 78.0Q189 79 189.0 82.5Q189 86 189.0 89.5Q189 93 188.5 93.5Q188 94 185.0 96.0Q182 98 179.0 100.5Q176 103 176.0 104.0Q176 105 178.0 108.5Q180 112 182.0 115.0Q184 118 184.5 120.0Q185 122 185.0 126.0Q185 130 185.0 132.5Q185 135 185.0 135.5Q185 136 186.0 137.0Q187 138 188.5 139.0Q190 140 190.0 140.0Q190 140 196.0 139.5Q202 139 210.5 138.5Q219 138 219.0 138.0Q219 138 220.5 139.5Q222 141 224.5 143.5Q227 146 226.5 147.5Q226 149 220.5 153.5Q215 158 211.5 160.5Q208 163 206.0 163.0Q204 163 201.0 161.0Q198 159 194.0 155.5Q190 152 187.0 154.5Q184 157 184.0 163.0Q184 169 184.0 171.5Q184 174 184.0 174.5Q184 175 185.5 177.0Q187 179 188.5 181.0Q190 183 190.5 185.5Q191 188 190.0 189.5Q189 191 188.0 192.5Q187 194 181.5 196.5Q176 199 174.5 199.0Q173 199 172.0 199.0Q171 199 170.0 198.5Q169 198 167.0 196.0Q165 194 165 194ZM157 111Q159 110 160.0 109.0Q161 108 161.5 107.5Q162 107 162.5 106.0Q163 105 163.0 104.5Q163 104 162.0 101.0Q161 98 159.5 94.5Q158 91 156.0 89.0Q154 87 148.5 83.5Q143 80 139.5 78.0Q136 76 135.5 76.0Q135 76 134.0 77.0Q133 78 131.5 79.0Q130 80 130.0 86.0Q130 92 131.5 94.0Q133 96 134.0 97.5Q135 99 135.5 101.5Q136 104 135.0 106.0Q134 108 132.5 110.0Q131 112 132.5 112.5Q134 113 139.5 113.0Q145 113 148.0 113.0Q151 113 152.5 113.0Q154 113 155.5 112.0Q157 111 157 111ZM75 87Q74 86 73.0 84.0Q72 82 71.0 80.5Q70 79 68.5 77.0Q67 75 65.5 72.5Q64 70 62.5 68.5Q61 67 58.0 63.0Q55 59 54.5 58.0Q54 57 54.0 53.0Q54 49 54.5 45.5Q55 42 56.0 40.5Q57 39 59.0 39.0Q61 39 64.0 39.0Q67 39 72.0 43.0Q77 47 79.5 51.0Q82 55 83.0 57.0Q84 59 84.0 59.0Q84 59 84.0 65.5Q84 72 83.5 76.0Q83 80 83.0 83.0Q83 86 82.5 86.5Q82 87 81.0 87.5Q80 88 78.5 88.0Q77 88 76.0 87.5Q75 87 75 87Z';
+const G_XIA='M50 198Q42 194 41.5 193.0Q41 192 43.5 187.5Q46 183 50 177L49 123Q49 93 49.0 73.0Q49 53 49.0 44.0Q49 35 48 1L51 -2Q55 -6 57.5 -6.0Q60 -6 62.5 -3.5Q65 -1 67.5 1.0Q70 3 70.5 4.0Q71 5 72.0 9.5Q73 14 73.5 15.5Q74 17 75.0 19.0Q76 21 76.5 21.5Q77 22 80 24L103 23Q116 23 122.5 23.0Q129 23 130.5 23.0Q132 23 134.5 23.5Q137 24 157.0 23.5Q177 23 189.0 22.0Q201 21 208.5 21.0Q216 21 216.5 21.0Q217 21 217.0 24.5Q217 28 217.0 30.0Q217 32 216.5 33.0Q216 34 214.5 36.0Q213 38 208.5 43.5Q204 49 202.5 49.0Q201 49 196.0 45.5Q191 42 189.5 40.5Q188 39 186.0 37.5Q184 36 183.5 36.0Q183 36 182.0 35.5Q181 35 166.5 35.5Q152 36 150.5 36.5Q149 37 148.5 37.5Q148 38 147.5 39.5Q147 41 147.0 48.0Q147 55 147.0 59.5Q147 64 147.0 68.5Q147 73 147.0 74.0Q147 75 146.5 78.0Q146 81 147.5 82.5Q149 84 153.5 84.0Q158 84 160.0 84.5Q162 85 164.0 85.0Q166 85 166.5 84.5Q167 84 168.0 84.0Q169 84 170.5 81.5Q172 79 172.0 77.0Q172 75 172.0 72.5Q172 70 174.0 68.5Q176 67 178.0 67.0Q180 67 182.5 67.0Q185 67 187.0 68.5Q189 70 191.0 74.0Q193 78 196 84L195 109Q195 130 195.0 133.0Q195 136 195.5 137.5Q196 139 197.0 141.0Q198 143 198.0 146.5Q198 150 197.5 151.5Q197 153 195.5 154.5Q194 156 190.0 158.5Q186 161 184.0 161.0Q182 161 180.5 161.0Q179 161 178.5 160.5Q178 160 175.5 157.5Q173 155 167 149H137Q107 150 107.0 150.0Q107 150 104.5 151.0Q102 152 99.5 153.5Q97 155 94.0 155.5Q91 156 87.5 154.5Q84 153 80.5 152.0Q77 151 76.5 150.0Q76 149 78.5 146.0Q81 143 83.5 140.5Q86 138 86.5 135.0Q87 132 86.5 127.0Q86 122 85.5 120.0Q85 118 85.0 110.0Q85 102 85.0 94.5Q85 87 85.0 74.0Q85 61 85.0 60.5Q85 60 86.0 59.0Q87 58 88.5 56.5Q90 55 92.0 55.0Q94 55 97.0 58.0Q100 61 102.5 63.5Q105 66 106.0 68.5Q107 71 107.0 74.0Q107 77 107.0 79.0Q107 81 108.5 82.0Q110 83 113.5 83.0Q117 83 121.5 83.0Q126 83 126.0 83.0Q126 83 126.0 71.5Q126 60 126.0 51.0Q126 42 126.0 41.0Q126 40 125.0 39.5Q124 39 123.5 38.0Q123 37 121.0 37.0Q119 37 109.5 37.0Q100 37 89.0 37.0Q78 37 77.5 37.0Q77 37 76.0 38.0Q75 39 74.5 39.5Q74 40 73.5 41.0Q73 42 73.0 43.0Q73 44 73.0 44.5Q73 45 73.0 59.5Q73 74 73.0 91.0Q73 108 72.5 137.5Q72 167 72.0 168.5Q72 170 73.0 170.5Q74 171 74.5 172.0Q75 173 78.5 173.0Q82 173 111.5 173.5Q141 174 171.0 174.0Q201 174 204.0 174.0Q207 174 208.0 175.0Q209 176 211.5 177.5Q214 179 213.5 181.0Q213 183 209.5 186.5Q206 190 202.0 195.0Q198 200 196.5 200.0Q195 200 191.0 196.5Q187 193 183.0 190.0Q179 187 178.5 186.5Q178 186 165.5 186.5Q153 187 147.0 187.0Q141 187 130.0 187.0Q119 187 112.0 187.5Q105 188 80 188L77 191Q66 200 63.0 201.0Q60 202 55.0 200.0Q50 198 50 198ZM169 136Q172 133 172.0 130.5Q172 128 170.5 126.5Q169 125 167.5 123.5Q166 122 157.5 121.5Q149 121 147.5 122.5Q146 124 144.5 125.0Q143 126 143.0 129.0Q143 132 144.5 134.0Q146 136 147.5 137.0Q149 138 149.5 138.0Q150 138 154.0 138.0Q158 138 161.5 138.0Q165 138 165.5 138.0Q166 138 167.5 137.0Q169 136 169 136ZM123 135Q124 134 124.5 133.0Q125 132 125.0 130.5Q125 129 125.0 126.0Q125 123 123.5 122.0Q122 121 119.0 121.0Q116 121 112.5 121.0Q109 121 108.0 122.0Q107 123 107.0 125.5Q107 128 107.0 130.5Q107 133 109.0 135.0Q111 137 114.0 137.0Q117 137 118.5 137.0Q120 137 121.0 136.5Q122 136 122.5 135.5Q123 135 123 135ZM124 110Q127 106 127.0 102.5Q127 99 125.5 97.0Q124 95 122.5 93.5Q121 92 116.5 92.0Q112 92 110.0 93.5Q108 95 105.5 97.5Q103 100 105.0 104.5Q107 109 110.5 110.0Q114 111 117.0 111.5Q120 112 120.5 112.0Q121 112 122.5 111.0Q124 110 124 110ZM167 111Q170 110 171.0 107.5Q172 105 171.5 103.5Q171 102 171.0 101.0Q171 100 170.5 99.0Q170 98 169.0 97.5Q168 97 166.5 95.5Q165 94 164.5 94.0Q164 94 160.5 94.0Q157 94 154.0 94.0Q151 94 150.0 94.0Q149 94 148.0 95.0Q147 96 145.5 98.0Q144 100 144.5 104.0Q145 108 147.5 109.5Q150 111 151.0 111.5Q152 112 158.5 112.0Q165 112 166.0 111.5Q167 111 167 111Z';
+/* 牌匾内二字（页头 SVG viewBox 136x48 与 drawLogo 共用） */
+const LG_SCALE=0.1015625, LG_LING_X=42.133, LG_XIA_X=66.895, LG_BASE=33.152;
+
+/* ---------- 木刻太阳：牌位之后的主视觉（原始 / 版画 / 四色套印） ---------- */
+function buildSun(){
+  const el=document.getElementById('sunmark'); if(!el)return;
+  let rays='';
+  for(let i=0;i<16;i++){
+    const a=i*22.5, wavy=(i%2===1);
+    const d=wavy?'M120 85 C113 77.5 127 72 120 57':'M120 85 L120 57';
+    rays+='<g transform="rotate('+a+' 120 120)"><path class="'+(wavy?'s-ray-b':'s-ray-a')+'" d="'+d+'"/></g>';
+  }
+  const stars=[[34,34],[206,34],[34,206],[206,206]].map(function(p){
+    return '<path d="M'+p[0]+' '+(p[1]-6)+' L'+p[0]+' '+(p[1]+6)+' M'+(p[0]-6)+' '+p[1]+' L'+(p[0]+6)+' '+p[1]+'"/>';
+  }).join('');
+  el.innerHTML='<circle class="s-ring" cx="120" cy="120" r="78" stroke-dasharray="3 7"/>'
+    +'<circle class="s-face" cx="120" cy="120" r="31"/>'
+    +'<path class="s-eye" d="M109 113 q4 -3.4 8 0"/><path class="s-eye" d="M123 113 q4 -3.4 8 0"/>'
+    +'<path class="s-mouth" d="M110 127 q10 5.5 20 0"/>'
+    +rays+'<g class="s-star">'+stars+'</g>';
+}
+buildSun();
+
+/* ---------- 牌组（马赛 78 张，罗马数字编号） ---------- */
+/* 马赛传统记法：愚者无数字，VIII 正义、VIIII 隐者、XI 力量、XIIII 节制、XVIIII 太阳 */
+const MAJOR_NUM=['0','I','II','III','IIII','V','VI','VII','VIII','VIIII','X','XI','XII',
+                 'XIII','XIIII','XV','XVI','XVII','XVIII','XVIIII','XX','XXI'];
+const MAJORS=['愚者','魔术师','女祭司','皇后','皇帝','教皇','恋人','战车','正义','隐者',
+              '命运之轮','力量','吊人','死亡','节制','恶魔','高塔','星星','月亮','太阳','审判','世界'];
+const SUITS={coin:'钱币',cup:'圣杯',sword:'宝剑',wand:'权杖'};
+const RANKS={'01':'一','02':'二','03':'三','04':'四','05':'五','06':'六',
+             '07':'七','08':'八','09':'九','10':'十','page':'侍从','knight':'骑士','queen':'皇后','king':'国王'};
+const PIP_NUM={'01':'I','02':'II','03':'III','04':'IIII','05':'V','06':'VI',
+               '07':'VII','08':'VIII','09':'VIIII','10':'X'};
+const DECK=MAJORS.map((cn,i)=>({
+  key:'M'+String(i).padStart(2,'0'),
+  cn:i===0?'愚者':(i===13?'XIII':MAJOR_NUM[i]+' · '+cn),  // 愚者不标数字；13 号死亡牌只留编号
+  num:i, major:true
+}));
+Object.keys(SUITS).forEach(s=>{
+  Object.keys(RANKS).forEach(r=>{
+    const pip=parseInt(r,10);
+    const cn=pip?(PIP_NUM[r]+' · '+SUITS[s]):(SUITS[s]+' '+RANKS[r]);  // 数字牌罗马编号，宫廷牌无编号
+    DECK.push({key:s+'_'+r,cn,num:pip||null,major:false});
+  });
+});
+const dsum=n=>String(n).split('').reduce((a,c)=>a+ +c,0);
+function toMajor(n){while(n>21)n=dsum(n);return DECK[n];}   // ≤21 分界，超过则各位再相加
+
+/* ---------- 体感反馈 ---------- */
+function buzz(p){try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}
+function pulse(b){b.classList.remove('pulse');void b.offsetWidth;b.classList.add('pulse');}
+
+/* ---------- 偏好 ---------- */
+const SPREADS={'1':{name:'单牌阵',n:1},'2':{name:'双牌阵',n:2},
+               '3':{name:'三张牌阵',n:3},'bday':{name:'生日牌阵',n:5}};
+const prefs=Object.assign({rev:false,minor:true,spread:'3',bday:null},
+  JSON.parse(localStorage.getItem('lx-prefs')||'{}'));
+function savePrefs(){localStorage.setItem('lx-prefs',JSON.stringify(
+  {rev:tRev.checked,minor:tMinor.checked,spread,bday}));}
+
+/* ---------- 元素 ---------- */
+const tRev=document.getElementById('tRev'), tMinor=document.getElementById('tMinor');
+const drawSection=document.getElementById('draw'), revealSection=document.getElementById('reveal');
+const slotsEl=document.getElementById('slots'), fanPrompt=document.getElementById('fanPrompt');
+const fanWrap=document.getElementById('fanWrap'), fanTrack=document.getElementById('fanTrack');
+const fanMid=document.getElementById('fanMid'), fanzone=document.getElementById('fanzone');
+const bdayEmpty=document.getElementById('bdayEmpty');
+const spreadInd=document.getElementById('spreadInd'), spreadName=document.getElementById('spreadName');
+const spreadOv=document.getElementById('spreadOv'), spreadBd=document.getElementById('spreadBd');
+const sp3Sub=document.getElementById('sp3Sub');
+const bdayRow=document.getElementById('bdayRow'), bdayHead=document.getElementById('bdayHead');
+const bdayForm=document.getElementById('bdayForm');
+const bY=document.getElementById('bY'), bM=document.getElementById('bM'), bD=document.getElementById('bD');
+const bStart=document.getElementById('bStart'), bErr=document.getElementById('bErr');
+const bdayGo=document.getElementById('bdayGo');
+const rvPrompt=document.getElementById('rvPrompt'), rvRow=document.getElementById('rvRow');
+const rvHidden=document.getElementById('rvHidden'), hCard=document.getElementById('hCard');
+const reShuffle=document.getElementById('reShuffle'), shareBtn=document.getElementById('shareBtn');
+const shareOv=document.getElementById('shareOv'), shareImg=document.getElementById('shareImg');
+const historyOv=document.getElementById('historyOv'), historyList=document.getElementById('historyList');
+const historyBtn=document.getElementById('historyBtn'), historyClose=document.getElementById('historyClose');
+const historyClear=document.getElementById('historyClear'), historyCount=document.getElementById('historyCount');
+
+/* ---------- 状态 ---------- */
+let spread=prefs.spread in SPREADS?prefs.spread:'3';
+let count=SPREADS[spread].n;
+let picks=[], hidden=null, busy=false, recorded=false;
+let bday=prefs.bday||null;
+let fanPool=[], fanCards=[], fanRaf=0, tsx=0, tsy=0, fanMoved=false;
+let rvCards=[];
+
+tRev.checked=!!prefs.rev;
+tMinor.checked=prefs.minor!==false;
+spreadName.textContent=SPREADS[spread].name;
+
+/* ---------- S1 牌位 ---------- */
+function renderSlots(){
+  slotsEl.setAttribute('data-n',count);
+  let html='';
+  for(let i=0;i<count;i++){
+    const p=picks[i];
+    if(p){
+      html+='<div class="slot done"><div class="slotcard"><img src="'+IMG.BACK+'" alt="" draggable="false"></div></div>';
+    }else{
+      html+='<div class="slot'+(i===picks.length?' next':'')+'"><div class="ph"><span>❦</span></div></div>';
+    }
+  }
+  slotsEl.innerHTML=html;
+}
+function markNext(){
+  Array.prototype.forEach.call(slotsEl.children,(s,i)=>
+    s.classList.toggle('next',i===picks.length));
+}
+
+/* ---------- 扇形牌阵 ---------- */
+function renderFan(){
+  fanPool=(tMinor.checked?DECK:DECK.filter(c=>c.major)).slice();
+  for(let i=fanPool.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    const t=fanPool[i];fanPool[i]=fanPool[j];fanPool[j]=t;
+  }
+  fanTrack.innerHTML=fanPool.map((c,i)=>
+    '<div class="fcard" data-i="'+i+'" style="left:'+(i*STEP)+'px">'
+    +'<div class="fcard-i" style="--d:'+Math.min(600,i*5)+'ms">'
+    +'<img src="'+IMG.BACK+'" alt="" draggable="false"></div></div>').join('');
+  fanCards=Array.prototype.slice.call(fanTrack.children);
+  fanTrack.style.width=(fanPool.length*STEP+fanWrap.clientWidth)+'px';
+  centerFan();
+  updateFan();
+}
+const STEP=62, CARD_W=84;
+function centerFan(){fanWrap.scrollLeft=(fanPool.length*STEP)/2;}
+function updateFan(){
+  if(drawSection.hidden||spread==='bday')return;
+  const W=fanWrap.clientWidth, sl=fanWrap.scrollLeft, c=sl+W/2;
+  const first=Math.max(0,Math.floor((sl-90)/STEP));
+  const last=Math.min(fanPool.length-1,Math.ceil((sl+W+90)/STEP));
+  const dipMax=Math.max(48,fanWrap.clientHeight*0.30);
+  for(let i=first;i<=last;i++){
+    const el=fanCards[i]; if(!el)continue;
+    const dx=i*STEP+CARD_W/2-c;
+    const rot=Math.max(-42,Math.min(42,dx*.06));
+    const dip=Math.min(dipMax,dx*dx/5200);
+    const sc=Math.max(.45,1-Math.abs(dx)/1400);
+    el.style.transform='translate3d(0,'+dip.toFixed(1)+'px,0) rotate('+rot.toFixed(2)+'deg) scale('+sc.toFixed(3)+')';
+  }
+}
+fanWrap.addEventListener('scroll',()=>{
+  if(fanRaf)return;
+  fanRaf=requestAnimationFrame(()=>{fanRaf=0;updateFan();});
+},{passive:true});
+fanWrap.addEventListener('touchstart',e=>{
+  tsx=e.touches[0].clientX;tsy=e.touches[0].clientY;fanMoved=false;
+},{passive:true});
+fanWrap.addEventListener('touchmove',e=>{
+  if(!fanMoved&&(Math.abs(e.touches[0].clientX-tsx)>9||Math.abs(e.touches[0].clientY-tsy)>9))fanMoved=true;
+},{passive:true});
+fanWrap.addEventListener('click',e=>{
+  if(fanMoved||busy)return;
+  const c=e.target.closest('.fcard');
+  if(!c)return;
+  pickFan(parseInt(c.dataset.i,10));
+});
+window.addEventListener('resize',()=>{
+  if(drawSection.hidden||spread==='bday')return;
+  fanTrack.style.width=(fanPool.length*STEP+fanWrap.clientWidth)+'px';
+  updateFan();
+});
+
+/* ---------- 抽牌：牌飞进牌位 ---------- */
+function flyToSlot(fEl,fr,slotEl,done){
+  const sr=slotEl.getBoundingClientRect();
+  const ghost=fEl.cloneNode(true);
+  const gi=ghost.querySelector('.fcard-i'); if(gi)gi.style.animation='none';
+  ghost.classList.remove('gone');
+  ghost.style.cssText='position:fixed;left:'+fr.left+'px;top:'+fr.top+'px;'
+    +'width:'+fr.width+'px;height:'+fr.height+'px;transform:none;z-index:70;'
+    +'pointer-events:none;margin:0;transition:left .42s cubic-bezier(.3,.7,.3,1),'
+    +'top .42s cubic-bezier(.3,.7,.3,1),width .42s cubic-bezier(.3,.7,.3,1),'
+    +'height .42s cubic-bezier(.3,.7,.3,1)';
+  document.body.appendChild(ghost);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    ghost.style.left=sr.left+'px';ghost.style.top=sr.top+'px';
+    ghost.style.width=sr.width+'px';ghost.style.height=sr.height+'px';
+  }));
+  setTimeout(()=>{ghost.remove();if(done)done();},460);
+}
+function pickFan(i){
+  if(busy||picks.length>=count)return;
+  const fEl=fanCards[i];
+  if(!fEl||fEl.classList.contains('gone'))return;
+  const slotEl=slotsEl.children[picks.length];
+  if(!slotEl)return;
+  const fr=fEl.getBoundingClientRect();   // 必须先量取：加 .gone(display:none) 后 rect 全为 0
+  fEl.classList.add('gone');
+  picks.push({...fanPool[i],rev:tRev.checked&&Math.random()<0.4,flipped:false});
+  markNext();
+  updatePrompt();
+  flyToSlot(fEl,fr,slotEl,()=>{
+    renderSlots();
+    buzz(12);
+    if(picks.length===count){buzz([12,50,12]);setTimeout(goReveal,430);}
+  });
+}
+
+/* ---------- S1 提示语 ---------- */
+function updatePrompt(){
+  let t;
+  if(spread==='bday'){
+    t=picks.length?'牌已落桌 · 即将揭牌':'生日牌阵 · 填写生日后发牌';
+  }else if(picks.length===0)t='请抽取 <b>'+count+'</b> 张牌';
+  else if(picks.length<count)t='还差 <b>'+(count-picks.length)+'</b> 张 · 请继续抽取';
+  else t='牌已入位 · 即将揭牌';
+  fanPrompt.innerHTML=t;
+}
+
+/* ---------- S2 翻牌屏 ---------- */
+function renderReveal(){
+  recorded=false;
+  rvRow.setAttribute('data-n',picks.length);
+  rvRow.innerHTML=picks.map((p,i)=>
+    '<div class="rcard'+(p.rev?' rev':'')+'" data-i="'+i+'">'
+    +'<div class="flip"><div class="flip-inner">'
+    +'<div class="face back"><img src="'+IMG.BACK+'" alt="牌背" draggable="false"></div>'
+    +'<div class="face front"><img class="'+(p.rev?'rev':'')+'" src="'+IMG[p.key]+'" alt="'+p.cn+'" draggable="false"></div>'
+    +'</div></div>'
+    +'<div class="rname">'+p.cn+'</div>'
+    +(p.rev?'<div class="rrev">逆 位</div>':'')
+    +'</div>').join('');
+  rvCards=Array.prototype.slice.call(rvRow.children);
+  rvRow.classList.add('pre');
+  hidden=null;
+  rvHidden.hidden=true;
+  hCard.innerHTML='';
+  hCard.classList.remove('flipped','guide');
+  updateRvPrompt();
+}
+function goReveal(){
+  if(busy||picks.length<count)return;
+  busy=true;
+  renderReveal();
+  /* 量取起点（S1 牌位）与终点（S2 卡位） */
+  const srcRects=picks.map((p,i)=>{
+    const s=slotsEl.children[i];
+    return s?s.getBoundingClientRect():null;
+  });
+  const vis=revealSection.style.visibility;
+  drawSection.hidden=true;
+  revealSection.hidden=false;
+  revealSection.style.visibility='hidden';
+  void revealSection.offsetHeight;   // 强制布局
+  const dstRects=rvCards.map(c=>c.getBoundingClientRect());
+  revealSection.style.visibility=vis;
+  revealSection.hidden=true;
+  drawSection.hidden=false;
+  /* ghost 飞行 */
+  const ghosts=[];
+  srcRects.forEach((sr,i)=>{
+    const dr=dstRects[i]; if(!sr||!dr)return;
+    const g=document.createElement('div');
+    g.className='flyghost';
+    g.style.cssText='position:fixed;left:'+sr.left+'px;top:'+sr.top+'px;'
+      +'width:'+sr.width+'px;height:'+sr.height+'px;z-index:70;pointer-events:none;'
+      +'border-radius:5px;overflow:hidden;box-shadow:var(--shadow);'
+      +'transition:left .44s cubic-bezier(.3,.7,.3,1),top .44s cubic-bezier(.3,.7,.3,1),'
+      +'width .44s cubic-bezier(.3,.7,.3,1),height .44s cubic-bezier(.3,.7,.3,1)';
+    g.innerHTML='<img src="'+IMG.BACK+'" draggable="false">';
+    document.body.appendChild(g);
+    ghosts.push({g,dr});
+  });
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    ghosts.forEach(({g,dr})=>{
+      g.style.left=dr.left+'px';g.style.top=dr.top+'px';
+      g.style.width=dr.width+'px';g.style.height=dr.height+'px';
+    });
+  }));
+  fanzone.classList.add('exit');
+  setTimeout(()=>{
+    ghosts.forEach(({g})=>g.remove());
+    fanzone.classList.remove('exit');
+    drawSection.hidden=true;
+    revealSection.hidden=false;
+    rvRow.classList.remove('pre');
+    const first=rvRow.children[0];
+    if(first)first.classList.add('guide');
+    busy=false;
+    buzz(12);
+  },470);
+}
+function afterFlip(){
+  document.querySelectorAll('.rcard.guide').forEach(g=>g.classList.remove('guide'));
+  const next=Array.prototype.find.call(rvRow.children,c=>!c.classList.contains('flipped'));
+  if(next){next.classList.add('guide');}
+  else if(hidden&&!hidden.flipped){hCard.classList.add('guide');}
+  updateRvPrompt();
+  if(spread==='3'&&picks.every(p=>p.flipped)&&!hidden)showHidden();
+  if(picks.every(p=>p.flipped)&&(!hidden||hidden.flipped)){
+    buzz([12,50,12]);
+    recordReading();
+  }
+}
+rvRow.addEventListener('click',e=>{
+  const c=e.target.closest('.rcard');
+  if(!c||c.classList.contains('flipped'))return;
+  const p=picks[+c.dataset.i]; if(!p)return;
+  c.classList.add('flipped');
+  p.flipped=true;
+  buzz(9);
+  afterFlip();
+});
+hCard.addEventListener('click',()=>{
+  if(!hidden||hidden.flipped||hCard.classList.contains('flipped'))return;
+  hCard.classList.add('flipped');
+  hidden.flipped=true;
+  buzz(9);
+  afterFlip();
+});
+function computeHidden(){
+  if(spread!=='3')return null;
+  if(tMinor.checked)return null;                  // 使用小阿尔卡纳时不算隐藏牌
+  if(picks.some(p=>p.num==null))return null;          // 防御：缺数字的牌无法计算
+  let s=0; for(const p of picks)s+=p.num;
+  while(s>21)s=dsum(s);
+  return DECK[s];
+}
+function showHidden(){
+  const c=computeHidden();
+  if(!c){updateRvPrompt();return;}
+  hidden={...c,flipped:false,hidden:true};
+  hCard.innerHTML='<div class="flip"><div class="flip-inner">'
+    +'<div class="face back"><img src="'+IMG.BACK+'" alt="牌背" draggable="false"></div>'
+    +'<div class="face front"><img src="'+IMG[hidden.key]+'" alt="'+hidden.cn+'" draggable="false"></div>'
+    +'</div></div><div class="rname">'+hidden.cn+'</div>';
+  rvHidden.hidden=false;
+  setTimeout(()=>{if(!hidden.flipped)hCard.classList.add('guide');},420);
+  updateRvPrompt();
+}
+function updateRvPrompt(){
+  const mainAll=picks.length>0&&picks.every(p=>p.flipped);
+  if(mainAll&&shareBtn.hidden){
+    shareBtn.hidden=false;
+    shareBtn.classList.remove('appear');void shareBtn.offsetWidth;shareBtn.classList.add('appear');
+  }
+  let t;
+  if(mainAll&&(!hidden||hidden.flipped))t='❦ 已全部揭示 ❦';
+  else if(hidden&&!hidden.flipped)t='隐藏牌 · 静待点开';
+  else t='点牌 · 逐张揭示';
+  rvPrompt.textContent=t;
+}
+
+/* ---------- 牌阵选择面板 ---------- */
+function syncRows(){
+  document.querySelectorAll('.sp-row').forEach(r=>
+    r.classList.toggle('on',r.dataset.s===spread));
+}
+function openSheet(expandBday){
+  syncRows();
+  sp3Sub.textContent=tMinor.checked?'3 张':'3 张 · 含隐藏牌';
+  spreadOv.hidden=false;
+  if(expandBday){
+    bdayForm.hidden=false;
+    if(prefs.bday){bY.value=prefs.bday.y;bM.value=prefs.bday.m;bD.value=prefs.bday.d;}
+    bErr.hidden=true;
+    [bY,bM,bD].forEach(i=>i.classList.remove('bad'));
+  }else{
+    bdayForm.hidden=true;
+  }
+}
+function closeSheet(){spreadOv.hidden=true;}
+spreadInd.onclick=()=>openSheet(false);
+bdayGo.onclick=()=>openSheet(true);
+spreadBd.onclick=closeSheet;
+document.querySelectorAll('.sp-head').forEach(h=>{
+  h.onclick=()=>{
+    const s=h.parentElement.dataset.s;
+    if(s==='bday'){
+      bdayForm.hidden=!bdayForm.hidden;
+      if(!bdayForm.hidden&&prefs.bday){bY.value=prefs.bday.y;bM.value=prefs.bday.m;bD.value=prefs.bday.d;}
+      return;
+    }
+    if(s===spread){closeSheet();return;}
+    spread=s; count=SPREADS[s].n;
+    spreadName.textContent=SPREADS[s].name;
+    savePrefs();
+    syncRows();
+    closeSheet();
+    resetDraw();
+    buzz(15);
+  };
+});
+tRev.onchange=savePrefs;
+tMinor.onchange=()=>{savePrefs();resetDraw();};
+
+/* ---------- 生日牌阵 ---------- */
+bStart.onclick=()=>{
+  const y=parseInt(bY.value,10), m=parseInt(bM.value,10), d=parseInt(bD.value,10);
+  const nowY=new Date().getFullYear();
+  const bad=[];
+  if(!(y>=1900&&y<=nowY))bad.push(bY);
+  if(!(m>=1&&m<=12))bad.push(bM);
+  const dim=(y>=1900&&y<=nowY&&m>=1&&m<=12)?new Date(y,m,0).getDate():31;
+  if(!(d>=1&&d<=dim))bad.push(bD);
+  [bY,bM,bD].forEach(i=>i.classList.remove('bad'));
+  if(bad.length){
+    bad.forEach(i=>i.classList.add('bad'));
+    bErr.hidden=false;
+    bErr.textContent='请填写有效的出生日期';
+    return;
+  }
+  bErr.hidden=true;
+  bday={y,m,d};
+  savePrefs();
+  spread='bday'; count=5;
+  spreadName.textContent=SPREADS.bday.name;
+  const yc=toMajor(dsum(y));      // 年份牌：各位相加，≤21 分界
+  const mc=DECK[m];              // 月份牌：1-12 直接对应
+  const dc=toMajor(d);           // 日子牌：>21 则各位再相加
+  let k=dsum(y)+dsum(m)+dsum(d); // karma 牌：年月日全部数字加到个位数
+  while(k>9)k=dsum(k);
+  const kc=DECK[k];
+  const fc=toMajor(dsum(nowY));  // 流年牌：今年年份各位相加，≤21 分界
+  picks=[yc,mc,dc,kc,fc].map(c=>({...c,rev:false,flipped:false}));
+  closeSheet();
+  renderSlots();
+  updatePrompt();
+  setTimeout(goReveal,680);
+};
+
+/* ---------- 重新洗牌 ---------- */
+reShuffle.onclick=()=>{pulse(reShuffle);buzz(20);resetDraw();};
+function resetDraw(){
+  picks=[]; hidden=null; busy=false;
+  renderSlots();
+  renderReveal();
+  if(spread==='bday'){
+    fanWrap.hidden=true; fanMid.hidden=true; bdayEmpty.hidden=false;
+  }else{
+    fanWrap.hidden=false; fanMid.hidden=false; bdayEmpty.hidden=true;
+    renderFan();
+  }
+  updatePrompt();
+  drawSection.hidden=false;
+  revealSection.hidden=true;
+}
+
+/* ---------- 历史抽卡记录（localStorage，iOS webapp 持久化） ---------- */
+const HKEY='lx-history', HMAX=100;
+function loadHistory(){
+  try{const a=JSON.parse(localStorage.getItem(HKEY)||'[]');return Array.isArray(a)?a:[];}
+  catch(e){return [];}
+}
+function saveHistory(list){
+  try{localStorage.setItem(HKEY,JSON.stringify(list));}catch(e){}
+}
+function addHistory(rec){
+  const list=loadHistory();
+  list.unshift(rec);
+  while(list.length>HMAX)list.pop();
+  saveHistory(list);
+}
+/* 一次完整揭示 = 一条记录（含隐藏牌，若已翻开） */
+function recordReading(){
+  if(recorded)return;
+  recorded=true;
+  const cards=picks.map(p=>({key:p.key,cn:p.cn,rev:!!p.rev}));
+  if(hidden&&hidden.flipped)cards.push({key:hidden.key,cn:hidden.cn,rev:false,hid:true});
+  addHistory({id:Date.now()+'-'+Math.random().toString(36).slice(2,7),
+    ts:Date.now(),spread:spread,cards:cards});
+}
+const SPREAD_COLOR={'1':'var(--ochre)','2':'var(--madder)','3':'var(--indigo)','bday':'var(--moss)'};
+function fmtTs(ts){
+  const d=new Date(ts);
+  const p=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 '+p(d.getHours())+':'+p(d.getMinutes());
+}
+function renderHistory(){
+  const list=loadHistory();
+  historyCount.textContent=list.length?'共 '+list.length+' 条 · 存于本机':'';
+  historyClear.hidden=list.length===0;
+  if(!list.length){
+    historyList.innerHTML='<div class="hd-empty"><p class="hd-e-orn">❦</p>'
+      +'<p class="hd-e-t">尚 无 记 录</p>'
+      +'<p class="hd-e-s">完成一次抽卡后自动存档</p></div>';
+    return;
+  }
+  historyList.innerHTML=list.map(r=>{
+    const thumbs=r.cards.map(c=>
+      '<div class="hd-thumb'+(c.hid?' hid':'')+'"><img class="'+(c.rev?'rev':'')+'" src="'
+      +(IMG[c.key]||IMG.BACK)+'" alt="'+c.cn+'" draggable="false"></div>').join('');
+    const names=r.cards.map(c=>(c.hid?'隐藏 ':'')+c.cn+(c.rev?'（逆）':'')).join(' · ');
+    return '<div class="hd-item" data-id="'+r.id+'">'
+      +'<div class="hd-meta"><span class="hd-date">'+fmtTs(r.ts)+'</span>'
+      +'<span class="hd-spread" style="color:'+(SPREAD_COLOR[r.spread]||'var(--ink-soft)')+'">'
+      +(SPREADS[r.spread]?SPREADS[r.spread].name:r.spread)+'</span>'
+      +'<button class="hd-share" data-share="'+r.id+'" aria-label="重新分享此页">享</button>'
+      +'<button class="hd-del" data-del="'+r.id+'" aria-label="删除此条">×</button></div>'
+      +'<div class="hd-cards">'+thumbs+'</div>'
+      +'<div class="hd-names">'+names+'</div></div>';
+  }).join('');
+}
+historyList.addEventListener('click',e=>{
+  const sh=e.target.closest('[data-share]');
+  if(sh){
+    const rec=loadHistory().find(r=>r.id===sh.dataset.share);
+    if(rec)reshareRecord(rec);
+    return;
+  }
+  const b=e.target.closest('[data-del]');
+  if(!b)return;
+  saveHistory(loadHistory().filter(r=>r.id!==b.dataset.del));
+  renderHistory();
+  buzz(8);
+});
+/* 重新分享历史记录：用存档数据原样重绘分享卡（日期取抽卡当日） */
+async function reshareRecord(rec){
+  try{
+    const jobs=rec.cards.map(c=>IMG[c.key]?whenLoaded(IMG[c.key]):Promise.resolve());
+    await Promise.all(jobs);
+    shareImg.src=compose(rec.cards,rec.ts).toDataURL('image/png');
+    historyOv.hidden=true;
+    shareOv.hidden=false;
+    buzz(9);
+  }catch(e){}
+}
+historyClear.onclick=()=>{
+  if(!loadHistory().length)return;
+  saveHistory([]);
+  renderHistory();
+  buzz(12);
+};
+historyBtn.onclick=()=>{renderHistory();historyOv.hidden=false;buzz(9);};
+historyClose.onclick=()=>{historyOv.hidden=true;buzz(6);};
+
+/* ---------- 添加到主屏幕引导（iOS Safari 首次；#guide 或点牌匾3次可随时预览） ---------- */
+const GKEY='lx-guide-done', VKEY='lx-visited';
+const guideOv=document.getElementById('guideOv');
+function isIosSafari(){
+  const ua=navigator.userAgent;
+  const ios=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const safari=/Safari/.test(ua)&&!/CriOS|FxiOS|EdgiOS|OPiOS|Chrome/.test(ua);
+  return ios&&safari&&!navigator.standalone;
+}
+function injectGuideImgs(){
+  document.getElementById('gdImgMenu').src=IMG.ios_menu;
+  document.getElementById('gdImgShot').src=IMG.ios_share;
+  document.getElementById('gdImgWebapp').src=IMG.ios_webapp;
+}
+function closeGuide(){
+  guideOv.hidden=true;
+  try{localStorage.setItem(GKEY,'1');}catch(e){}
+}
+function openGuide(){injectGuideImgs();guideOv.hidden=false;}
+document.getElementById('guideOk').onclick=closeGuide;
+document.getElementById('guideClose').onclick=closeGuide;
+guideOv.addEventListener('click',e=>{if(e.target===guideOv)closeGuide();});
+function initGuide(force){
+  const forced=force||/guide/.test(location.hash+location.search);
+  if(!forced&&!isIosSafari())return;
+  try{
+    if(!forced&&localStorage.getItem(GKEY))return;
+    injectGuideImgs();
+    guideOv.hidden=false;
+  }catch(e){}
+}
+initGuide();
+/* 地址栏补 #guide 即时预览，无需刷新 */
+window.addEventListener('hashchange',()=>{if(/guide/.test(location.hash))openGuide();});
+/* 测试手势：连续点牌匾 3 次，随时预览引导 */
+(function(){
+  let taps=0,timer=null;
+  document.querySelector('.brand').addEventListener('click',()=>{
+    taps++;
+    clearTimeout(timer);
+    timer=setTimeout(()=>taps=0,700);
+    if(taps>=3){taps=0;openGuide();buzz(9);}
+  });
+})();
+/* 换牌阵入口：本机首次到访时轻浮一下，之后安静 */
+try{
+  if(!localStorage.getItem(VKEY)){
+    localStorage.setItem(VKEY,'1');
+    requestAnimationFrame(()=>spreadInd.classList.add('bounce'));
+  }
+}catch(e){}
+
+/* ---------- 分享截图 ---------- */
+function loadImg(src){
+  loadImg.c=loadImg.c||{};
+  if(!loadImg.c[src]){const i=new Image();i.src=src;loadImg.c[src]=i;}
+  return loadImg.c[src];
+}
+function whenLoaded(src){
+  const i=loadImg(src);
+  return i.complete?Promise.resolve(i):new Promise(r=>{i.onload=()=>r(i);i.onerror=()=>r(null);});
+}
+function diamond(g,x,y,r,color){
+  g.save();g.fillStyle=color;g.translate(x,y);g.rotate(Math.PI/4);
+  g.fillRect(-r/2,-r/2,r,r);g.restore();
+}
+/* Logo = 「灵匣」二字 + 手刻双线牌匾，与页头 SVG 同一路径 */
+function drawLogo(g,cx,y,w,ink){
+  const s=w/136;
+  g.save();
+  g.translate(cx-w/2,y);g.scale(s,s);
+  g.strokeStyle=ink;g.lineWidth=1.1;g.lineJoin='round';
+  g.stroke(new Path2D(LG_OUT));
+  g.save();g.globalAlpha=.5;g.lineWidth=.7;g.stroke(new Path2D(LG_IN));g.restore();
+  g.fillStyle=ink;
+  g.save();g.translate(LG_LING_X,LG_BASE);g.scale(LG_SCALE,-LG_SCALE);g.fill(new Path2D(G_LING));g.restore();
+  g.save();g.translate(LG_XIA_X,LG_BASE);g.scale(LG_SCALE,-LG_SCALE);g.fill(new Path2D(G_XIA));g.restore();
+  g.restore();
+}
+function drawCard(g,src,rev,x,y,w,h,bg,ink){
+  const img=loadImg(src), r=9;
+  g.save();
+  g.beginPath();
+  g.moveTo(x+r,y);
+  g.arcTo(x+w,y,x+w,y+h,r);
+  g.arcTo(x+w,y+h,x,y+h,r);
+  g.arcTo(x,y+h,x,y+h,r);
+  g.arcTo(x,y,x+w,y,r);
+  g.closePath();g.clip();
+  g.fillStyle=bg;g.fillRect(x,y,w,h);
+  if(img&&img.complete&&img.naturalWidth){
+    g.save();
+    g.translate(x+w/2,y+h/2);          // 原点移到牌中心
+    if(rev)g.rotate(Math.PI);          // 逆位绕牌中心旋转 180°
+    const ir=img.naturalWidth/img.naturalHeight, cr=w/h;
+    let dw,dh;
+    if(ir>cr){dh=h;dw=h*ir;}else{dw=w;dh=w/ir;}
+    g.drawImage(img,-dw/2,-dh/2,dw,dh);   // 以牌中心为原点绘制
+    g.restore();
+  }
+  g.restore();
+  g.strokeStyle=ink;g.lineWidth=1.6;
+  g.beginPath();
+  g.moveTo(x+r,y);
+  g.arcTo(x+w,y,x+w,y+h,r);
+  g.arcTo(x+w,y+h,x,y+h,r);
+  g.arcTo(x,y+h,x,y+h,r);
+  g.arcTo(x,y,x+w,y,r);
+  g.closePath();g.stroke();
+}
+/* 生成分享卡：cards 为已翻开的牌（含隐藏牌 hid），ts 为抽卡时间戳（重新分享历史时传入） */
+function compose(cards,ts){
+  const dark=root.getAttribute('data-theme')==='dark';
+  const PAPER=dark?'#191410':'#f1e7d0', PAPER2=dark?'#211a12':'#e7dabb';
+  const INK=dark?'#e8dcbc':'#3a2c1c', SOFT=dark?'#a08e70':'#7d6b52';
+  const LINE=dark?'#4a3d28':'#c6b18c';
+  /* 四色版墨：赭石 / 茜草 / 靛蓝 / 苔绿 */
+  const GOLD=dark?'#d9a94e':'#b8802a', MADDER=dark?'#c1553a':'#96351f';
+  const INDIGO=dark?'#7d95c2':'#3c4f74', MOSS=dark?'#8a9660':'#5f6b3c';
+  const CARDBG=dark?'#261f15':'#f8f0dc';
+  const W=750, M=62, PAD=32;
+  const SERIF='Georgia,"Palatino Linotype","Book Antiqua","Songti SC","STSong",serif';
+  const shown=cards||[];
+  const n=shown.length;
+  const gap=n===1?0:25;
+  const cardW=n===1?300:Math.floor((W-2*M-(n-1)*gap)/n);
+  const cardH=Math.round(cardW/0.5305);
+  const small=cardW<140;
+  const nameF=small?'400 17px '+SERIF:'400 20px '+SERIF;
+  const areaH=n===0?150:cardH+(small?62:76);
+  const headH=140, footH=70;
+  const H=M+headH+PAD+areaH+PAD+footH+M;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const g=cv.getContext('2d');
+  const bg=g.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,PAPER);bg.addColorStop(1,PAPER2);
+  g.fillStyle=bg;g.fillRect(0,0,W,H);
+  g.save();g.globalAlpha=.05;g.fillStyle=INK;
+  for(let i=0;i<1600;i++)g.fillRect(Math.random()*W,Math.random()*H,1.2,1.2);
+  g.restore();
+  g.strokeStyle=INK;g.lineWidth=2.5;g.strokeRect(M-30,M-30,W-2*(M-30),H-2*(M-30));
+  g.strokeStyle=LINE;g.lineWidth=1;g.strokeRect(M-18,M-18,W-2*(M-18),H-2*(M-18));
+  diamond(g,M-30,M-30,7,GOLD);diamond(g,W-(M-30),M-30,7,MADDER);
+  diamond(g,M-30,H-(M-30),7,MOSS);diamond(g,W-(M-30),H-(M-30),7,INDIGO);
+  g.textAlign='center';g.textBaseline='middle';
+  /* 品牌只留牌匾一处：灵匣二字 + 手刻双线框，即 Logo 即名 */
+  drawLogo(g,W/2,M+8,160,INK);
+  g.fillStyle=SOFT;g.font='12px '+SERIF;
+  g.fillText('T A R O T   D E   M A R S E I L L E',W/2,M+96);
+  const d=ts?new Date(ts):new Date();
+  g.fillStyle=SOFT;g.font='15px '+SERIF;
+  g.fillText(d.getFullYear()+' 年 '+(d.getMonth()+1)+' 月 '+d.getDate()+' 日',W/2,M+120);
+  const y0=M+headH+PAD;
+  if(n===0){
+    g.fillStyle=SOFT;g.font='15px '+SERIF;
+    g.fillText('❦   尚 未 抽 牌   ❦',W/2,y0+75);
+  }else{
+    const totalW=n*cardW+(n-1)*gap;
+    let x=(W-totalW)/2;
+    shown.forEach(c=>{
+      if(c.hid||c.hidden){
+        g.fillStyle=SOFT;g.font=small?'12px '+SERIF:'13px '+SERIF;
+        g.fillText('隐 藏 牌',x+cardW/2,y0-16);
+      }
+      drawCard(g,IMG[c.key]||IMG.BACK,!!c.rev,x,y0,cardW,cardH,CARDBG,INK);
+      g.fillStyle=SOFT;g.font=nameF;
+      g.fillText(c.cn,x+cardW/2,y0+cardH+29);
+      if(c.rev){
+        g.fillStyle=SOFT;g.font=small?'12px '+SERIF:'14px '+SERIF;
+        g.fillText('逆 位',x+cardW/2,y0+cardH+(small?51:55));
+      }
+      x+=cardW+gap;
+    });
+  }
+  g.fillStyle=GOLD;g.font='15px '+SERIF;
+  g.fillText('❦',W/2,H-M-footH/2+6);
+  return cv;
+}
+async function shareNow(){
+  try{
+    const cards=picks.filter(p=>p.flipped);   // 只呈现已翻开的牌
+    if(hidden&&hidden.flipped)cards.push(hidden);   // 隐藏牌一并呈现
+    const jobs=cards.map(c=>whenLoaded(IMG[c.key]));
+    await Promise.all(jobs);
+    shareImg.src=compose(cards).toDataURL('image/png');
+    shareOv.hidden=false;
+    buzz(9);
+  }catch(e){}
+}
+shareBtn.onclick=shareNow;
+document.getElementById('shareClose').onclick=()=>{shareOv.hidden=true;};
+shareOv.addEventListener('click',e=>{if(e.target===shareOv)shareOv.hidden=true;});
+
+resetDraw();
+</script>
+</body>
+</html>
