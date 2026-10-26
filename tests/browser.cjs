@@ -41,7 +41,15 @@ async function run(browser, url, output) {
   await test('78/22 card toggle, reverse preference, card fonts, light/dark contrast, full width fan', async()=>{
     const {page,context}=await reading({minor:true});
     assert.equal(await page.locator('.fcard').count(),78);
+    await page.locator('#fanWrap').evaluate(el=>el.scrollLeft=el.scrollWidth);
     await page.locator('#tMinor').uncheck();assert.equal(await page.locator('.fcard').count(),22);
+    await page.waitForTimeout(100);
+    const visible=await page.locator('.fcard').evaluateAll(els=>els.filter(el=>getComputedStyle(el).visibility==='visible').map(el=>{
+      const r=el.getBoundingClientRect();return {x:r.x+r.width/2,transform:el.style.transform};
+    }));
+    assert.ok(visible.some(r=>r.x>0&&r.x<130));
+    assert.ok(visible.some(r=>r.x>260&&r.x<390));
+    assert.ok(visible.every(r=>r.transform),'Visible fan cards must all be positioned');
     await page.locator('#tRev').check();
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('lx-prefs')).rev),true);
     for(const dark of [false,true]) {
@@ -77,6 +85,10 @@ async function run(browser, url, output) {
     const next=page.locator('.fcard:not(.gone)').nth(10);
     await next.focus();await page.keyboard.press('Enter');await page.waitForTimeout(510);
     assert.equal(await page.locator('.slot.done').count(),2);
+    await page.keyboard.press('End');
+    assert.equal(await page.evaluate(()=>document.activeElement.dataset.i),'21');
+    await page.keyboard.press('Home');
+    assert.equal(await page.evaluate(()=>document.activeElement.dataset.i),'0');
     await context.close();
   });
 
@@ -140,7 +152,7 @@ async function run(browser, url, output) {
     await context.close();
   });
 
-  await test('wheel elsewhere and hidden wheel do not offer an extra',async()=>{
+  await test('wheel elsewhere does not trigger; revealed hidden wheel triggers one extra',async()=>{
     const {page,context}=await reading();
     await pick(page,['M10','M01','M02']);await flip(page);
     assert.equal(await page.locator('.wheel-action').count(),0);
@@ -150,8 +162,22 @@ async function run(browser, url, output) {
     assert.equal(await page.locator('.wheel-action').count(),0);
     await page.locator('#reShuffle').click();await pick(page,['M19','M20','M07']);await flip(page); // 46 -> hidden wheel
     assert.equal(await page.locator('#hCard .rname').innerText(),'X · 命运之轮');
-    await page.locator('#hCard .flip').click();
     assert.equal(await page.locator('.wheel-action').count(),0);
+    await page.locator('#hCard .flip').click();
+    assert.equal(await page.locator('.wheel-action').count(),1);
+    const original=(await history(page))[0];
+    await page.locator('.wheel-action').click();
+    await page.locator('#rvExtra .flip').click();
+    const updated=(await history(page))[0];
+    assert.equal(updated.id,original.id);assert.equal(updated.ts,original.ts);
+    assert.ok(updated.cards[3].hid);assert.ok(updated.cards[4].extra);
+    assert.equal(await page.locator('.wheel-action').count(),0);
+    const layout=await page.evaluate(()=>{
+      const h=document.getElementById('hCard').getBoundingClientRect();
+      const e=document.querySelector('#rvExtra .rcard').getBoundingClientRect();
+      return {hx:h.x,ex:e.x,hy:h.y,ey:e.y};
+    });
+    assert.ok(layout.hx<layout.ex);assert.equal(layout.hy,layout.ey);
     await context.close();
   });
 
@@ -216,6 +242,122 @@ async function run(browser, url, output) {
       if(output&&width===390)await page.screenshot({path:path.join(output,'home-dark.png'),fullPage:true});
       await context.close();
     }
+  });
+
+  await test('fixed navigation preserves reading; clear requires confirmation and danger color',async()=>{
+    const {page,context}=await reading({spread:'1'});
+    await pick(page,['M01']);await flip(page);
+    const original=await history(page);
+    const nav=await page.locator('.main-nav').boundingBox();
+    await page.evaluate(()=>scrollTo(0,document.body.scrollHeight));
+    const scrolled=await page.locator('.main-nav').boundingBox();
+    assert.equal(nav.y,scrolled.y);assert.equal(nav.height,72);
+    await page.locator('#historyBtn').click();
+    assert.equal(await page.locator('#historyBtn').getAttribute('aria-current'),'page');
+    await page.locator('#drawBtn').focus();await page.keyboard.press('Tab');
+    assert.equal(await page.evaluate(()=>document.activeElement.id),'historyBtn');
+    assert.equal(await page.locator('#historyClear').evaluate(el=>getComputedStyle(el).color),await page.locator('.hd-del').evaluate(el=>getComputedStyle(el).color));
+    page.once('dialog',dialog=>dialog.dismiss());
+    await page.locator('#historyClear').click();assert.deepEqual(await history(page),original);
+    await page.locator('#drawBtn').click();
+    assert.equal(await page.locator('#reveal').isVisible(),true);
+    await page.locator('#historyBtn').click();
+    page.once('dialog',dialog=>dialog.accept());
+    await page.locator('#historyClear').click();assert.deepEqual(await history(page),[]);
+    await page.locator('#drawBtn').click();
+    assert.equal(await page.locator('#rvRow .rcard.flipped').count(),1);
+    await context.close();
+  });
+
+  await test('front preloads on selection, shares one request and survives rounds/reload offline',async()=>{
+    const {page,context}=await reading();
+    let requests=0;
+    await context.route('**/M01.*.webp',route=>{requests++;return route.continue();});
+    const card=page.locator('.fcard[data-key="M01"]');
+    await card.evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));
+    await card.dispatchEvent('click');
+    await page.waitForFunction(async()=>{
+      for(const name of await caches.keys()){
+        const cache=await caches.open(name);
+        if((await cache.keys()).some(r=>/M01\./.test(r.url)))return true;
+      }
+      return false;
+    });
+    assert.equal(await page.locator('#draw').isVisible(),true);
+    assert.equal(requests,1);
+    await page.waitForTimeout(510);
+    await pick(page,['M02','M03']);await flip(page);
+    await page.locator('#reShuffle').click();await pick(page,['M01','M02','M03']);await flip(page);
+    assert.equal(requests,1,'Same-round and next-round consumers reuse the image');
+    await page.reload();
+    // A reload discards the JS map. Abort card network to require persistent cache.
+    await context.unroute('**/M01.*.webp');
+    await context.route('**/assets/cards/M*.webp',route=>route.abort());
+    await pick(page,['M01','M02','M03']);await flip(page);
+    await page.waitForFunction(()=>[...document.querySelectorAll('#rvRow .front img')].every(i=>i.complete&&i.naturalWidth>0));
+    await context.close();
+  });
+
+  await test('failed image retries automatically, offers manual recovery, and share has a fallback',async()=>{
+    const {page,context}=await reading({spread:'1'});
+    let requests=0,recover=false;
+    await context.route('**/M04.*.webp',route=>{
+      requests++;return recover?route.continue():route.fulfill({status:503,body:'temporarily unavailable'});
+    });
+    await pick(page,['M04']);await flip(page);
+    await page.locator('.image-retry').waitFor({state:'visible'});
+    assert.equal(requests,2);
+    await page.evaluate(()=>{window.drawn=[];const f=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(t,...a){window.drawn.push(t);return f.call(this,t,...a)}});
+    await page.locator('#shareBtn').click();await page.locator('#shareOv').waitFor({state:'visible'});
+    assert.ok((await page.evaluate(()=>window.drawn)).includes('牌面暂不可用'));
+    await page.locator('#shareClose').click();
+    const original=await history(page);recover=true;
+    await page.locator('.image-retry').click();
+    await page.waitForFunction(()=>document.querySelector('#rvRow .front img').naturalWidth>0);
+    assert.deepEqual(await history(page),original);
+    await context.close();
+  });
+
+  await test('stalled image times out and retries; corrupted disk cache repairs itself',async()=>{
+    const {page,context}=await reading({spread:'1'});
+    await page.addInitScript(()=>{
+      const fetchImage=window.fetch.bind(window),timer=window.setTimeout.bind(window);
+      let shortened=false,stalled=false;window.stalledRequests=0;
+      window.setTimeout=(fn,delay,...args)=>{
+        if(delay===8000&&!shortened){shortened=true;delay=150;}
+        return timer(fn,delay,...args);
+      };
+      window.fetch=(input,options)=>{
+        if(String(input).includes('/M06.')&&!stalled){
+          stalled=true;window.stalledRequests++;
+          return new Promise((resolve,reject)=>options.signal.addEventListener('abort',()=>reject(new DOMException('Timed out','AbortError')),{once:true}));
+        }
+        return fetchImage(input,options);
+      };
+    });
+    await page.reload();await pick(page,['M06']);await flip(page);
+    await page.waitForFunction(()=>document.querySelector('#rvRow .front img').naturalWidth>0);
+    assert.equal(await page.evaluate(()=>window.stalledRequests),1);
+    await page.locator('#reShuffle').click();
+    await page.evaluate(async()=>{
+      const {IMG}=await import('./js/images.js');
+      const cache=await caches.open('orca-card-images-v1:'+new URL('js/',location.href).pathname);
+      await cache.put(new URL(IMG.M08,location.href).href,new Response('corrupted image',{status:200}));
+    });
+    let requests=0;
+    await context.route('**/M08.*.webp',route=>{requests++;return route.continue();});
+    await pick(page,['M08']);await flip(page);
+    await page.waitForFunction(()=>document.querySelector('#rvRow .front img').naturalWidth>0);
+    assert.equal(requests,1,'Corrupt cached image should recover with one network retry');
+    await context.close();
+  });
+
+  await test('cache storage denied still loads card fronts',async()=>{
+    const {page,context}=await reading({spread:'1'});
+    await page.addInitScript(()=>Object.defineProperty(window,'caches',{value:{open:()=>Promise.reject(new Error('denied'))}}));
+    await page.reload();await pick(page,['M05']);await flip(page);
+    await page.waitForFunction(()=>document.querySelector('#rvRow .front img').naturalWidth>0);
+    await context.close();
   });
 
   await test('iOS guide: force open, three images, close persists, triple brand opens',async()=>{
