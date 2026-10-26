@@ -40,3 +40,15 @@
 - 线上 HTML 原始采样 SHA-256：`39651b2167644fb04e8a2910a9f59425ebaed8294873789eb86e4a2b28f5929e`
 - 核验时间：2026-10-27 01:28:52；剔除 Cloudflare 纯新增脚本后首页与源 HTML 完全一致，全部 102 项核验通过。
 - 验收：本地 11 组完整浏览器测试通过；线上无缓存条件下重现相同隐藏牌/追加牌组合，首次分享成功，字体加载正常，无页面错误。发布时远程 CI 仍在安装浏览器依赖，未宣称远程 CI 已通过。
+
+### v3 · 2026-10-27 02:03:24
+
+- 地址：https://jinglingxia-staging.earthymars15.chatgpt.site
+- 应用源码：`2741b21791097442742b33fc9d85b0e93159c5ae`（PR #4，main CI 已通过）
+- 站点快照源码：`efc10e0863d327afadc5e590e54af73b7d21b6e7`
+- deployment_id：`appgdep_6adf95dbfe788191807a81ead236e4ef`
+- 入口 HTML SHA-256：`086372f7b1f0131e3dbb97eed930ed8e61f142af8023c59f51398637e0868f88`
+- manifest SHA-256：`5171d1e856c190f993c5aa6278dd61af332b25ab7e88f60f17e4c6a28663fc2c`
+- 线上 HTML 原始采样 SHA-256：`56753ca62dc5283843f370bc6ee6e9da654f3b2a50ac70cc84007efb366d048f`
+- 核验时间：2026-10-27 02:04:52；剔除 Cloudflare 纯新增脚本后首页与源 HTML 完全一致，全部 103 项核验通过（包含 manifest.json、SHA256SUMS）。
+- 验收：本地 16 组完整浏览器测试、PR CI 和应用源码 main CI 均已通过；覆盖隐藏十号牌追加、固定底栏、清空确认、牌面预加载、跨轮/刷新缓存及加载异常恢复。沿用现有所有者私有权限，手机浏览器需要登录同一 ChatGPT 账号；正式站未更改。
