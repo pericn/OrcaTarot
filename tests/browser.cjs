@@ -199,12 +199,29 @@ async function run(browser, url, output) {
     await page.locator('#bStart').click();assert.equal(await page.locator('#bErr').isVisible(),true);
     await page.locator('#bM').fill('7');await page.locator('#bD').fill('3');await page.locator('#bStart').click();
     assert.equal(await page.locator('#rvRow .rcard').count(),5);
+    assert.deepEqual(await page.locator('#rvRow .rposition').allTextContents(),['年','月','日','业力','流年']);
     const boxes=await page.locator('#rvRow .rcard').evaluateAll(els=>els.map(e=>({x:e.getBoundingClientRect().x,y:e.getBoundingClientRect().y})));
     assert.equal(boxes[0].y,boxes[2].y);assert.equal(boxes[3].y,boxes[4].y);assert.ok(boxes[3].y>boxes[0].y);
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('lx-prefs')).spread),'bday');
     await flip(page);
     assert.deepEqual((await page.locator('#rvRow .rname').allTextContents()).slice(0,4),['XVIIII · 太阳','VII · 战车','III · 皇后','II · 女祭司']);
+    const record=(await history(page))[0];
+    assert.deepEqual(record.cards.map(c=>c.position),['年','月','日','业力','流年']);
+    const digit=n=>{while(n>9)n=String(n).split('').reduce((sum,d)=>sum+Number(d),0);return n;};
+    assert.equal(record.cards[4].key,'M'+String(digit(new Date().getFullYear())).padStart(2,'0'));
     if(output)await page.screenshot({path:path.join(output,'birthday.png'),fullPage:true});
+    await page.evaluate(()=>{window.drawn=[];const f=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(t,...a){window.drawn.push(t);return f.call(this,t,...a)}});
+    await page.locator('#shareBtn').click();await page.locator('#shareOv').waitFor({state:'visible'});
+    for(const position of ['年','月','日','业力','流年'])assert.ok((await page.evaluate(()=>window.drawn)).includes(position));
+    await page.locator('#shareClose').click();
+    const legacy={...record,cards:record.cards.map(({position,...card})=>card)};
+    await page.evaluate(record=>localStorage.setItem('lx-history',JSON.stringify([record])),legacy);
+    await page.locator('#historyBtn').click();
+    assert.ok((await page.locator('.hd-names').innerText()).includes('流年：'));
+    await page.evaluate(()=>window.drawn=[]);
+    await page.locator('.hd-share').click();await page.locator('#shareOv').waitFor({state:'visible'});
+    for(const position of ['年','月','日','业力','流年'])assert.ok((await page.evaluate(()=>window.drawn)).includes(position));
+    assert.deepEqual(await history(page),[legacy]);
     await context.close();
   });
 
@@ -222,7 +239,7 @@ async function run(browser, url, output) {
     const drawn=await page.evaluate(()=>window.drawn);
     assert.ok(drawn.includes('2020 年 2 月 3 日'));assert.ok(drawn.includes('隐 藏 牌'));assert.ok(drawn.includes('追 加 牌'));assert.ok(drawn.includes('鲸灵匣'));
     await page.locator('#shareClose').click();assert.equal(await page.locator('#historyOv').isVisible(),true);
-    await page.locator('#historyClose').click();assert.equal(await page.locator('#draw').isVisible(),true);
+    await page.locator('#drawBtn').click();assert.equal(await page.locator('#draw').isVisible(),true);
     assert.deepEqual(await history(page),[rec]);
     await context.close();
   });
@@ -267,6 +284,46 @@ async function run(browser, url, output) {
     await page.locator('#drawBtn').click();
     assert.equal(await page.locator('#rvRow .rcard.flipped').count(),1);
     await context.close();
+  });
+
+  await test('history uses the bottom navigation and count follows the last record in the scroller',async()=>{
+    const {page,context}=await reading();
+    const records=Array.from({length:20},(_,i)=>({id:'test-'+i,ts:Date.now()-i*60000,spread:'1',cards:[{key:'M01',cn:'I · 魔术师',rev:false}]}));
+    await page.evaluate(records=>localStorage.setItem('lx-history',JSON.stringify(records)),records);
+    await page.locator('#historyBtn').click();
+    assert.equal(await page.locator('#historyClose').count(),0);
+    const before=await page.locator('#historyCount').boundingBox();
+    const scroller=await page.locator('#historyScroll').boundingBox();
+    assert.ok(before.y>scroller.y+scroller.height,'Count must follow all 20 records');
+    await page.locator('#historyScroll').evaluate(el=>el.scrollTop=el.scrollHeight);
+    const after=await page.locator('#historyCount').boundingBox();
+    const last=await page.locator('.hd-item').last().boundingBox();
+    assert.ok(after.y>=last.y+last.height);
+    assert.ok(after.y+after.height<=scroller.y+scroller.height+1); // scrollHeight rounds to whole pixels
+    assert.equal(await page.locator('#historyCount').innerText(),'共 20 条 · 存于本机');
+    await page.locator('#drawBtn').click();assert.equal(await page.locator('#draw').isVisible(),true);
+    await context.close();
+  });
+
+  await test('fan and center card fit on the initial screen in short portrait and landscape viewports',async()=>{
+    for(const [width,height] of [[320,568],[360,640],[390,667],[390,844],[430,932],[640,360],[844,390],[1440,900]]){
+      const {page,context}=await reading({minor:true});
+      await page.setViewportSize({width,height});await page.waitForTimeout(100);
+      await page.evaluate(()=>scrollTo(0,0));
+      const view=await page.evaluate(()=>{
+        const fan=document.getElementById('fanWrap').getBoundingClientRect();
+        const nav=document.querySelector('.main-nav').getBoundingClientRect();
+        const cards=[...document.querySelectorAll('.fcard')].filter(el=>getComputedStyle(el).visibility==='visible').map(el=>el.getBoundingClientRect());
+        const center=cards.sort((a,b)=>Math.abs(a.x+a.width/2-(fan.x+fan.width/2))-Math.abs(b.x+b.width/2-(fan.x+fan.width/2)))[0];
+        return {fanTop:fan.top,fanBottom:fan.bottom,navTop:nav.top,cardTop:center.top,cardBottom:center.bottom,overflow:document.documentElement.scrollWidth>innerWidth};
+      });
+      assert.ok(view.fanBottom<=view.navTop,JSON.stringify({width,height,...view}));
+      assert.ok(view.cardTop>=view.fanTop&&view.cardBottom<=view.fanBottom,JSON.stringify(view));
+      assert.equal(view.overflow,false);
+      if(output&&width===320)await page.screenshot({path:path.join(output,'home-short.png')});
+      if(output&&width===844)await page.screenshot({path:path.join(output,'home-landscape.png')});
+      await context.close();
+    }
   });
 
   await test('front preloads on selection, shares one request and survives rounds/reload offline',async()=>{

@@ -98,9 +98,9 @@ function compose(cards,ts){
       const inRow=Math.min(cols,n-Math.floor(i/cols)*cols);
       x=(W-(inRow*cardW+(inRow-1)*gap))/2+(i%cols)*(cardW+gap);
       const cy=y0+Math.floor(i/cols)*rowH;
-      if(c.hid||c.hidden||c.extra){
-        g.fillStyle=SOFT;g.font=small?'12px '+SERIF:'13px '+SERIF;
-        g.fillText(c.extra?'追 加 牌':'隐 藏 牌',x+cardW/2,cy-16);
+      if(c.position||c.hid||c.hidden||c.extra){
+        g.fillStyle=SOFT;g.font=(c.position?'18px ':small?'12px ':'13px ')+SERIF;
+        g.fillText(c.position||(c.extra?'追 加 牌':'隐 藏 牌'),x+cardW/2,cy-16);
       }
       drawCard(g,IMG[c.key]||IMG.BACK,!!c.rev,x,cy,cardW,cardH,CARDBG,INK);
       g.fillStyle=SOFT;g.font=nameF;
