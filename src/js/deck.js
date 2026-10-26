@@ -21,8 +21,10 @@ Object.keys(SUITS).forEach(s=>{
     DECK.push({key:s+'_'+r,cn,num:pip||null,major:false});
   });
 });
+const BIRTHDAY_POSITIONS=['年','月','日','业力','流年'];
+function toDigit(n){while(n>9)n=dsum(n);return n;}
 const dsum=n=>String(n).split('').reduce((a,c)=>a+ +c,0);
 function toMajor(n){while(n>21)n=dsum(n);return DECK[n];}   // <=21 分界，超过则各位再相加
 
 
-export { DECK, MAJOR_NUM, dsum, toMajor };
+export { DECK, MAJOR_NUM, BIRTHDAY_POSITIONS, dsum, toMajor, toDigit };

@@ -1,6 +1,6 @@
 
 import { IMG } from './images.js';
-import { DECK, MAJOR_NUM, dsum, toMajor } from './deck.js';
+import { DECK, MAJOR_NUM, BIRTHDAY_POSITIONS, dsum, toMajor, toDigit } from './deck.js';
 import { compose, whenLoaded } from './share.js';
 import { hydrateCardImages } from './card-images.js';
 import { icon, spreadIcon } from './icons.js';
@@ -52,7 +52,7 @@ const rvHidden=document.getElementById('rvHidden'), hCard=document.getElementByI
 const reShuffle=document.getElementById('reShuffle'), shareBtn=document.getElementById('shareBtn');
 const shareOv=document.getElementById('shareOv'), shareImg=document.getElementById('shareImg');
 const historyOv=document.getElementById('historyOv'), historyList=document.getElementById('historyList');
-const historyBtn=document.getElementById('historyBtn'), historyClose=document.getElementById('historyClose');
+const historyBtn=document.getElementById('historyBtn');
 const historyClear=document.getElementById('historyClear'), historyCount=document.getElementById('historyCount');
 
 /* ---------- 状态 ---------- */
@@ -106,14 +106,16 @@ function renderFan(){
     +'<div class="fcard-i">'
     +'<img src="'+IMG.BACK+'" alt="" draggable="false"></div></button>').join('');
   fanCards=Array.prototype.slice.call(fanTrack.children);
-  fanTrack.style.width=((fanPool.length-1)*STEP+CARD_W)+'px';
+  cardWidth=fanCards[0]?.offsetWidth||100;
+  fanTrack.style.width=((fanPool.length-1)*STEP+cardWidth)+'px';
   // Commit the shorter track before assigning scrollLeft; the old 78-card
   // scroll offset otherwise survives the first switch to 22 cards.
   fanVisible=[];
-  fanWrap.scrollLeft=Math.max(0,(fanPool.length-1)*STEP/2+CARD_W/2-fanWrap.clientWidth/2);
+  fanWrap.scrollLeft=Math.max(0,(fanPool.length-1)*STEP/2+cardWidth/2-fanWrap.clientWidth/2);
   updateFan();
 }
-const STEP=52, CARD_W=100;
+const STEP=52;
+let cardWidth=100;
 function updateFan(){
   if(drawSection.hidden||spread==='bday')return;
   const W=fanWrap.clientWidth, sl=fanWrap.scrollLeft, c=sl+W/2;
@@ -125,7 +127,7 @@ function updateFan(){
   for(let i=first;i<=last;i++){
     fanVisible.push(i);
     const el=fanCards[i]; if(!el)continue;
-    const dx=i*STEP+CARD_W/2-c;
+    const dx=i*STEP+cardWidth/2-c;
     const rot=Math.max(-42,Math.min(42,dx*.06));
     const dip=Math.min(dipMax,dx*dx/5200);
     const sc=Math.max(.45,1-Math.abs(dx)/1400);
@@ -160,12 +162,13 @@ fanWrap.addEventListener('keydown',e=>{
   focusFan(index);
 });
 function focusFan(index){
-  fanWrap.scrollLeft=Math.max(0,index*STEP+CARD_W/2-fanWrap.clientWidth/2);
+  fanWrap.scrollLeft=Math.max(0,index*STEP+cardWidth/2-fanWrap.clientWidth/2);
   updateFan();fanCards[index].focus({preventScroll:true});
 }
 window.addEventListener('resize',()=>{
   if(drawSection.hidden||spread==='bday')return;
-  fanTrack.style.width=((fanPool.length-1)*STEP+CARD_W)+'px';
+  cardWidth=fanCards[0]?.offsetWidth||100;
+  fanTrack.style.width=((fanPool.length-1)*STEP+cardWidth)+'px';
   updateFan();
 });
 
@@ -226,7 +229,8 @@ function frontMarkup(p){
 function retryMarkup(){return '<button type="button" class="btn image-retry" hidden>重试牌面</button>';}
 function cardMarkup(p,i){
   return '<div class="rcard'+(p.rev?' rev':'')+'" data-i="'+i+'">'
-    +'<button type="button" class="flip" aria-label="翻开第 '+(i+1)+' 张牌"><span class="flip-inner">'
+    +(p.position?'<div class="rposition">'+p.position+'</div>':'')
+    +'<button type="button" class="flip" aria-label="翻开'+(p.position?p.position+'牌':'第 '+(i+1)+' 张牌')+'"><span class="flip-inner">'
     +'<span class="face back"><img src="'+IMG.BACK+'" alt="牌背" draggable="false"></span>'
     +frontMarkup(p)
     +'</span></button>'+retryMarkup()+'<div class="rname">'+p.cn+'</div>'
@@ -296,7 +300,7 @@ function flipReadingCard(e){
   if(!c||c.classList.contains('flipped'))return;
   const p=picks[+c.dataset.i]; if(!p)return;
   c.classList.add('flipped');
-  c.querySelector('.flip').setAttribute('aria-label',p.cn+(p.rev?'，逆位':''));
+  c.querySelector('.flip').setAttribute('aria-label',(p.position?p.position+'牌，':'')+p.cn+(p.rev?'，逆位':''));
   p.flipped=true;
   buzz(9);
   afterFlip();
@@ -412,11 +416,10 @@ bStart.onclick=()=>{
   const yc=toMajor(dsum(y));      // 年份牌：各位相加，<=21 分界
   const mc=DECK[m];              // 月份牌：1-12 直接对应
   const dc=toMajor(d);           // 日子牌：>21 则各位再相加
-  let k=dsum(y)+dsum(m)+dsum(d); // karma 牌：年月日全部数字加到个位数
-  while(k>9)k=dsum(k);
+  const k=toDigit(dsum(y)+dsum(m)+dsum(d)); // 业力持续归约到 1–9
   const kc=DECK[k];
-  const fc=toMajor(dsum(nowY));  // 流年牌：今年年份各位相加，<=21 分界
-  picks=[yc,mc,dc,kc,fc].map(c=>({...c,rev:false,flipped:false}));
+  const fc=DECK[toDigit(dsum(nowY))]; // 流年持续归约到 1–9（如 2026 → 10 → 1）
+  picks=[yc,mc,dc,kc,fc].map((c,i)=>({...c,rev:false,flipped:false,position:BIRTHDAY_POSITIONS[i]}));
   picks.forEach(c=>whenLoaded(IMG[c.key],{retry:true}));
   closeSheet();
   renderSlots();
@@ -461,13 +464,16 @@ function addHistory(rec){
 function orderedCards(){
   return [...picks.slice(0,count).filter(p=>p.flipped),...(hidden?.flipped?[hidden]:[]),...picks.slice(count).filter(p=>p.flipped)];
 }
+function cardsForRecord(rec){
+  return rec.cards.map((c,i)=>({...c,position:c.position||(rec.spread==='bday'&&i<5&&!c.extra&&!c.hid&&!c.hidden?BIRTHDAY_POSITIONS[i]:undefined)}));
+}
 function orderSavedCards(cards){
   return [...cards.filter(c=>!c.hid&&!c.hidden&&!c.extra),...cards.filter(c=>c.hid||c.hidden),...cards.filter(c=>c.extra&&!c.hid&&!c.hidden)];
 }
 /* 一次完整揭示 = 一条记录（含隐藏牌，若已翻开） */
 function recordReading(){
 
-  const cards=orderedCards().map(p=>({key:p.key,cn:p.cn,rev:!!p.rev,...(p.extra?{extra:true}:{}),...(p.hidden?{hid:true}:{})}));
+  const cards=orderedCards().map(p=>({key:p.key,cn:p.cn,rev:!!p.rev,...(p.extra?{extra:true}:{}),...(p.hidden?{hid:true}:{}),...(p.position?{position:p.position}:{})}));
   if(!readingId)readingId=Date.now()+'-'+Math.random().toString(36).slice(2,7);
   const rec={id:readingId,ts:readingTs,spread,cards};
   const list=loadHistory(),index=list.findIndex(r=>r.id===readingId);
@@ -493,11 +499,11 @@ function renderHistory(){
     return;
   }
   historyList.innerHTML=list.map(r=>{
-    const cards=orderSavedCards(r.cards);
+    const cards=orderSavedCards(cardsForRecord(r));
     const thumbs=cards.map(c=>
       '<div class="hd-thumb'+(c.hid||c.hidden?' hid':'')+'"><img class="'+(c.rev?'rev':'')+'" data-card-src="'
       +(IMG[c.key]||IMG.BACK)+'" alt="'+c.cn+'" loading="lazy" decoding="async" draggable="false"></div>').join('');
-    const names=cards.map(c=>(c.hid||c.hidden?'隐藏 ':c.extra?'追加 ':'')+c.cn+(c.rev?'（逆）':'')).join(' · ');
+    const names=cards.map(c=>(c.position?c.position+'：':'')+(c.hid||c.hidden?'隐藏 ':c.extra?'追加 ':'')+c.cn+(c.rev?'（逆）':'')).join(' · ');
     return '<div class="hd-item" data-id="'+r.id+'">'
       +'<div class="hd-meta"><span class="hd-date">'+fmtTs(r.ts)+'</span>'
       +'<span class="hd-spread" style="color:'+(SPREAD_COLOR[r.spread]||'var(--ink-soft)')+'">'
@@ -529,7 +535,7 @@ async function reshareRecord(rec){
     await Promise.all(jobs);
     await document.fonts.load('16px OrcaWoodblock');
     await document.fonts.ready;
-    shareImg.src=compose(orderSavedCards(rec.cards),rec.ts).toDataURL('image/png');
+    shareImg.src=compose(orderSavedCards(cardsForRecord(rec)),rec.ts).toDataURL('image/png');
     shareOv.dataset.returnTo="history";
     setHistory(false);
     shareOv.hidden=false;
@@ -550,7 +556,6 @@ function setHistory(open){
   historyBtn.setAttribute('aria-current',open?'page':'false');
 }
 historyBtn.onclick=()=>{renderHistory();setHistory(true);buzz(9);};
-historyClose.onclick=()=>{setHistory(false);buzz(6);};
 
 /* ---------- 添加到主屏幕引导（iOS Safari 首次；#guide 或点牌匾3次可随时预览） ---------- */
 const GKEY='lx-guide-done', VKEY='lx-visited';
@@ -636,7 +641,11 @@ window.addEventListener('keydown',e=>{
 for(const overlay of [spreadOv,shareOv,historyOv,guideOv]){
   let returnFocus=null;
   new MutationObserver(()=>{
-    if(!overlay.hidden){returnFocus=document.activeElement;overlay.querySelector('button,input')?.focus();}
+    if(!overlay.hidden){
+      returnFocus=document.activeElement;
+      const first=Array.from(overlay.querySelectorAll('button,input')).find(el=>!el.disabled&&el.getClientRects().length);
+      (first||(overlay===historyOv?historyBtn:null))?.focus();
+    }
     else if(returnFocus?.isConnected)returnFocus.focus();
   }).observe(overlay,{attributes:true,attributeFilter:['hidden']});
   overlay.addEventListener('keydown',e=>{
