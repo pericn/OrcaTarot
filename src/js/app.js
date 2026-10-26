@@ -558,7 +558,7 @@ function setHistory(open){
 historyBtn.onclick=()=>{renderHistory();setHistory(true);buzz(9);};
 
 /* ---------- 添加到主屏幕引导（iOS Safari 首次；#guide 或点牌匾3次可随时预览） ---------- */
-const GKEY='lx-guide-done', VKEY='lx-visited';
+const GKEY='lx-guide-done', VKEY='lx-visited', UKEY='lx-upd-2026-10a';
 const guideOv=document.getElementById('guideOv');
 function isIosSafari(){
   const ua=navigator.userAgent;
@@ -574,6 +574,8 @@ function injectGuideImgs(){
 function closeGuide(){
   guideOv.hidden=true;
   try{localStorage.setItem(GKEY,'1');}catch(e){}
+  /* 引导关掉后接着提示版本更新，避免本次整轮跳过 */
+  try{if(!localStorage.getItem(UKEY))setTimeout(openUpdate,260);}catch(e){}
 }
 function openGuide(){injectGuideImgs();guideOv.hidden=false;}
 document.getElementById('guideOk').onclick=closeGuide;
@@ -591,7 +593,6 @@ function initGuide(force){
 initGuide();
 /* 地址栏补 #guide 即时预览，无需刷新 */
 window.addEventListener('hashchange',()=>{if(/guide/.test(location.hash))openGuide();});/* ---------- 版本更新提示（一次性；#update 可随时预览） ---------- */
-const UKEY='lx-upd-2026-10a';
 const updateOv=document.getElementById('updateOv');
 function closeUpdate(){updateOv.hidden=true;try{localStorage.setItem(UKEY,'1');}catch(e){}}
 function openUpdate(){updateOv.hidden=false;}
