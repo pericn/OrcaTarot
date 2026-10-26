@@ -62,7 +62,17 @@ def build(output):
     for path in sorted((SRC / 'assets').rglob('*')):
         if path.is_file():
             relative = path.relative_to(SRC).as_posix()
-            replacements[relative] = asset(relative, path.read_bytes())
+            if relative == 'assets/app-icon-orca-engraved.png':
+                # Keep the full-resolution artwork in source; ship sizes for
+                # iOS home screens and browser tabs instead of the large master.
+                with Image.open(path) as original:
+                    for size, name in [(180, relative), (32, 'assets/favicon-orca-engraved.png')]:
+                        icon = original.convert('RGB').resize((size, size), Image.Resampling.LANCZOS)
+                        buf = io.BytesIO()
+                        icon.save(buf, 'PNG', optimize=True)
+                        replacements[name] = asset(name, buf.getvalue())
+            else:
+                replacements[relative] = asset(relative, path.read_bytes())
 
     def replace_assets(text):
         for old, new in replacements.items():
