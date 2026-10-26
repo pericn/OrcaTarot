@@ -1,106 +1,93 @@
 #!/usr/bin/env python3
-import os, io, json, base64, argparse, hashlib
+"""Build a directory-based, dependency-free static site for Workbuddy."""
+import argparse
+import hashlib
+import io
+import json
+import os
 from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
-parser = argparse.ArgumentParser(description="构建可交给 Workbuddy 发布的单文件 HTML")
-parser.add_argument("--output", type=Path, default=ROOT / "dist" / "soul-toolkit.html")
-args = parser.parse_args()
-CARD_DIR = ROOT / "src" / "cards"
-TEMPLATE = ROOT / "src" / "template.html"
-OUT = args.output.resolve()
-W = 280
+SRC = ROOT / 'src'
+REQUIRED = ({f'M{i:02d}' for i in range(22)} |
+            {f'{s}_{r}' for s in ('coin', 'cup', 'sword', 'wand')
+             for r in [*[f'{n:02d}' for n in range(1, 11)], 'page', 'knight', 'queen', 'king']} |
+            {'card-back', 'ios_menu', 'ios_share', 'ios_webapp'})
 
-required = ({f"M{i:02d}" for i in range(22)} |
-            {f"{suit}_{rank}" for suit in ("coin", "cup", "sword", "wand")
-             for rank in ([f"{i:02d}" for i in range(1, 11)] + ["page", "knight", "queen", "king"])} |
-            {"card-back", "logo_src", "ios_menu", "ios_share", "ios_webapp"})
-missing = sorted(key for key in required if not (CARD_DIR / f"{key}.png").is_file())
-if missing:
-    raise SystemExit("缺少构建素材：" + ", ".join(missing))
 
-IMG = {}
-sizes = []
-LOGO_SKIP = {"logo_src", "logo_ink", "logo_cream"}  # logo 单独处理，不走卡牌管线
-for fn in sorted(os.listdir(CARD_DIR)):
-    if not fn.lower().endswith(".png"):
-        continue
-    key = fn[:-4]
-    if key in LOGO_SKIP:
-        continue
-    with Image.open(os.path.join(CARD_DIR, fn)) as im:
-        im = im.convert("RGBA")
-        if key.startswith("ios_"):
-            # iOS 引导素材：不缩放（保 UI 文字清晰），高质量
-            q = 88
-        else:
-            q = 80
-            if im.width > W:
-                h = round(im.height * W / im.width)
-                im = im.resize((W, h), Image.LANCZOS)
-        if key == "card-back":
-            # 卡背原图透明底 -> 拼合纯白背景，避免暗色模式下透出页面底色
-            bg = Image.new("RGBA", im.size, (255, 255, 255, 255))
-            im = Image.alpha_composite(bg, im).convert("RGB")
-        buf = io.BytesIO()
-        im.save(buf, "WEBP", quality=q, method=4)
-        data = buf.getvalue()
-    IMG[key] = "data:image/webp;base64," + base64.b64encode(data).decode()
-    sizes.append(len(data))
+def build(output):
+    output = output.resolve()
+    if output.suffix.lower() == '.html':
+        raise SystemExit('--output 现在指定发布目录，例如 --output /workspace/jinglingxia')
+    if output == ROOT or output == SRC or ROOT.is_relative_to(output) or output.is_relative_to(SRC):
+        raise SystemExit('输出目录不能覆盖源码')
+    for asset_path in ['assets/fonts/orca-woodblock.woff2', 'assets/icons.svg', 'assets/motifs/sun.webp', 'assets/motifs/moon.webp', 'assets/motifs/star.webp']:
+        if not (SRC / asset_path).is_file():
+            raise SystemExit('缺少素材：'+asset_path)
+    missing = sorted(k for k in REQUIRED if not (SRC / 'cards' / (k+'.png')).is_file())
+    if missing:
+        raise SystemExit('缺少素材：' + ', '.join(missing))
+    output.mkdir(parents=True, exist_ok=True)
+    written = {}
 
-print("cards:", len(IMG))
-print("avg webp:", round(sum(sizes)/len(sizes)/1024, 1), "KB  total:", round(sum(sizes)/1024/1024, 2), "MB")
-b64_total = sum(len(v) for v in IMG.values())
-print("base64 total:", round(b64_total/1024/1024, 2), "MB")
+    def write(path, data):
+        if isinstance(data, str):
+            data = data.encode('utf-8')
+        target = output / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+        written[path] = hashlib.sha256(data).hexdigest()
+        return path
 
-# 牌背单独处理：文件名 card-back -> key BACK（与牌面同比例，同管线压缩）
-if "card-back" in IMG:
-    IMG["BACK"] = IMG.pop("card-back")
-    print("BACK key set, size:", round(len(IMG["BACK"])/1024, 1), "KB (b64)")
+    def asset(path, data):
+        path = Path(path)
+        digest = hashlib.sha256(data).hexdigest()[:12]
+        return write(str(path.with_name(path.stem + '.' + digest + path.suffix)), data)
 
-# 虎鲸 logo：白底版画 -> 亮度提取 alpha（白底/白斑透明、墨迹不透明），
-# 重新着色为明/暗两套主题色，输出透明 PNG
-def logo_variant(rgb, w=400):
-    src = os.path.join(CARD_DIR, "logo_src.png")
-    if not os.path.exists(src):
-        return None
-    im = Image.open(src).convert("RGB")
-    alpha = im.convert("L").point(lambda p: 255 - p)
-    bbox = alpha.point(lambda a: 255 if a > 10 else 0).getbbox()
-    if bbox:
-        pad = 8
-        l, t, r, b = bbox
-        box = (max(0, l-pad), max(0, t-pad), min(im.width, r+pad), min(im.height, b+pad))
-        im = im.crop(box)
-        alpha = alpha.crop(box)
-    if im.width > w:
-        h = round(im.height * w / im.width)
-        im = im.resize((w, h), Image.LANCZOS)
-        alpha = alpha.resize((w, h), Image.LANCZOS)
-    out = Image.new("RGBA", im.size, rgb + (255,))
-    out.putalpha(alpha)
-    buf = io.BytesIO()
-    out.save(buf, "PNG", optimize=True)
-    return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+    # Browser requests only the selected fronts; the initial fan shares one back URL.
+    images = {}
+    for key in sorted(REQUIRED):
+        with Image.open(SRC / 'cards' / (key+'.png')) as im:
+            im = im.convert('RGBA')
+            if not key.startswith('ios_'):
+                im.thumbnail((400, 800), Image.Resampling.LANCZOS)
+            if key == 'card-back':
+                bg = Image.new('RGBA', im.size, 'white')
+                im = Image.alpha_composite(bg, im).convert('RGB')
+            buf = io.BytesIO()
+            im.save(buf, 'WEBP', quality=88 if key.startswith('ios_') else 84, method=4)
+        images['BACK' if key == 'card-back' else key] = asset('assets/cards/'+key+'.webp', buf.getvalue())
+    replacements = {}
+    for path in sorted((SRC / 'assets').rglob('*')):
+        if path.is_file():
+            relative = path.relative_to(SRC).as_posix()
+            replacements[relative] = asset(relative, path.read_bytes())
 
-if os.path.exists(os.path.join(CARD_DIR, "logo_src.png")):
-    IMG["LOGO"] = logo_variant((60, 46, 31))    # 亮色主题墨色
-    IMG["LOGO_D"] = logo_variant((232, 220, 188))  # 暗色主题奶油色
-    print("LOGO keys set:", round(len(IMG["LOGO"])/1024, 1), "KB /",
-          round(len(IMG["LOGO_D"])/1024, 1), "KB (b64)")
+    def replace_assets(text):
+        for old, new in replacements.items():
+            text = text.replace(old, new)
+        return text
 
-with open(TEMPLATE, encoding="utf-8") as f:
-    html = f.read()
-if html.count("const IMG = __IMAGES_JSON__;") != 1:
-    raise SystemExit("模板必须恰好包含一个 const IMG = __IMAGES_JSON__; 标记")
-html = html.replace("const IMG = __IMAGES_JSON__;",
-                     "const IMG = " + json.dumps(IMG, ensure_ascii=False, separators=(",", ":")) + ";")
-OUT.parent.mkdir(parents=True, exist_ok=True)
-with open(OUT, "w", encoding="utf-8") as f:
-    f.write(html)
-print("written:", OUT, round(os.path.getsize(OUT)/1024/1024, 2), "MB")
-digest = hashlib.sha256(OUT.read_bytes()).hexdigest()
-checksum = OUT.with_name(OUT.name + ".sha256")
-checksum.write_text(f"{digest}  {OUT.name}\n", encoding="utf-8")
-print("sha256:", digest)
+    write('js/images.js', 'export const IMG = '+json.dumps(images, separators=(',', ':'))+';\n')
+    for folder in ('css', 'js'):
+        for path in sorted((SRC / folder).glob('*')):
+            if path.is_file():
+                write(path.relative_to(SRC).as_posix(), replace_assets(path.read_text()))
+    html = replace_assets((SRC / 'template.html').read_text())
+    write('index.html', html)
+    source_commit = os.environ.get('SOURCE_COMMIT', 'uncommitted')
+    write('SOURCE_COMMIT.txt', source_commit+'\n')
+    # Keep a per-file manifest, so publishing verifies the complete site, not HTML alone.
+    write('manifest.json', json.dumps({'source_commit':source_commit, 'files':written.copy()}, indent=2)+'\n')
+    write('SHA256SUMS', ''.join(f'{digest}  {path}\n' for path, digest in sorted(written.items())))
+    # Build into a fresh staging directory for deployment; files outside this
+    # manifest may belong to a previous build and are intentionally untouched.
+    print(json.dumps({'output':str(output), 'files':len(written), 'html_bytes':len(html.encode()),
+                      'html_sha256':written['index.html'], 'source_commit':source_commit}, ensure_ascii=False))
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, default=ROOT / 'dist')
+    build(parser.parse_args().output)

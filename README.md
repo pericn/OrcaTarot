@@ -1,106 +1,62 @@
-# OrcaTarot · 灵匣 · Tarot de Marseille
+# 鲸灵匣 · OrcaTarot
 
-微信马赛塔罗网页小工具。单文件交付（`soul-toolkit.html`，约 4.5 MB），所有卡牌图、UI 素材、logo 均以 WebP base64 内联，无任何外部依赖，可直接部署到任意静态托管。
+马赛塔罗静态网页工具。纯白浅底、疏落的日月星底纹、深靛蓝夜间主题；使用开放许可的齐伋体 Combo 与 New Tegomin 合并子集，页面和分享图统一字体。无需后端、第三方字体服务或运行时依赖。
 
-公开源码仓库：https://github.com/pericn/OrcaTarot
+公开仓库：https://github.com/pericn/OrcaTarot
 
-仓库保存源码与原始素材，生成的 HTML 不进入日常 Git 历史。协作约定见 [AGENTS.md](AGENTS.md)。当前先保留原模板结构，CSS/JS 拆分是后续工作。
+## 源码与构建
 
-## 文件结构
+- `src/template.html`：页面结构、对话框及 iOS 引导。
+- `src/css/app.css`：全部主题和响应式样式。
+- `src/js/app.js`：抽牌、翻牌、历史、主题及引导。
+- `src/js/deck.js`：78 张牌、马赛编号与数字归约规则。
+- `src/js/share.js`：参数化分享图绘制与图片加载。
+- `src/js/icons.js`、`src/assets/icons.svg`：操作和牌阵图标。
+- `src/assets/fonts/`：自托管字体与 OFL 许可。
+- `src/assets/motifs/`：经视觉稿确认的日月星图案，不拉伸。
+- `src/cards/`：原始牌面和 iOS 引导素材，构建时转换为 WebP。
+- `src/build.py`：生成可直接部署的目录式静态站。
+- `tests/browser.cjs`：浏览器验收，使用独立测试会话，不读取个人历史。
+- `dist/`：构建产物，不提交。
 
-```
-OrcaTarot/
-├── README.md                ← 本文件
-├── requirements.txt         ← 构建依赖
-├── AGENTS.md                ← Codex / Workbuddy 协作约定
-├── docs/                    ← 交接基线与发布说明
-├── dist/                    ← 构建输出，不提交 Git
-│   └── soul-toolkit.html     ← 单文件成品，可直接部署
-└── src/                     ← 源码
-    ├── template.html        ← 唯一源模板（所有改动都在这里）
-    ├── build.py             ← 构建脚本：模板 + 素材 → 成品
-    ├── dl_cards.py          ← 历史脚本：卡牌原图下载
-    ├── export_b64.py        ← 历史脚本：base64 导出
-    └── cards/               ← 85 张 PNG（78 张牌 + 3 张引导 + 牌背 + 3 张 logo 素材）
-```
-
-## 构建
-
-```bash
+```sh
 python3 -m pip install -r requirements.txt
 python3 src/build.py
+# Workbuddy 指定一个新的发布目录：
+python3 src/build.py --output /workspace/jinglingxia
 ```
 
-默认产物写到 `dist/soul-toolkit.html`，同时生成 `.sha256` 校验文件。脚本从自身位置定位源码和素材，在任意工作目录运行均可。Workbuddy 需要指定发布路径时：
+部署入口为 `index.html`；一起部署同目录的 `css/`、`js/`、`assets/`。不再输出单文件兼容包。默认目录已有旧版本时，请按 `manifest.json` 中列出的文件打包，或构建到新的暂存目录；不要把旧的单文件产物混入正式发布包。
 
-```bash
-python3 src/build.py --output /workspace/soul-toolkit.html
+牌图、图标、字体和底纹使用带内容哈希的文件名。HTML、CSS、JS 应重新验证缓存；带内容哈希的素材可设长缓存。牌背在首页共用一个 URL，未选牌面不会预加载，已选牌面和 iOS 引导图按需请求。所有 URL 为相对路径，可部署在子目录；务必保留文件结构。
+
+## 交互规则
+
+- 一、二、三张牌阵使用图标，生日牌阵另标名称，图标与牌面均按 3＋2 分行。
+- 全宽扇形支持滑动、鼠标滚动和键盘操作；抽满后收起牌堆，点击逐张翻牌。
+- 小阿尔卡纳和逆位开关直接放在抽牌页；切换会清空本轮未完成牌阵，保留历史。
+- 罗马编号与原程序一致：IIII、VIIII、XIIII、XVIIII；愚者无编号，XIII 只显示编号，宫廷牌不加数字。
+- 三张牌阵且关闭小阿尔卡纳时，按原三张主牌编号和归约计算隐藏牌。
+- 最后一张主牌翻开后若为命运之轮（正逆位均可），旁边出现“再抽一张”。从当前牌池中排除已抽主牌，再抽一张作为追加牌；每轮最多追加一次，隐藏牌不触发此规则，也不参与追加牌池的排除或改变隐藏牌计算。
+- 追加牌计入分享图和本轮同一条历史，保留初次记录的时间。历史重新分享仍取原记录日期，兼容 `hid`/`hidden` 标记。
+- 生日牌继续按原算法由出生年月日、业力数及当前年份确定，不随机替代。
+
+## 本地验收
+
+```sh
+python3 -m http.server 8765 --directory dist
+# 在另一个终端，安装测试依赖（不属于线上资源）：
+npm install --prefix /tmp/orca-tests playwright@1.58.0
+/tmp/orca-tests/node_modules/.bin/playwright install chromium
+NODE_PATH=/tmp/orca-tests/node_modules node tests/browser.cjs http://127.0.0.1:8765/ /tmp/orca-qa
 ```
 
-构建流程：
+测试覆盖抽牌数量、牌堆收起、隐藏牌、命运之轮追加、生日牌阵、逆位、历史重新分享、字体和主题对比度、320–1440px 布局与 iOS 引导。`#guide` 可强制显示引导，连续点品牌三次也可打开。
 
-1. 扫描 `cards/*.png`，转 WebP → base64
-2. 普通牌图缩放到 280px 宽、q=80；`ios_` 前缀的引导截图**不缩放**、q=88（保 UI 文字清晰）
-3. 校验完整牌组与必需素材，再注入 `template.html` 的 `__IMAGES_JSON__` 占位符
-4. 同时注入牌背、logo 的 base64
+## 数据与发布
 
-改完 `template.html` 后必须重新 build，成品才会变。
+既有 localStorage 键全部保留：`lx-history`、`lx-prefs`、`lx-theme`、`lx-guide-done`、`lx-visited`。历史最多 100 条。新版本在原域名发布时可以继续读取本机记录；域名变化须另行处理迁移。
 
-## 自动构建与交付
+Workbuddy 继续负责发布。只发布已合并且检查通过的版本，校验 `SHA256SUMS` 和 `manifest.json` 中的全部文件，记录 `SOURCE_COMMIT.txt`、入口 HTML SHA-256、整站清单 SHA-256、线上地址及时间；发布后实际核对线上资源。发布流程见 [docs/RELEASES.md](docs/RELEASES.md)。
 
-main 更新、PR 或手动触发会运行 GitHub Actions，生成带源码 commit 标识的构建包，临时产物保留 14 天。Workbuddy 从通过检查的 main 构建中下载 HTML，核对 SHA-256 后用原机制发布。PR 构建仅用于预览，不代表正式版本。
-
-正式发布时应另行将 HTML、校验文件与源码 commit 归档到 GitHub Release；当前尚未建立 Release。发布记录见 [docs/RELEASES.md](docs/RELEASES.md)。
-
-## 本地测试
-
- Safari 打不开 file:// 的引导弹框问题，用以下任一方式：
-
-- **地址栏强制预览**：`dist/soul-toolkit.html#guide`（打开即弹引导，跳过 iOS UA 检测和记忆）
-- **牌匾三击**：成品页连续点顶部"灵匣"牌匾 3 次，随时弹出引导
-- **桌面浏览器**：Chromium headless + `--allow-file-access-from-files` 可跑断言测试（375×667 视口模拟 iPhone SE）
-
-## 功能清单
-
-| 模块 | 说明 |
-|---|---|
-| 抽牌 | 单张 / 三张牌阵，逆位开关，小阿尔卡纳开关 |
-| 隐藏牌 | 三张牌阵抽卡后可翻一张隐藏牌 |
-| 分享卡 | compose() 生成 750px 宽分享长图，参数化（牌数组 + 时间戳） |
-| 历史记录 | localStorage 最多 100 条，每条可**重新分享**（日期取抽卡当天） |
-| 重新分享 | 历史页每条记录的"享"按钮重绘分享卡 |
-| 换牌阵入口 | 迷你牌阵 SVG 图标 + 放大按钮 + 常驻提示 + 首次轻浮动画（只弹一次） |
-| iOS 引导 | 首次 Safari 打开弹"添加到主屏幕"引导，真实 iOS 截图三步流程 |
-| 明暗模式 | CSS 变量切换，跟随系统 |
-
-## iOS 引导流程（新版 iOS 26+）
-
-1. 点屏幕最下面的**更多**按钮 → 再点**共享**
-2. 共享菜单里找到**添加到主屏幕**，点这一行
-3. 打开**作为网页 App 打开**的开关，再点**添加**
-   - ⚠️ 不开这个开关，加的只是书签，点开还在 Safari 里
-
-引导弹框只在 iOS Safari 且未 standalone 时自动弹出一次；`lx-guide-done` 记住已看过。
-
-## 技术要点 / 踩过的坑
-
-- **compose(cards, ts) 参数化**：分享卡从读全局 picks/hidden 改为接受牌数组 + 时间戳参数，历史重绘时日期取抽卡当天而非今天
-- **hid/hidden 双兼容**：实时路径隐藏牌是 `{...c, flipped:false, hidden:true}`，历史存档存 `hid:true`，compose 判定必须写 `c.hid||c.hidden`，否则历史重绘的隐藏牌标签丢失
-- **iOS Safari 检测**：UA 含 iPad/iPhone/iPod（或 MacIntel + maxTouchPoints>1）+ 真 Safari（排除 CriOS/FxiOS/EdgiOS/OPiOS）+ `!navigator.standalone`
-- **const 不挂 window**：iframe 内 `const IMG` 不能通过 `w.IMG` 访问，断言测试里要用 `w.eval('IMG.xxx')`
-- **headless 截图**：`--screenshot` 按 `--window-size` 尺寸，真实视口 = 窗口高 − 87px（chrome 区）；窗口 754 高 = 667 视口（iPhone SE）
-- **iframe 测试滚动条**：桌面 Chromium 垂直滚动条占 15px，iframe 宽要设 390 才能得到 375 视口
-- **引导弹框一屏完整**：375×667 下 scrollHeight 必须 ≤ 667，实测 629；步骤文字 12px + letter-spacing .5px 才能单行（step 内容区实际只有 260px 宽）
-- **分享卡呼吸感参数**：M=62、PAD=32、headH=140、footH=70、gap=25；牌名 `400 20px` + SOFT 色（#7d6b52）
-
-## localStorage 键
-
-| 键 | 用途 |
-|---|---|
-| `lx-history` | 历史抽卡记录（HMAX=100） |
-| `lx-guide-done` | 引导已看过（GKEY，只自动弹一次） |
-| `lx-visited` | 换牌阵入口弹跳只播一次（VKEY） |
-
-## 线上地址（原 README 提供，建仓时未重新发布）
-
-https://a17db079dfdd07afb.app.workbuddy.host （重复发布保持同一链接）
+历史线上地址：https://a17db079dfdd07afb.app.workbuddy.host （此重构不自动更改线上内容）。
