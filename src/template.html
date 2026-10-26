@@ -22,8 +22,8 @@
 <div class="reading-tools"><button class="sp-ind" id="spreadInd" aria-label="选择牌阵"><span id="spreadIcon"></span><span id="spreadName"></span><svg class="ico chevron" aria-hidden="true"><use href="assets/icons.svg#chevron"/></svg></button>
 <div class="reading-options"><label class="sw"><input type="checkbox" id="tMinor" checked><span>小阿尔卡纳</span></label><label class="sw"><input type="checkbox" id="tRev"><span>逆位</span></label></div></div>
 <section id="draw" aria-label="选牌"><div class="slotstage"><div class="slots" id="slots" data-n="3"></div></div>
-<div class="fanzone" id="fanzone"><div class="fanprompt" id="fanPrompt" aria-live="polite"></div><div id="fanMid" hidden></div><div id="fanWrap" aria-label="扇形牌堆，左右滑动选牌"><div id="fanTrack"></div></div><div id="bdayEmpty" hidden><button class="btn" id="bdayGo">填写生日</button></div></div></section>
-<section id="reveal" aria-label="翻牌" hidden><div class="rv-prompt" id="rvPrompt" aria-live="polite"></div><div class="rv-row pre" id="rvRow" data-n="3"></div><div class="rv-extra" id="rvExtra" hidden></div><div class="rv-hidden" id="rvHidden" hidden><div class="rvh-cap">隐藏牌</div><div class="rcard hs" id="hCard"></div></div><div class="rv-acts"><button class="btn" id="reShuffle"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#shuffle"/></svg>重新洗牌</button><button class="btn primary" id="shareBtn" hidden><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#share"/></svg>分享</button></div></section>
+<div class="fanzone" id="fanzone"><div class="fanprompt" id="fanPrompt" aria-live="polite"></div><div id="fanMid" hidden></div><div id="fanWrap" aria-label="扇形牌堆，左右滑动或用方向键选牌"><div id="fanTrack"></div></div><div id="bdayEmpty" hidden><button class="btn" id="bdayGo">填写生日</button></div></div></section>
+<section id="reveal" aria-label="翻牌" hidden><div class="rv-prompt" id="rvPrompt" aria-live="polite"></div><div class="rv-row pre" id="rvRow" data-n="3"></div><div class="rv-supplement"><div class="rv-hidden" id="rvHidden" hidden><div class="rvh-cap">隐藏牌</div><div class="rcard hs" id="hCard"></div></div><div class="rv-extra" id="rvExtra" hidden></div></div><div class="rv-acts"><button class="btn" id="reShuffle"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#shuffle"/></svg>重新洗牌</button><button class="btn primary" id="shareBtn" hidden><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#share"/></svg>分享</button></div></section>
 </main>
 <nav class="main-nav" aria-label="主导航"><button id="drawBtn" aria-current="page"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#cards"/></svg>抽牌</button><button id="historyBtn"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>抽牌记录</button></nav>
 </div>
@@ -76,12 +76,12 @@
 <div id="historyOv" hidden>
   <div class="hd-head">
     <p class="sh-title">抽 卡 记 录</p>
+    <button class="btn danger" id="historyClear" hidden>清空记录</button>
     <button class="hd-close" id="historyClose" aria-label="返回抽牌"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#back"/></svg></button>
   </div>
   <div class="hd-list" id="historyList"></div>
   <div class="hd-foot">
     <span class="hd-count" id="historyCount"></span>
-    <button class="btn sm" id="historyClear" hidden>清 空</button>
   </div>
 </div>
 

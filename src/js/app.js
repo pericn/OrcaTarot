@@ -2,6 +2,7 @@
 import { IMG } from './images.js';
 import { DECK, MAJOR_NUM, dsum, toMajor } from './deck.js';
 import { compose, whenLoaded } from './share.js';
+import { hydrateCardImages } from './card-images.js';
 import { icon, spreadIcon } from './icons.js';
 
 /* ---------- 主题 ---------- */
@@ -62,6 +63,7 @@ let readingId=null, readingTs=Date.now(), drawRevision=0;
 let bday=prefs.bday||null;
 let fanPool=[], fanCards=[], fanRaf=0, tsx=0, tsy=0, fanMoved=false;
 let rvCards=[];
+let fanVisible=[];
 
 tRev.checked=!!prefs.rev;
 tMinor.checked=prefs.minor!==false;
@@ -101,27 +103,33 @@ function renderFan(){
   }
   fanTrack.innerHTML=fanPool.map((c,i)=>
     '<button type="button" class="fcard" aria-label="选择第 '+(i+1)+' 张牌" data-key="'+c.key+'" data-i="'+i+'" style="left:'+(i*STEP)+'px">'
-    +'<div class="fcard-i" style="--d:'+Math.min(600,i*5)+'ms">'
+    +'<div class="fcard-i">'
     +'<img src="'+IMG.BACK+'" alt="" draggable="false"></div></button>').join('');
   fanCards=Array.prototype.slice.call(fanTrack.children);
-  fanTrack.style.width=(fanPool.length*STEP+fanWrap.clientWidth)+'px';
-  centerFan();
+  fanTrack.style.width=((fanPool.length-1)*STEP+CARD_W)+'px';
+  // Commit the shorter track before assigning scrollLeft; the old 78-card
+  // scroll offset otherwise survives the first switch to 22 cards.
+  fanVisible=[];
+  fanWrap.scrollLeft=Math.max(0,(fanPool.length-1)*STEP/2+CARD_W/2-fanWrap.clientWidth/2);
   updateFan();
 }
 const STEP=52, CARD_W=100;
-function centerFan(){fanWrap.scrollLeft=(fanPool.length*STEP)/2;}
 function updateFan(){
   if(drawSection.hidden||spread==='bday')return;
   const W=fanWrap.clientWidth, sl=fanWrap.scrollLeft, c=sl+W/2;
   const first=Math.max(0,Math.floor((sl-90)/STEP));
   const last=Math.min(fanPool.length-1,Math.ceil((sl+W+90)/STEP));
   const dipMax=Math.max(48,fanWrap.clientHeight*0.30);
+  for(const i of fanVisible){if(i<first||i>last)fanCards[i].style.visibility='hidden';}
+  fanVisible=[];
   for(let i=first;i<=last;i++){
+    fanVisible.push(i);
     const el=fanCards[i]; if(!el)continue;
     const dx=i*STEP+CARD_W/2-c;
     const rot=Math.max(-42,Math.min(42,dx*.06));
     const dip=Math.min(dipMax,dx*dx/5200);
     const sc=Math.max(.45,1-Math.abs(dx)/1400);
+    el.style.visibility=el.classList.contains('gone')?'hidden':'visible';
     el.style.transform='translate3d(0,'+dip.toFixed(1)+'px,0) rotate('+rot.toFixed(2)+'deg) scale('+sc.toFixed(3)+')';
   }
 }
@@ -141,29 +149,41 @@ fanWrap.addEventListener('click',e=>{
   if(!c)return;
   pickFan(parseInt(c.dataset.i,10));
 });
+fanWrap.addEventListener('keydown',e=>{
+  if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+  const current=e.target.closest('.fcard');if(!current)return;
+  e.preventDefault();
+  const direction=e.key==='ArrowLeft'||e.key==='End'?-1:1;
+  let index=e.key==='Home'?0:e.key==='End'?fanCards.length-1:+current.dataset.i+direction;
+  while(index>=0&&index<fanCards.length&&fanCards[index].classList.contains('gone'))index+=direction;
+  if(index<0||index>=fanCards.length)return;
+  focusFan(index);
+});
+function focusFan(index){
+  fanWrap.scrollLeft=Math.max(0,index*STEP+CARD_W/2-fanWrap.clientWidth/2);
+  updateFan();fanCards[index].focus({preventScroll:true});
+}
 window.addEventListener('resize',()=>{
   if(drawSection.hidden||spread==='bday')return;
-  fanTrack.style.width=(fanPool.length*STEP+fanWrap.clientWidth)+'px';
+  fanTrack.style.width=((fanPool.length-1)*STEP+CARD_W)+'px';
   updateFan();
 });
 
 /* ---------- 抽牌：牌飞进牌位 ---------- */
 function flyToSlot(fEl,fr,slotEl,done){
   const sr=slotEl.getBoundingClientRect();
-  const ghost=fEl.cloneNode(true);ghost.classList.add('flyghost');
-  const gi=ghost.querySelector('.fcard-i'); if(gi)gi.style.animation='none';
-  ghost.classList.remove('gone');
-  ghost.style.cssText='position:fixed;left:'+fr.left+'px;top:'+fr.top+'px;'
-    +'width:'+fr.width+'px;height:'+fr.height+'px;transform:none;z-index:70;'
-    +'pointer-events:none;margin:0;transition:left .42s cubic-bezier(.3,.7,.3,1),'
-    +'top .42s cubic-bezier(.3,.7,.3,1),width .42s cubic-bezier(.3,.7,.3,1),'
-    +'height .42s cubic-bezier(.3,.7,.3,1)';
+  const ghost=document.createElement('div');ghost.className='flyghost';
+  const img=document.createElement('img');img.src=IMG.BACK;img.alt='';ghost.append(img);
+  ghost.style.cssText='left:'+fr.left+'px;top:'+fr.top+'px;width:'+fr.width+'px;height:'+fr.height+'px';
   document.body.appendChild(ghost);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    ghost.style.left=sr.left+'px';ghost.style.top=sr.top+'px';
-    ghost.style.width=sr.width+'px';ghost.style.height=sr.height+'px';
-  }));
-  setTimeout(()=>{ghost.remove();if(done)done();},460);
+  const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  // Only transform/opacity animate: left/top/width/height used to force layout
+  // on every animation frame, alongside dozens of shadowed fan cards.
+  const animation=ghost.animate([
+    {transform:'none',opacity:1},
+    {transform:'translate('+ (sr.left-fr.left)+'px,'+(sr.top-fr.top)+'px) scale('+(sr.width/fr.width)+','+(sr.height/fr.height)+')',opacity:.9}
+  ],{duration:reduced?0:280,easing:'cubic-bezier(.3,.7,.3,1)',fill:'forwards'});
+  animation.finished.then(()=>{ghost.remove();done();}).catch(()=>ghost.remove());
 }
 function pickFan(i){
   if(busy||picks.length>=count)return;
@@ -172,9 +192,12 @@ function pickFan(i){
   const slotEl=slotsEl.children[picks.length];
   if(!slotEl)return;
   busy=true;const revision=drawRevision;
-  const fr=fEl.getBoundingClientRect();   // 必须先量取：加 .gone(display:none) 后 rect 全为 0
-  fEl.classList.add('gone');
+  const restoreFocus=document.activeElement===fEl;
+  const fr=fEl.getBoundingClientRect();   // 在隐藏之前记录飞牌起点
+  fEl.classList.add('gone');fEl.style.visibility='hidden';
   picks.push({...fanPool[i],rev:tRev.checked&&Math.random()<0.4,flipped:false});
+  whenLoaded(IMG[fanPool[i].key],{retry:true});
+  if(picks.length===count){const c=computeHidden();if(c)whenLoaded(IMG[c.key],{retry:true});}
   markNext();
   updatePrompt();
   flyToSlot(fEl,fr,slotEl,()=>{
@@ -182,6 +205,11 @@ function pickFan(i){
     busy=false;renderSlots();
     buzz(12);
     if(picks.length===count){buzz([12,50,12]);goReveal();}
+    else if(restoreFocus){
+      const remaining=fanCards.map((card,index)=>({card,index})).filter(({card})=>!card.classList.contains('gone'));
+      const next=remaining.find(({index})=>index>i)||remaining.at(-1);
+      if(next)focusFan(next.index);
+    }
   });
 }
 
@@ -191,18 +219,24 @@ function updatePrompt(){
 }
 
 /* ---------- S2 翻牌屏 ---------- */
+function frontMarkup(p){
+  return '<span class="face front"><img class="'+(p.rev?'rev':'')+'" data-card-src="'+IMG[p.key]+'" alt="'+p.cn+'" draggable="false" hidden>'
+    +'<span class="card-image-status" role="status">牌面加载中…</span></span>';
+}
+function retryMarkup(){return '<button type="button" class="btn image-retry" hidden>重试牌面</button>';}
 function cardMarkup(p,i){
   return '<div class="rcard'+(p.rev?' rev':'')+'" data-i="'+i+'">'
     +'<button type="button" class="flip" aria-label="翻开第 '+(i+1)+' 张牌"><span class="flip-inner">'
     +'<span class="face back"><img src="'+IMG.BACK+'" alt="牌背" draggable="false"></span>'
-    +'<span class="face front"><img class="'+(p.rev?'rev':'')+'" src="'+IMG[p.key]+'" alt="'+p.cn+'" draggable="false"></span>'
-    +'</span></button><div class="rname">'+p.cn+'</div>'
+    +frontMarkup(p)
+    +'</span></button>'+retryMarkup()+'<div class="rname">'+p.cn+'</div>'
     +(p.rev?'<div class="rrev">逆位</div>':'')+'</div>';
 }
 function renderReveal(){
   rvRow.dataset.n=String(count);
   rvRow.innerHTML=picks.slice(0,count).map(cardMarkup).join('');
   rvCards=Array.from(rvRow.children);
+  hydrateCardImages(rvRow);
   rvRow.classList.add('pre');
   rvExtra.hidden=true;rvExtra.replaceChildren();
   hidden=null;rvHidden.hidden=true;hCard.innerHTML='';
@@ -220,11 +254,13 @@ function goReveal(){
   buzz(12);
 }
 // The wheel at the end of the primary reading (upright or reversed) offers one
-// extra card from the remaining pool. Hidden cards do not trigger this rule.
+// extra card from the remaining pool. A revealed hidden wheel also qualifies.
 function syncWheel(){
-  rvRow.querySelectorAll('.wheel-action').forEach(b=>b.remove());
+  revealSection.querySelectorAll('.wheel-action').forEach(b=>b.remove());
   const last=picks[count-1];
-  if(!last?.flipped||last.key!=='M10'||picks.length>count)return;
+  const mainWheel=last?.flipped&&last.key==='M10';
+  const hiddenWheel=hidden?.flipped&&hidden.key==='M10';
+  if((!mainWheel&&!hiddenWheel)||picks.length>count)return;
   const button=document.createElement('button');button.type='button';
   button.className='btn wheel-action';button.innerHTML=icon('plus')+'再抽一张';
   button.onclick=()=>{
@@ -234,27 +270,28 @@ function syncWheel(){
     const card=pool[Math.floor(Math.random()*pool.length)];
     if(!card)return;
     picks.push({...card,rev:tRev.checked&&Math.random()<.4,flipped:false,extra:true});
+    whenLoaded(IMG[card.key],{retry:true});
     button.remove();
     rvExtra.hidden=false;rvExtra.innerHTML='<div class="rvh-cap">追加牌</div>'+cardMarkup(picks.at(-1),picks.length-1);
+    hydrateCardImages(rvExtra);
     rvExtra.querySelector('.rcard').classList.add('guide');
     updateRvPrompt();buzz(12);
   };
-  rvRow.lastElementChild.append(button);
+  (mainWheel?rvRow.lastElementChild:hCard).append(button);
 }
 function afterFlip(){
+  if(spread==='3'&&picks.slice(0,count).every(p=>p.flipped)&&!hidden)showHidden();
   document.querySelectorAll('.rcard.guide').forEach(g=>g.classList.remove('guide'));
-  const next=[...rvRow.children,...rvExtra.querySelectorAll('.rcard')].find(c=>!c.classList.contains('flipped'));
-  if(next){next.classList.add('guide');}
-  else if(hidden&&!hidden.flipped){hCard.classList.add('guide');}
+  const next=[...rvRow.children,...(hidden?[hCard]:[]),...rvExtra.querySelectorAll('.rcard')].find(c=>!c.classList.contains('flipped'));
+  if(next)next.classList.add('guide');
   syncWheel();updateRvPrompt();
-  if(spread==='3'&&picks.every(p=>p.flipped)&&!hidden)showHidden();
   if(picks.every(p=>p.flipped)&&(!hidden||hidden.flipped)){
     buzz([12,50,12]);
     recordReading();
   }
 }
 function flipReadingCard(e){
-  if(e.target.closest('.wheel-action'))return;
+  if(e.target.closest('.wheel-action,.image-retry'))return;
   const c=e.target.closest('.rcard');
   if(!c||c.classList.contains('flipped'))return;
   const p=picks[+c.dataset.i]; if(!p)return;
@@ -266,7 +303,8 @@ function flipReadingCard(e){
 }
 rvRow.addEventListener('click',flipReadingCard);
 rvExtra.addEventListener('click',flipReadingCard);
-hCard.addEventListener('click',()=>{
+hCard.addEventListener('click',e=>{
+  if(e.target.closest('.wheel-action,.image-retry'))return;
   if(!hidden||hidden.flipped||hCard.classList.contains('flipped'))return;
   hCard.classList.add('flipped');
   hidden.flipped=true;
@@ -288,8 +326,9 @@ function showHidden(){
   hidden={...c,flipped:false,hidden:true};
   hCard.innerHTML='<button type="button" class="flip" aria-label="翻开隐藏牌"><span class="flip-inner">'
     +'<span class="face back"><img src="'+IMG.BACK+'" alt="牌背" draggable="false"></span>'
-    +'<span class="face front"><img src="'+IMG[hidden.key]+'" alt="'+hidden.cn+'" draggable="false"></span>'
-    +'</span></button><div class="rname">'+hidden.cn+'</div>';
+    +frontMarkup(hidden)
+    +'</span></button>'+retryMarkup()+'<div class="rname">'+hidden.cn+'</div>';
+  hydrateCardImages(hCard);
   rvHidden.hidden=false;
   setTimeout(()=>{if(hidden&&!hidden.flipped)hCard.classList.add('guide');},420);
   updateRvPrompt();
@@ -378,6 +417,7 @@ bStart.onclick=()=>{
   const kc=DECK[k];
   const fc=toMajor(dsum(nowY));  // 流年牌：今年年份各位相加，<=21 分界
   picks=[yc,mc,dc,kc,fc].map(c=>({...c,rev:false,flipped:false}));
+  picks.forEach(c=>whenLoaded(IMG[c.key],{retry:true}));
   closeSheet();
   renderSlots();
   updatePrompt();
@@ -418,11 +458,16 @@ function addHistory(rec){
   while(list.length>HMAX)list.pop();
   saveHistory(list);
 }
+function orderedCards(){
+  return [...picks.slice(0,count).filter(p=>p.flipped),...(hidden?.flipped?[hidden]:[]),...picks.slice(count).filter(p=>p.flipped)];
+}
+function orderSavedCards(cards){
+  return [...cards.filter(c=>!c.hid&&!c.hidden&&!c.extra),...cards.filter(c=>c.hid||c.hidden),...cards.filter(c=>c.extra&&!c.hid&&!c.hidden)];
+}
 /* 一次完整揭示 = 一条记录（含隐藏牌，若已翻开） */
 function recordReading(){
 
-  const cards=picks.map(p=>({key:p.key,cn:p.cn,rev:!!p.rev,...(p.extra?{extra:true}:{})}));
-  if(hidden&&hidden.flipped)cards.push({key:hidden.key,cn:hidden.cn,rev:false,hid:true});
+  const cards=orderedCards().map(p=>({key:p.key,cn:p.cn,rev:!!p.rev,...(p.extra?{extra:true}:{}),...(p.hidden?{hid:true}:{})}));
   if(!readingId)readingId=Date.now()+'-'+Math.random().toString(36).slice(2,7);
   const rec={id:readingId,ts:readingTs,spread,cards};
   const list=loadHistory(),index=list.findIndex(r=>r.id===readingId);
@@ -435,7 +480,9 @@ function fmtTs(ts){
   const p=n=>String(n).padStart(2,'0');
   return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 '+p(d.getHours())+':'+p(d.getMinutes());
 }
+let disposeHistoryImages=()=>{};
 function renderHistory(){
+  disposeHistoryImages();
   const list=loadHistory();
   historyCount.textContent=list.length?'共 '+list.length+' 条 · 存于本机':'';
   historyClear.hidden=list.length===0;
@@ -446,10 +493,11 @@ function renderHistory(){
     return;
   }
   historyList.innerHTML=list.map(r=>{
-    const thumbs=r.cards.map(c=>
-      '<div class="hd-thumb'+(c.hid?' hid':'')+'"><img class="'+(c.rev?'rev':'')+'" src="'
-      +(IMG[c.key]||IMG.BACK)+'" alt="'+c.cn+'" draggable="false"></div>').join('');
-    const names=r.cards.map(c=>(c.hid?'隐藏 ':c.extra?'追加 ':'')+c.cn+(c.rev?'（逆）':'')).join(' · ');
+    const cards=orderSavedCards(r.cards);
+    const thumbs=cards.map(c=>
+      '<div class="hd-thumb'+(c.hid||c.hidden?' hid':'')+'"><img class="'+(c.rev?'rev':'')+'" data-card-src="'
+      +(IMG[c.key]||IMG.BACK)+'" alt="'+c.cn+'" loading="lazy" decoding="async" draggable="false"></div>').join('');
+    const names=cards.map(c=>(c.hid||c.hidden?'隐藏 ':c.extra?'追加 ':'')+c.cn+(c.rev?'（逆）':'')).join(' · ');
     return '<div class="hd-item" data-id="'+r.id+'">'
       +'<div class="hd-meta"><span class="hd-date">'+fmtTs(r.ts)+'</span>'
       +'<span class="hd-spread" style="color:'+(SPREAD_COLOR[r.spread]||'var(--ink-soft)')+'">'
@@ -459,6 +507,7 @@ function renderHistory(){
       +'<div class="hd-cards">'+thumbs+'</div>'
       +'<div class="hd-names">'+names+'</div></div>';
   }).join('');
+  disposeHistoryImages=hydrateCardImages(historyList);
 }
 historyList.addEventListener('click',e=>{
   const sh=e.target.closest('[data-share]');
@@ -476,25 +525,32 @@ historyList.addEventListener('click',e=>{
 /* 重新分享历史记录：用存档数据原样重绘分享卡（日期取抽卡当日） */
 async function reshareRecord(rec){
   try{
-    const jobs=rec.cards.map(c=>IMG[c.key]?whenLoaded(IMG[c.key]):Promise.resolve());
+    const jobs=rec.cards.map(c=>IMG[c.key]?whenLoaded(IMG[c.key],{retry:true}):Promise.resolve());
     await Promise.all(jobs);
     await document.fonts.load('16px OrcaWoodblock');
     await document.fonts.ready;
-    shareImg.src=compose(rec.cards,rec.ts).toDataURL('image/png');
+    shareImg.src=compose(orderSavedCards(rec.cards),rec.ts).toDataURL('image/png');
     shareOv.dataset.returnTo="history";
-    historyOv.hidden=true;
+    setHistory(false);
     shareOv.hidden=false;
     buzz(9);
   }catch(e){}
 }
 historyClear.onclick=()=>{
   if(!loadHistory().length)return;
+  if(!confirm('清空本机的全部抽牌记录？此操作无法撤销。'))return;
   saveHistory([]);
   renderHistory();
   buzz(12);
 };
-historyBtn.onclick=()=>{renderHistory();historyOv.hidden=false;buzz(9);};
-historyClose.onclick=()=>{historyOv.hidden=true;buzz(6);};
+function setHistory(open){
+  historyOv.hidden=!open;
+  document.body.classList.toggle('history-open',open);
+  document.getElementById('drawBtn').setAttribute('aria-current',open?'false':'page');
+  historyBtn.setAttribute('aria-current',open?'page':'false');
+}
+historyBtn.onclick=()=>{renderHistory();setHistory(true);buzz(9);};
+historyClose.onclick=()=>{setHistory(false);buzz(6);};
 
 /* ---------- 添加到主屏幕引导（iOS Safari 首次；#guide 或点牌匾3次可随时预览） ---------- */
 const GKEY='lx-guide-done', VKEY='lx-visited';
@@ -551,9 +607,8 @@ try{
 /* ---------- 分享截图 ---------- */
 async function shareNow(){
   try{
-    const cards=picks.filter(p=>p.flipped);   // 只呈现已翻开的牌
-    if(hidden&&hidden.flipped)cards.push(hidden);   // 隐藏牌一并呈现
-    const jobs=cards.map(c=>whenLoaded(IMG[c.key]));
+    const cards=orderedCards();
+    const jobs=cards.map(c=>whenLoaded(IMG[c.key],{retry:true}));
     await Promise.all(jobs);
     await document.fonts.load('16px OrcaWoodblock');
     await document.fonts.ready;
@@ -564,7 +619,7 @@ async function shareNow(){
   }catch(e){console.error("分享失败",e)}
 }
 shareBtn.onclick=shareNow;
-function closeShare(){shareOv.hidden=true;if(shareOv.dataset.returnTo==='history')historyOv.hidden=false;}
+function closeShare(){shareOv.hidden=true;if(shareOv.dataset.returnTo==='history')setHistory(true);}
 document.getElementById('shareClose').onclick=closeShare;
 shareOv.addEventListener('click',e=>{if(e.target===shareOv)closeShare();});
 
@@ -572,11 +627,11 @@ resetDraw();
 
 // Navigation keeps the current reading intact. Dialogs return focus to the
 // opener, and Escape is the same action as each visible back control.
-document.getElementById('drawBtn').onclick=()=>{historyOv.hidden=true;};
+document.getElementById('drawBtn').onclick=()=>{setHistory(false);};
 window.addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;
   if(!guideOv.hidden)closeGuide();else if(!shareOv.hidden)closeShare();
-  else if(!spreadOv.hidden)closeSheet();else historyOv.hidden=true;
+  else if(!spreadOv.hidden)closeSheet();else setHistory(false);
 });
 for(const overlay of [spreadOv,shareOv,historyOv,guideOv]){
   let returnFocus=null;
@@ -586,7 +641,8 @@ for(const overlay of [spreadOv,shareOv,historyOv,guideOv]){
   }).observe(overlay,{attributes:true,attributeFilter:['hidden']});
   overlay.addEventListener('keydown',e=>{
     if(e.key!=='Tab')return;
-    const els=Array.from(overlay.querySelectorAll('button,input')).filter(el=>!el.disabled&&el.getClientRects().length);
+    const controls=[...overlay.querySelectorAll('button,input'),...(overlay===historyOv?document.querySelectorAll('.main-nav button'):[])];
+    const els=controls.filter(el=>!el.disabled&&el.getClientRects().length);
     const first=els[0],last=els.at(-1);
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}

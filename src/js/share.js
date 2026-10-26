@@ -1,25 +1,5 @@
 import { IMG } from './images.js';
-function loadImg(src){
-  loadImg.c=loadImg.c||{};
-  if(!loadImg.c[src]){const i=new Image();i.src=src;loadImg.c[src]=i;}
-  return loadImg.c[src];
-}
-function whenLoaded(src){
-  const i=loadImg(src);
-  if(i.complete)return Promise.resolve(i.naturalWidth?i:null);
-  return new Promise(resolve=>{
-    // A reading can contain the same image twice (e.g. hidden and extra cards).
-    // Independent listeners let every caller settle without overwriting others.
-    const done=()=>{
-      i.removeEventListener('load',done);
-      i.removeEventListener('error',done);
-      resolve(i.naturalWidth?i:null);
-    };
-    i.addEventListener('load',done,{once:true});
-    i.addEventListener('error',done,{once:true});
-    if(i.complete)done();
-  });
-}
+import { whenLoaded, getLoadedImage } from './card-images.js';
 
 function diamond(g,x,y,r,color){
   g.save();g.fillStyle=color;g.translate(x,y);g.rotate(Math.PI/4);
@@ -30,7 +10,7 @@ function drawLogo(g,cx,y,w,ink){
   g.fillText('鲸灵匣',cx,y+35);
 }
 function drawCard(g,src,rev,x,y,w,h,bg,ink){
-  const img=loadImg(src), r=9;
+  const img=getLoadedImage(src), r=9;
   g.save();
   g.beginPath();
   g.moveTo(x+r,y);
@@ -49,6 +29,9 @@ function drawCard(g,src,rev,x,y,w,h,bg,ink){
     if(ir>cr){dw=w;dh=w/ir;}else{dh=h;dw=h*ir;}
     g.drawImage(img,-dw/2,-dh/2,dw,dh);   // 以牌中心为原点绘制
     g.restore();
+  }else{
+    g.fillStyle=ink;g.font='14px OrcaWoodblock,serif';g.textAlign='center';
+    g.fillText('牌面暂不可用',x+w/2,y+h/2,w-12);
   }
   g.restore();
   g.strokeStyle=ink;g.lineWidth=1.6;
