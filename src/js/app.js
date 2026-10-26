@@ -157,9 +157,12 @@ fanWrap.addEventListener('keydown',e=>{
   let index=e.key==='Home'?0:e.key==='End'?fanCards.length-1:+current.dataset.i+direction;
   while(index>=0&&index<fanCards.length&&fanCards[index].classList.contains('gone'))index+=direction;
   if(index<0||index>=fanCards.length)return;
+  focusFan(index);
+});
+function focusFan(index){
   fanWrap.scrollLeft=Math.max(0,index*STEP+CARD_W/2-fanWrap.clientWidth/2);
   updateFan();fanCards[index].focus({preventScroll:true});
-});
+}
 window.addEventListener('resize',()=>{
   if(drawSection.hidden||spread==='bday')return;
   fanTrack.style.width=((fanPool.length-1)*STEP+CARD_W)+'px';
@@ -189,6 +192,7 @@ function pickFan(i){
   const slotEl=slotsEl.children[picks.length];
   if(!slotEl)return;
   busy=true;const revision=drawRevision;
+  const restoreFocus=document.activeElement===fEl;
   const fr=fEl.getBoundingClientRect();   // 在隐藏之前记录飞牌起点
   fEl.classList.add('gone');fEl.style.visibility='hidden';
   picks.push({...fanPool[i],rev:tRev.checked&&Math.random()<0.4,flipped:false});
@@ -201,6 +205,11 @@ function pickFan(i){
     busy=false;renderSlots();
     buzz(12);
     if(picks.length===count){buzz([12,50,12]);goReveal();}
+    else if(restoreFocus){
+      const remaining=fanCards.map((card,index)=>({card,index})).filter(({card})=>!card.classList.contains('gone'));
+      const next=remaining.find(({index})=>index>i)||remaining.at(-1);
+      if(next)focusFan(next.index);
+    }
   });
 }
 
