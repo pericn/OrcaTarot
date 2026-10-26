@@ -192,3 +192,17 @@ header.top{display:flex;align-items:center;justify-content:space-between;padding
   #draw .slots{--slot-w:44px;margin-bottom:0;gap:8px}
   .fanzone{width:100%;padding-top:0}
 }
+
+#updateOv{position:fixed;inset:0;z-index:101;background:#101729aa;display:grid;place-items:center;padding:14px}
+.up-icon-wrap{text-align:center;margin:10px 0 0}
+.up-icon{width:64px;height:64px;border-radius:14px;border:2px solid var(--line);background:var(--card);box-shadow:var(--shadow)}
+.up-icon-cap{font-size:12px;color:var(--ink-soft);margin:6px 0 0}
+.up-note{font-size:12px;color:var(--ink-soft);line-height:1.7;margin:7px 0 0}
+.up-warn{font-size:12px;color:var(--madder);line-height:1.7;margin:7px 0 0}
+/* 弹框主按钮居中（gd-card 复用） */
+#guideOv .btn,#updateOv .btn{display:flex;margin:14px auto 0;width:fit-content;min-width:150px}
+#updateOv .gd-card{padding:14px}
+#updateOv .gd-steps{gap:8px;margin:10px 0}
+#updateOv .gd-step{padding:8px 9px}
+#updateOv .gd-close{width:36px;height:36px;padding:6px}
+#updateOv .gd-kicker{margin-bottom:6px}

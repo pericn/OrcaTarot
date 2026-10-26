@@ -43,7 +43,7 @@
 <!-- ========== 添加到主屏幕引导（仅 iOS Safari 首次） ========== -->
 <div id="guideOv" hidden>
   <div class="gd-card">
-    <button class="gd-close" id="guideClose" aria-label="关闭引导">←</button>
+    <button class="gd-close" id="guideClose" aria-label="关闭引导"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#back"/></svg></button>
     <p class="gd-kicker">A D D &nbsp; T O &nbsp; H O M E</p>
     <h2 class="gd-title">把鲸灵匣放到桌面上</h2>
     <p class="gd-sub">以后像 App 一样，点一下就开</p>
@@ -69,6 +69,34 @@
       </li>
     </ol>
     <button class="btn" id="guideOk">好 的</button>
+  </div>
+</div>
+
+<!-- ========== 版本更新提示（一次性） ========== -->
+<div id="updateOv" hidden>
+  <div class="gd-card">
+    <button class="gd-close" id="updClose" aria-label="关闭更新提示"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#back"/></svg></button>
+    <p class="gd-kicker">W H A T ' S &nbsp; N E W</p>
+    <h2 class="gd-title">鲸灵匣更新好了</h2>
+    <p class="gd-sub">桌面图标换了新的版画虎鲸，也更快了</p>
+    <div class="up-icon-wrap">
+      <img class="up-icon" src="assets/app-icon-orca-engraved.png" alt="鲸灵匣的桌面图标">
+      <p class="up-icon-cap">新的桌面图标</p>
+    </div>
+    <ol class="gd-steps">
+      <li class="gd-step">
+        <p class="gd-s-t"><b>1</b>你桌面上那枚图标<em>不会自动换新</em></p>
+      </li>
+      <li class="gd-step">
+        <p class="gd-s-t"><b>2</b>想用新图标：先<em>删掉桌面上这个图标</em>，再重新加一次</p>
+        <p class="up-note">照着第一次把它放到桌面上的那三步再做一遍就行</p>
+      </li>
+      <li class="gd-step gd-done">
+        <p class="gd-s-t"><b>3</b>删之前先<em>把抽卡记录存下来</em></p>
+        <p class="up-warn">删除桌面图标会连同里面的抽卡记录一起删掉，删了找不回来。想留的，去「抽牌记录」页，点每条右上角的分享按钮，就能存成图片。</p>
+      </li>
+    </ol>
+    <button class="btn" id="updOk">知 道 了</button>
   </div>
 </div>
 

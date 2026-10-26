@@ -416,7 +416,7 @@ bStart.onclick=()=>{
   const yc=toMajor(dsum(y));      // 年份牌：各位相加，<=21 分界
   const mc=DECK[m];              // 月份牌：1-12 直接对应
   const dc=toMajor(d);           // 日子牌：>21 则各位再相加
-  const k=toDigit(dsum(y)+dsum(m)+dsum(d)); // 业力持续归约到 1–9
+  const k=toDigit(dsum(y)+dsum(m)+dsum(d)); // 業力持续归约到 1–9
   const kc=DECK[k];
   const fc=DECK[toDigit(dsum(nowY))]; // 流年持续归约到 1–9（如 2026 → 10 → 1）
   picks=[yc,mc,dc,kc,fc].map((c,i)=>({...c,rev:false,flipped:false,position:BIRTHDAY_POSITIONS[i]}));
@@ -590,7 +590,25 @@ function initGuide(force){
 }
 initGuide();
 /* 地址栏补 #guide 即时预览，无需刷新 */
-window.addEventListener('hashchange',()=>{if(/guide/.test(location.hash))openGuide();});
+window.addEventListener('hashchange',()=>{if(/guide/.test(location.hash))openGuide();});/* ---------- 版本更新提示（一次性；#update 可随时预览） ---------- */
+const UKEY='lx-upd-2026-10a';
+const updateOv=document.getElementById('updateOv');
+function closeUpdate(){updateOv.hidden=true;try{localStorage.setItem(UKEY,'1');}catch(e){}}
+function openUpdate(){updateOv.hidden=false;}
+document.getElementById('updOk').onclick=()=>{closeUpdate();buzz(9);};
+document.getElementById('updClose').onclick=closeUpdate;
+updateOv.addEventListener('click',e=>{if(e.target===updateOv)closeUpdate();});
+function initUpdate(){
+  const forced=/update/.test(location.hash+location.search);
+  if(forced){openUpdate();return;}
+  try{
+    if(localStorage.getItem(UKEY))return;
+    if(!guideOv.hidden)return;          // 今天先把屏幕让给安装引导，下次再提示
+    openUpdate();
+  }catch(e){}
+}
+initUpdate();
+window.addEventListener('hashchange',()=>{if(/update/.test(location.hash))openUpdate();});
 /* 测试手势：连续点牌匾 3 次，随时预览引导 */
 (function(){
   let taps=0,timer=null;
