@@ -67,7 +67,12 @@ def build(output):
                 # iOS home screens and browser tabs instead of the large master.
                 with Image.open(path) as original:
                     for size, name in [(180, relative), (32, 'assets/favicon-orca-engraved.png')]:
-                        icon = original.convert('RGB').resize((size, size), Image.Resampling.LANCZOS)
+                        # Leave room for the OS corner mask around the tail.
+                        artwork_size = round(size * .9)
+                        artwork = original.convert('RGB').resize((artwork_size, artwork_size), Image.Resampling.LANCZOS)
+                        icon = Image.new('RGB', (size, size), '#fcfcfa')
+                        offset = (size - artwork_size) // 2
+                        icon.paste(artwork, (offset, offset))
                         buf = io.BytesIO()
                         icon.save(buf, 'PNG', optimize=True)
                         replacements[name] = asset(name, buf.getvalue())
