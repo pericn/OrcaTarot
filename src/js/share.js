@@ -6,8 +6,21 @@ function loadImg(src){
 }
 function whenLoaded(src){
   const i=loadImg(src);
-  return i.complete?Promise.resolve(i.naturalWidth?i:null):new Promise(r=>{i.onload=()=>r(i);i.onerror=()=>r(null);});
+  if(i.complete)return Promise.resolve(i.naturalWidth?i:null);
+  return new Promise(resolve=>{
+    // A reading can contain the same image twice (e.g. hidden and extra cards).
+    // Independent listeners let every caller settle without overwriting others.
+    const done=()=>{
+      i.removeEventListener('load',done);
+      i.removeEventListener('error',done);
+      resolve(i.naturalWidth?i:null);
+    };
+    i.addEventListener('load',done,{once:true});
+    i.addEventListener('error',done,{once:true});
+    if(i.complete)done();
+  });
 }
+
 function diamond(g,x,y,r,color){
   g.save();g.fillStyle=color;g.translate(x,y);g.rotate(Math.PI/4);
   g.fillRect(-r/2,-r/2,r,r);g.restore();

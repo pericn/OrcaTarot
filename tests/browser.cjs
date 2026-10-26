@@ -122,6 +122,24 @@ async function run(browser, url, output) {
     await context.close();
   });
 
+  await test('first share completes when extra and hidden cards use the same uncached image',async()=>{
+    const {page,context}=await reading();
+    // Routing disables the HTTP cache, reproducing the concurrent image loads
+    // seen on the protected staging host instead of relying on a warm cache.
+    await context.route('**/*',route=>route.continue());
+    await pick(page,['M01','M02','M10']);await flip(page);
+    await page.evaluate(()=>{Math.random=()=>.54});
+    await page.locator('.wheel-action').click();
+    assert.equal(await page.locator('#rvExtra .rname').innerText(),'XIII');
+    assert.equal(await page.locator('#hCard .rname').innerText(),'XIII');
+    await page.locator('#rvExtra .flip').click();await page.locator('#hCard .flip').click();
+    await page.locator('#shareBtn').click();
+    await page.locator('#shareOv').waitFor({state:'visible',timeout:10000});
+    assert.ok((await page.locator('#shareImg').getAttribute('src')).startsWith('data:image/png;'));
+    assert.equal((await history(page))[0].cards.filter(c=>c.key==='M13').length,2);
+    await context.close();
+  });
+
   await test('wheel elsewhere and hidden wheel do not offer an extra',async()=>{
     const {page,context}=await reading();
     await pick(page,['M10','M01','M02']);await flip(page);
