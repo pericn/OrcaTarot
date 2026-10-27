@@ -6,7 +6,6 @@ import { hydrateCardImages } from './card-images.js';
 import { icon, spreadIcon } from './icons.js';
 
 await window.orcaStylesReady;
-const returningVisitor=localStorage.getItem('lx-visited')==='1';
 
 /* ---------- 主题 ---------- */
 const root=document.documentElement, themeBtn=document.getElementById('themeBtn');
@@ -574,8 +573,9 @@ function setHistory(open){
 historyBtn.onclick=()=>{renderHistory();setHistory(true);buzz(9);};
 
 /* ---------- 添加到主屏幕引导（iOS Safari 首次；#guide 或点牌匾3次可随时预览） ---------- */
-const GKEY='lx-guide-done', VKEY='lx-visited', UKEY='lx-upd-2026-10a';
+const GKEY='lx-guide-done', VKEY='lx-visited', UKEY='lx-icon-notice-v2';
 const guideOv=document.getElementById('guideOv');
+const suppressUpdateForGuide=location.hash==='#guide'||new URLSearchParams(location.search).has('guide');
 function isIosSafari(){
   const ua=navigator.userAgent;
   const ios=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
@@ -590,6 +590,7 @@ function injectGuideImgs(){
 function closeGuide(){
   guideOv.hidden=true;
   try{localStorage.setItem(GKEY,'1');}catch(e){}
+  if(!suppressUpdateForGuide)requestAnimationFrame(initUpdate);
 }
 function openGuide(){injectGuideImgs();guideOv.hidden=false;}
 document.getElementById('guideOk').onclick=closeGuide;
@@ -615,9 +616,10 @@ updateOv.addEventListener('click',e=>{if(e.target===updateOv)closeUpdate();});
 function initUpdate(){
   const forced=location.hash==='#update'||new URLSearchParams(location.search).has('update');
   if(forced){if(guideOv.hidden)openUpdate();return;}
-  const standalone=navigator.standalone||matchMedia('(display-mode: standalone)').matches;
-  // Only existing home-screen users need this notice. Never stack it after onboarding.
-  try{if(returningVisitor&&standalone&&!localStorage.getItem(UKEY)&&guideOv.hidden)openUpdate();}catch{}
+  // An absent/zero value means unseen on every browser; only dismissal marks it seen.
+  // The v2 key intentionally supersedes the earlier gated notice.
+  if(!guideOv.hidden||suppressUpdateForGuide)return;
+  try{if(localStorage.getItem(UKEY)!=='1')openUpdate();}catch{openUpdate();}
 }
 window.addEventListener('hashchange',()=>{if(location.hash==='#update'&&guideOv.hidden)openUpdate();});
 /* 测试手势：连续点牌匾 3 次，随时预览引导 */

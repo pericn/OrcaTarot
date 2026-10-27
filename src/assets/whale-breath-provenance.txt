@@ -1,0 +1,20 @@
+Whale surfacing/breathing stop-motion sprite, approved in the dedicated loading design conversation on 2026-10-27.
+Generated using the built-in imagegen with the existing OrcaTarot woodcut whale as a style reference; eight distinct anatomical poses, mechanically cut and aligned to the waterline.
+Final strip: 3552 × 444 RGBA, eight 444 × 444 frames, 400 ms each, 3.2 seconds per cycle.
+Generation prompt:
+
+Use case: illustration-story.
+Asset type: PRODUCTION ANIMATION SPRITE SHEET, eight successive stop-motion frames of ONE orca surfacing to breathe and submerging. This must be genuine redrawn successive body poses and water interactions, not rotated copies of the reference.
+Reference image: the supplied OrcaTarot engraving, STYLE AND CHARACTER REFERENCE ONLY. Preserve its dark indigo woodcut/linocut fine scratch lines, white eye patch and belly, long curved dorsal fin and calm spirit.
+Output layout: one 2048 by 1024 pixel transparent PNG sprite sheet, EXACTLY 4 columns by 2 rows, eight equal 512 by 512 square cells. Each cell is a distinct frame. Read left to right top row, then left to right bottom row. No gutters, no borders, no labels, no frame numbers, no text. Keep every mark at least 35px from cell boundaries.
+Fixed side-view camera, facing LEFT in every frame, same whale size and consistent anatomy. Ocean surface is a small cluster of indigo engraved horizontal wave/ripple marks centered at local y=350 in EVERY cell, not a solid filled ocean. The water occludes the lower body: do not show the full whale floating in air. Drawing width roughly 380px in every cell, comfortably centered. Upper 2/3 has room for head and breath.
+The eight sequential frames:
+1: almost submerged, only a tiny dark arc of back and tip of dorsal fin at the surface, two calm ripples.
+2: head rises to break the surface, brow and eye patch just emerging, dorsal fin higher, ripples pushed outward.
+3: head and shoulders lifted to breathe, recognizable eye patch, curved back and dorsal fin, bottom half hidden by water; short first puff emerging from blowhole on top of head behind brow.
+4: peak EXHALATION, same head at surface, a clearly visible upright fan of finely engraved mist expanding from the blowhole above head, little droplets; enough head/neck showing to read character.
+5: mist disperses into smaller separate droplets, whale starts lowering its head, back arches naturally, small water curls on either side.
+6: head has dived underwater, arched back and high dorsal fin remain above surface, no spout.
+7: back follows downward, a small tail fluke lifts above water to right of center, several lively droplets and concentric ripples; no head.
+8: whale disappears almost completely, tail tip just sinking, ripples settle toward frame 1 for looping.
+Every pose is DIFFERENT anatomy/occlusion, same character. Frame 1 to 8 together must clearly tell the physical action 'rise, exhale, arch, dive', not a whale flying or bobbing. Delicate understated woodcut, no cute cartoon simplification, no photorealism, no gradients, no UI, no background paper, real transparency around artwork. Dark indigo ink and ivory white body details.
