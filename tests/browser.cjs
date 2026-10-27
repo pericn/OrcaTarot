@@ -751,7 +751,7 @@ async function run(browser, url, output) {
   });
 
 
-  await test('questions stay local, wrap with native fonts, and persist through extra cards, history and shares',async()=>{
+  await test('questions stay local, wrap with supplied Song fonts, and persist through extra cards, history and shares',async()=>{
     const {page,context}=await reading({spread:'1'});
     const question=('转职 & 去留 <img src=x onerror=alert(1)> 🐋，接下来应该怎么做？').repeat(3);
     const expected=question.slice(0,120);
@@ -760,7 +760,7 @@ async function run(browser, url, output) {
     await pick(page,['M10']);
     assert.equal(await page.locator('#readingQuestion').innerText(),expected);
     assert.equal(await page.locator('#questionEditor').isVisible(),false);
-    assert.ok((await page.locator('#readingQuestion').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Songti SC'));
+    assert.ok((await page.locator('#readingQuestion').evaluate(el=>getComputedStyle(el).fontFamily)).includes('OrcaQuestionSong'));
     await flip(page);const original=(await history(page))[0];assert.equal(original.question,expected);
     await page.locator('.wheel-action').click();await page.locator('#rvExtra .flip').click();
     await page.waitForFunction(()=>JSON.parse(localStorage.getItem('lx-history'))[0].cards.length===2);
@@ -768,7 +768,7 @@ async function run(browser, url, output) {
     await page.evaluate(()=>{window.textDraws=[];window.shareGeometry=[];const p=CanvasRenderingContext2D.prototype,original=p.fillText,draw=p.drawImage,fill=p.fillRect;p.fillText=function(text,x,y,...rest){window.textDraws.push({text,x,y,font:this.font,width:this.measureText(text).width,height:this.canvas.height});return original.call(this,text,x,y,...rest)};p.drawImage=function(img,x,y,w,h,...rest){if(img.naturalWidth===img.naturalHeight&&img.naturalWidth>=180)window.shareGeometry.push({kind:'whale',x,y,w,h,height:this.canvas.height});return draw.call(this,img,x,y,w,h,...rest)};p.fillRect=function(x,y,w,h){if(x===556&&w===132&&h===132)window.shareGeometry.push({kind:'qr',x,y,w,h,height:this.canvas.height});return fill.call(this,x,y,w,h)}});
     await page.locator('#shareBtn').click();await page.locator('#shareOv').waitFor({state:'visible'});
     async function checkShare(){
-      const texts=await page.evaluate(()=>window.textDraws),questionLines=texts.filter(t=>t.font.includes('Songti SC'));
+      const texts=await page.evaluate(()=>window.textDraws),questionLines=texts.filter(t=>t.font.includes('OrcaQuestionSong'));
       assert.equal(questionLines.map(t=>t.text).join(''),expected);assert.ok(questionLines.length>1);
       assert.ok(questionLines.every(t=>t.width<=626&&t.x===375));
       assert.ok(texts.some(t=>t.text==='让直觉，浮出水面'));
@@ -787,7 +787,45 @@ async function run(browser, url, output) {
     await page.locator('#questionInput').fill('   ');await pick(page,['M01']);await flip(page);
     assert.equal(await page.locator('#readingQuestion').isVisible(),false);assert.equal((await history(page))[0].question,undefined);
     await page.locator('#historyBtn').click();assert.equal(await page.locator('.hd-item').first().locator('.hd-question').count(),0);
-    const fontsAfter=await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/\.woff2?/.test(r.name)).length);assert.equal(fontsAfter,fontsBefore);
+    const fontsAfter=await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/\.woff2?/.test(r.name)).length);assert.ok(fontsAfter>fontsBefore);const fontUse=await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>r.name.includes('/fonts/question-song/')));assert.ok(fontUse.length<50);assert.ok(fontUse.reduce((n,r)=>n+(r.encodedBodySize||0),0)<2000000);
+    await context.close();
+  });
+
+  await test('question uses actual supplied Song glyphs rather than a declared local family or sans fallback',async()=>{
+    const {page,context}=await reading({spread:'1'});
+    let externalFonts=0;await context.route(/https:\/\/fonts\.(googleapis|gstatic)\.com\//,route=>{externalFonts++;return route.abort()});
+    await page.locator('#questionInput').fill('永明问题');await pick(page,['M01']);
+    const proof=await page.evaluate(async()=>{
+      const {loadQuestionFont}=await import('./js/question-font.js');const loaded=await loadQuestionFont('永明问题');
+      const matches=(range,cp)=>range.split(',').some(raw=>{const r=raw.trim().replace('U+','').split('-');return cp>=parseInt(r[0],16)&&cp<=parseInt(r[r.length-1],16)});
+      let source;
+      function scan(sheet){for(const rule of sheet.cssRules){if(rule.styleSheet)scan(rule.styleSheet);if(rule.type===CSSRule.FONT_FACE_RULE&&rule.style.fontFamily.includes('OrcaQuestionSong')&&matches(rule.style.unicodeRange,0x6c38))source={src:rule.style.src,base:sheet.href};}}
+      for(const sheet of document.styleSheets)scan(sheet);
+      const url=new URL(source.src.match(/url\(["']?([^"')]+)/)[1],source.base).href;
+      const reference=new FontFace('IndependentSongReference','url("'+url+'")',{weight:'400 600'});await reference.load();document.fonts.add(reference);
+      async function raster(family){const cv=document.createElement('canvas');cv.width=96;cv.height=96;const g=cv.getContext('2d');g.font='600 64px '+family;g.fillText('永',8,72);return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',g.getImageData(0,0,96,96).data))).map(n=>n.toString(16).padStart(2,'0')).join('');}
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      return {faces:loaded.length,loaded:loaded.every(f=>f.status==='loaded'),actual:await raster('OrcaQuestionSong'),reference:await raster('IndependentSongReference'),sans:await raster('sans-serif')};
+    });
+    assert.ok(proof.faces>0&&proof.loaded);assert.equal(proof.actual,proof.reference);assert.notEqual(proof.actual,proof.sans);assert.equal(externalFonts,0);
+    if(browser.browserType().name()==='chromium'){
+      const cdp=await context.newCDPSession(page);await cdp.send('DOM.enable');await cdp.send('CSS.enable');const doc=await cdp.send('DOM.getDocument'),node=await cdp.send('DOM.querySelector',{nodeId:doc.root.nodeId,selector:'#readingQuestion'});
+      const fonts=await cdp.send('CSS.getPlatformFontsForNode',{nodeId:node.nodeId});assert.ok(fonts.fonts.some(f=>f.isCustomFont&&f.familyName.includes('Noto Serif SC')&&f.glyphCount>=4),JSON.stringify(fonts));
+    }
+    if(output)await page.screenshot({path:path.join(output,'actual-song-question.png'),fullPage:true});
+    await context.close();
+  });
+
+  await test('share waits for question glyph subsets instead of exporting fallback text',async()=>{
+    const {page,context}=await reading({spread:'1'});
+    let release,requested=0;const gate=new Promise(resolve=>release=resolve);
+    await context.route('**/fonts/question-song/*.woff2',async route=>{if(route.request().url().includes('song-ui.'))return route.continue();requested++;await gate;await route.continue()});
+    await page.locator('#questionInput').fill('龘');await pick(page,['M01']);await flip(page);await page.locator('#shareBtn').click();
+    await page.waitForFunction(()=>document.fonts.status==='loading');await page.waitForTimeout(200);
+    assert.ok(requested>0);assert.equal(await page.locator('#shareOv').isVisible(),false);
+    release();await page.locator('#shareOv').waitFor({state:'visible'});
+    assert.ok((await page.locator('#shareImg').getAttribute('src')).startsWith('data:image/png;'));
+    const faces=await page.evaluate(()=>document.fonts.load('600 22px OrcaQuestionSong','龘'));assert.ok(faces.length>0);
     await context.close();
   });
 

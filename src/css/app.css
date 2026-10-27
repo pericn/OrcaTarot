@@ -1,3 +1,4 @@
+@import url('question-font.css');
 @font-face{font-family:OrcaWoodblock;src:url('../assets/fonts/orca-woodblock.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
 :root{color-scheme:light;--paper:#fcfcfa;--paper2:#f5f6f8;--card:#fff;--ink:#252834;--ink-soft:#505665;--line:#a0a9b8;--edge:#bcc3cf;--indigo:#193a88;--madder:#a22624;--ochre:#805600;--moss:#305c41;--accent:var(--indigo);--gold:var(--ochre);--shadow:0 10px 24px #1c2a4c30,0 2px 5px #1c2a4c26;--serif:OrcaWoodblock,serif;--latin:var(--serif);--motif-opacity:.09;--text-display:40px;--text-title:22px;--text-body:16px;--text-label:14px;--text-caption:12px;--ease-out:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--fan-card-h:clamp(110px,32svh,300px)}
 [data-theme=dark]{color-scheme:dark;--paper:#19213d;--paper2:#202c48;--card:#25314e;--ink:#f4f3ed;--ink-soft:#d1d7e6;--line:#8391ae;--edge:#687899;--indigo:#bad7ff;--madder:#ffb9b5;--ochre:#ffe094;--moss:#b5e2c3;--shadow:0 12px 26px #0008,0 3px 6px #0006;--motif-opacity:.15}
@@ -251,8 +252,8 @@ button{transition:background-color .25s var(--ease-out),color .25s var(--ease-ou
 @media(max-height:500px) and (min-width:600px){.wrap{min-height:calc(100svh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}.fanzone{padding-top:0}.brand-whale{width:36px;height:36px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
-/* Native Song/Ming faces keep free text close to the printed card typography. */
-:root{--question-font:"Songti SC","Songti TC","STSong","Noto Serif CJK SC","Noto Serif SC",SimSun,serif}
+/* Self-hosted Song/Ming glyphs avoid platform-specific Chinese font fallback. */
+:root{--question-font:OrcaQuestionSong,"Songti SC","Songti TC","STSong","Noto Serif CJK SC","Noto Serif SC",SimSun,serif}
 .user-text,#questionInput{font-family:var(--question-font);font-weight:600;letter-spacing:.035em}
 .reading-tools:has(.question-editor:not([hidden])){flex-wrap:nowrap;justify-content:space-between;gap:20px}
 .question-editor{flex:1;min-width:0;max-width:360px;margin:0;text-align:left;position:relative}

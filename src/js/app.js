@@ -4,6 +4,7 @@ import { DECK, MAJOR_NUM, BIRTHDAY_POSITIONS, dsum, toMajor, toDigit } from './d
 import { compose, whenLoaded } from './share.js';
 import { hydrateCardImages, primeImage, prepareCardImage, cardFaceReady, prepareCardFace } from './card-images.js';
 import { icon, spreadIcon } from './icons.js';
+import { loadQuestionFont } from './question-font.js';
 
 await window.orcaStylesReady;
 const decodedBack=await window.orcaBackReady;
@@ -579,7 +580,7 @@ async function reshareRecord(rec){
   try{
     const jobs=rec.cards.map(c=>IMG[c.key]?whenLoaded(IMG[c.key],{retry:true}):Promise.resolve());
     await Promise.all(jobs);
-    await Promise.all([document.fonts.load('16px OrcaWoodblock'),whenLoaded(root.dataset.theme==='dark'?'assets/app-icon-orca-dark.png':'assets/app-icon-orca-engraved.png',{retry:true})]);
+    await Promise.all([document.fonts.load('16px OrcaWoodblock'),loadQuestionFont(cleanQuestion(rec.question)),whenLoaded(root.dataset.theme==='dark'?'assets/app-icon-orca-dark.png':'assets/app-icon-orca-engraved.png',{retry:true})]);
     await document.fonts.ready;
     shareImg.src=compose(orderSavedCards(cardsForRecord(rec)),rec.ts,cleanQuestion(rec.question)).toDataURL('image/png');
     shareOv.dataset.returnTo="history";
@@ -677,7 +678,7 @@ async function shareNow(){
     const cards=orderedCards();
     const jobs=cards.map(c=>whenLoaded(IMG[c.key],{retry:true}));
     await Promise.all(jobs);
-    await Promise.all([document.fonts.load('16px OrcaWoodblock'),whenLoaded(root.dataset.theme==='dark'?'assets/app-icon-orca-dark.png':'assets/app-icon-orca-engraved.png',{retry:true})]);
+    await Promise.all([document.fonts.load('16px OrcaWoodblock'),loadQuestionFont(readingQuestion),whenLoaded(root.dataset.theme==='dark'?'assets/app-icon-orca-dark.png':'assets/app-icon-orca-engraved.png',{retry:true})]);
     await document.fonts.ready;
     shareImg.src=compose(cards,readingTs,readingQuestion).toDataURL('image/png');
     shareOv.dataset.returnTo="draw";
