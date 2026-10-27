@@ -65,7 +65,7 @@ function compose(cards,ts,question=''){
   const cv=document.createElement('canvas');cv.width=W;
   const g=cv.getContext('2d');
   const questionFamily=getComputedStyle(document.documentElement).getPropertyValue('--question-font').trim()||'serif';
-  const questionFont='600 22px '+questionFamily;
+  const questionFont='400 22px '+questionFamily;
   g.font=questionFont;if('letterSpacing' in g)g.letterSpacing='.77px';
   const questionLines=[];
   const text=Array.from(String(question).replace(/\s+/gu,' ').trim()).slice(0,120).join('');

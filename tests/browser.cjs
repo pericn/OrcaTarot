@@ -26,6 +26,10 @@ async function run(browser, url, output) {
     await page.locator('#appLoading').waitFor({state:'hidden'});
     return {page,context};
   }
+  async function openQuestion(page) {await page.locator('#questionOpen').click();}
+  async function setQuestion(page,text) {
+    await openQuestion(page);await page.locator('#questionInput').fill(text);await page.locator('#questionForm button[type=submit]').click();
+  }
   async function pick(page,keys) {
     for (const key of keys) {
       // Choose a known shuffled card to exercise rules deterministically; no app state is exposed.
@@ -751,16 +755,85 @@ async function run(browser, url, output) {
   });
 
 
-  await test('questions stay local, wrap with supplied Song fonts, and persist through extra cards, history and shares',async()=>{
+  await test('spread, question entry, empty slots and fan share one centered vertical axis',async()=>{
+    const {page,context}=await reading();
+    for(const size of [{width:390,height:844},{width:320,height:568}]){
+      await page.setViewportSize(size);await page.waitForTimeout(100);
+      const boxes=await page.evaluate(()=>['spreadInd','questionOpen','slots','fanWrap'].map(id=>{const r=document.getElementById(id).getBoundingClientRect();return {id,cx:r.x+r.width/2,y:r.y,bottom:r.bottom}}));
+      assert.ok(boxes.every(b=>Math.abs(b.cx-size.width/2)<2),JSON.stringify(boxes));
+      assert.ok(boxes.slice(1).every((b,i)=>b.y>=boxes[i].bottom-1),JSON.stringify(boxes));
+    }
+    await context.close();
+  });
+
+  await test('question modal wraps long text, confirms or cancels edits, restores focus and survives small viewports',async()=>{
+    const {page,context}=await reading({spread:'1'});
+    assert.equal(await page.locator('#questionInput').isVisible(),false);
+    await openQuestion(page);
+    assert.equal(await page.locator('#questionOv').evaluate(el=>el.matches(':modal')),true);
+    assert.equal(await page.evaluate(()=>document.activeElement.id),'questionInput');
+    const long='面对现在的工作和未来的生活我应该怎样做出更适合自己的选择？'.repeat(5);
+    await page.locator('#questionInput').fill(long);
+    const expected=Array.from(long).slice(0,120).join('');
+    assert.equal(await page.locator('#questionInput').inputValue(),expected);
+    assert.equal(await page.locator('#questionCount').innerText(),'120 / 120');
+    const geometry=await page.locator('#questionInput').evaluate(el=>({width:el.clientWidth,scrollWidth:el.scrollWidth,height:el.clientHeight,scrollHeight:el.scrollHeight}));
+    assert.ok(geometry.scrollHeight>geometry.height);assert.ok(geometry.scrollWidth<=geometry.width+1);
+    await page.locator('#questionForm button[type=submit]').click();
+    assert.equal(await page.locator('#questionOv').isVisible(),false);
+    await page.waitForFunction(()=>document.activeElement.id==='questionOpen');
+    assert.equal(await page.locator('#readingQuestion').innerText(),expected);
+    await openQuestion(page);await page.locator('#questionInput').fill('这次取消');await page.locator('#questionCancel').click();
+    assert.equal(await page.locator('#readingQuestion').innerText(),expected);
+    await openQuestion(page);assert.equal(await page.locator('#questionInput').inputValue(),expected);
+    await page.locator('#questionInput').fill('Esc 也取消');await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#questionOv').isVisible(),false);assert.equal(await page.locator('#readingQuestion').innerText(),expected);
+    await openQuestion(page);await page.locator('#questionInput').fill('第一行');await page.keyboard.press('Enter');await page.keyboard.type('second line');
+    assert.equal(await page.locator('#questionOv').isVisible(),true);assert.ok((await page.locator('#questionInput').inputValue()).includes('\n'));
+    await page.locator('#questionInput').fill('🐋'.repeat(121));assert.equal(Array.from(await page.locator('#questionInput').inputValue()).length,120);
+    await page.locator('#questionCancel').click();
+    for(const dark of [false,true]){
+      if(dark)await page.locator('#themeBtn').click();
+      await openQuestion(page);
+      await page.setViewportSize({width:320,height:360});
+      await page.waitForTimeout(100);
+      const box=await page.locator('#questionOv').boundingBox();assert.ok(box.x>=0&&box.y>=0&&box.x+box.width<=321&&box.y+box.height<=361,JSON.stringify(box));
+      await page.locator('#questionForm button[type=submit]').scrollIntoViewIfNeeded();
+      const action=await page.locator('#questionForm button[type=submit]').boundingBox();assert.ok(action.y>=0&&action.y+action.height<=361);
+      if(output)await page.screenshot({path:path.join(output,'question-modal-'+(dark?'dark':'light')+'.png')});
+      await page.locator('#questionCancel').click();await page.setViewportSize({width:390,height:844});
+    }
+    await pick(page,['M01']);assert.equal(await page.locator('#readingQuestion').innerText(),expected);await flip(page);
+    assert.equal((await history(page))[0].question,expected);
+    await context.close();
+  });
+
+  await test('question editing keeps one system font and never downloads question fonts while typing',async()=>{
+    const {page,context}=await reading();let requests=0;
+    await context.route('**/fonts/question-woodblock/*.woff2',route=>{requests++;return route.continue()});
+    await openQuestion(page);
+    const before=await page.locator('#questionInput').evaluate(el=>getComputedStyle(el).fontFamily);
+    for(const text of ['永明问题','转职去留怎么选择','龘🐋AB']){
+      await page.locator('#questionInput').fill(text);await page.waitForTimeout(100);
+      assert.equal(await page.locator('#questionInput').evaluate(el=>getComputedStyle(el).fontFamily),before);
+    }
+    assert.ok(before.includes('system-ui'));assert.equal(requests,0);
+    for(const selector of ['#questionTitle','#questionHint','#questionCount','#questionCancel','#questionForm button[type=submit]'])assert.ok((await page.locator(selector).evaluate(el=>getComputedStyle(el).fontFamily)).includes('OrcaWoodblock'));
+    assert.ok(parseFloat(await page.locator('#questionPlaceholder').evaluate(el=>getComputedStyle(el).fontSize))<=12);
+    assert.equal(await page.locator('#questionOpen').evaluate(el=>getComputedStyle(el).fontFamily.includes('OrcaWoodblock')),true);
+    await page.locator('#questionCancel').click();await context.close();
+  });
+
+  await test('questions stay local, wrap with supplied woodblock fonts, and persist through extra cards, history and shares',async()=>{
     const {page,context}=await reading({spread:'1'});
     const question=('转职 & 去留 <img src=x onerror=alert(1)> 🐋，接下来应该怎么做？').repeat(3);
-    const expected=question.slice(0,120);
+    const expected=Array.from(question).slice(0,120).join('').replace(/\s+/gu,' ').trim();
     const fontsBefore=await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/\.woff2?/.test(r.name)).length);
-    await page.locator('#questionInput').fill(question);
+    await setQuestion(page,question);
     await pick(page,['M10']);
     assert.equal(await page.locator('#readingQuestion').innerText(),expected);
     assert.equal(await page.locator('#questionEditor').isVisible(),false);
-    assert.ok((await page.locator('#readingQuestion').evaluate(el=>getComputedStyle(el).fontFamily)).includes('OrcaQuestionSong'));
+    assert.ok((await page.locator('#readingQuestion').evaluate(el=>getComputedStyle(el).fontFamily)).includes('OrcaQuestionWoodblock'));
     await flip(page);const original=(await history(page))[0];assert.equal(original.question,expected);
     await page.locator('.wheel-action').click();await page.locator('#rvExtra .flip').click();
     await page.waitForFunction(()=>JSON.parse(localStorage.getItem('lx-history'))[0].cards.length===2);
@@ -768,7 +841,7 @@ async function run(browser, url, output) {
     await page.evaluate(()=>{window.textDraws=[];window.shareGeometry=[];const p=CanvasRenderingContext2D.prototype,original=p.fillText,draw=p.drawImage,fill=p.fillRect;p.fillText=function(text,x,y,...rest){window.textDraws.push({text,x,y,font:this.font,width:this.measureText(text).width,height:this.canvas.height});return original.call(this,text,x,y,...rest)};p.drawImage=function(img,x,y,w,h,...rest){if(img.naturalWidth===img.naturalHeight&&img.naturalWidth>=180)window.shareGeometry.push({kind:'whale',x,y,w,h,height:this.canvas.height});return draw.call(this,img,x,y,w,h,...rest)};p.fillRect=function(x,y,w,h){if(x===556&&w===132&&h===132)window.shareGeometry.push({kind:'qr',x,y,w,h,height:this.canvas.height});return fill.call(this,x,y,w,h)}});
     await page.locator('#shareBtn').click();await page.locator('#shareOv').waitFor({state:'visible'});
     async function checkShare(){
-      const texts=await page.evaluate(()=>window.textDraws),questionLines=texts.filter(t=>t.font.includes('OrcaQuestionSong'));
+      const texts=await page.evaluate(()=>window.textDraws),questionLines=texts.filter(t=>t.font.includes('OrcaQuestionWoodblock'));
       assert.equal(questionLines.map(t=>t.text).join(''),expected);assert.ok(questionLines.length>1);
       assert.ok(questionLines.every(t=>t.width<=626&&t.x===375));
       assert.ok(texts.some(t=>t.text==='让直觉，浮出水面'));
@@ -783,49 +856,49 @@ async function run(browser, url, output) {
     assert.equal(await page.locator('.hd-question').innerText(),expected);assert.equal(await page.locator('.hd-question img').count(),0);
     await page.evaluate(()=>{window.textDraws=[];window.shareGeometry=[]});await page.locator('.hd-share').click();await page.locator('#shareOv').waitFor({state:'visible'});await checkShare();
     await page.locator('#shareClose').click();await page.locator('#drawBtn').click();await page.locator('#reShuffle').click();
-    assert.equal(await page.locator('#readingQuestion').isVisible(),false);assert.equal(await page.locator('#questionEditor').isVisible(),true);
-    await page.locator('#questionInput').fill('   ');await pick(page,['M01']);await flip(page);
+    assert.equal(await page.locator('#questionPreview').innerText(),expected);assert.equal(await page.locator('#questionEditor').isVisible(),true);
+    await setQuestion(page,'   ');await pick(page,['M01']);await flip(page);
     assert.equal(await page.locator('#readingQuestion').isVisible(),false);assert.equal((await history(page))[0].question,undefined);
     await page.locator('#historyBtn').click();assert.equal(await page.locator('.hd-item').first().locator('.hd-question').count(),0);
-    const fontsAfter=await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/\.woff2?/.test(r.name)).length);assert.ok(fontsAfter>fontsBefore);const fontUse=await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>r.name.includes('/fonts/question-song/')));assert.ok(fontUse.length<50);assert.ok(fontUse.reduce((n,r)=>n+(r.encodedBodySize||0),0)<2000000);
+    const fontsAfter=await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/\.woff2?/.test(r.name)).length);assert.ok(fontsAfter>fontsBefore);const fontUse=await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>r.name.includes('/fonts/question-woodblock/')));assert.ok(fontUse.length<50);assert.ok(fontUse.reduce((n,r)=>n+(r.encodedBodySize||0),0)<2000000);
     await context.close();
   });
 
-  await test('question uses actual supplied Song glyphs rather than a declared local family or sans fallback',async()=>{
+  await test('question uses actual supplied woodblock glyphs rather than a declared local family or sans fallback',async()=>{
     const {page,context}=await reading({spread:'1'});
     let externalFonts=0;await context.route(/https:\/\/fonts\.(googleapis|gstatic)\.com\//,route=>{externalFonts++;return route.abort()});
-    await page.locator('#questionInput').fill('永明问题');await pick(page,['M01']);
+    await setQuestion(page,'永明问题');await pick(page,['M01']);
     const proof=await page.evaluate(async()=>{
       const {loadQuestionFont}=await import('./js/question-font.js');const loaded=await loadQuestionFont('永明问题');
       const matches=(range,cp)=>range.split(',').some(raw=>{const r=raw.trim().replace('U+','').split('-');return cp>=parseInt(r[0],16)&&cp<=parseInt(r[r.length-1],16)});
       let source;
-      function scan(sheet){for(const rule of sheet.cssRules){if(rule.styleSheet)scan(rule.styleSheet);if(rule.type===CSSRule.FONT_FACE_RULE&&rule.style.fontFamily.includes('OrcaQuestionSong')&&matches(rule.style.unicodeRange,0x6c38))source={src:rule.style.src,base:sheet.href};}}
+      function scan(sheet){for(const rule of sheet.cssRules){if(rule.styleSheet)scan(rule.styleSheet);if(rule.type===CSSRule.FONT_FACE_RULE&&rule.style.fontFamily.includes('OrcaQuestionWoodblock')&&matches(rule.style.unicodeRange,0x6c38))source={src:rule.style.src,base:sheet.href};}}
       for(const sheet of document.styleSheets)scan(sheet);
       const url=new URL(source.src.match(/url\(["']?([^"')]+)/)[1],source.base).href;
-      const reference=new FontFace('IndependentSongReference','url("'+url+'")',{weight:'400 600'});await reference.load();document.fonts.add(reference);
-      async function raster(family){const cv=document.createElement('canvas');cv.width=96;cv.height=96;const g=cv.getContext('2d');g.font='600 64px '+family;g.fillText('永',8,72);return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',g.getImageData(0,0,96,96).data))).map(n=>n.toString(16).padStart(2,'0')).join('');}
+      const reference=new FontFace('IndependentWoodblockReference','url("'+url+'")',{weight:'400'});await reference.load();document.fonts.add(reference);
+      async function raster(family){const cv=document.createElement('canvas');cv.width=96;cv.height=96;const g=cv.getContext('2d');g.font='400 64px '+family;g.fillText('永',8,72);return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',g.getImageData(0,0,96,96).data))).map(n=>n.toString(16).padStart(2,'0')).join('');}
       await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-      return {faces:loaded.length,loaded:loaded.every(f=>f.status==='loaded'),actual:await raster('OrcaQuestionSong'),reference:await raster('IndependentSongReference'),sans:await raster('sans-serif')};
+      return {faces:loaded.length,loaded:loaded.every(f=>f.status==='loaded'),actual:await raster('OrcaQuestionWoodblock'),reference:await raster('IndependentWoodblockReference'),sans:await raster('sans-serif')};
     });
     assert.ok(proof.faces>0&&proof.loaded);assert.equal(proof.actual,proof.reference);assert.notEqual(proof.actual,proof.sans);assert.equal(externalFonts,0);
     if(browser.browserType().name()==='chromium'){
       const cdp=await context.newCDPSession(page);await cdp.send('DOM.enable');await cdp.send('CSS.enable');const doc=await cdp.send('DOM.getDocument'),node=await cdp.send('DOM.querySelector',{nodeId:doc.root.nodeId,selector:'#readingQuestion'});
-      const fonts=await cdp.send('CSS.getPlatformFontsForNode',{nodeId:node.nodeId});assert.ok(fonts.fonts.some(f=>f.isCustomFont&&f.familyName.includes('Noto Serif SC')&&f.glyphCount>=4),JSON.stringify(fonts));
+      const fonts=await cdp.send('CSS.getPlatformFontsForNode',{nodeId:node.nodeId});assert.ok(fonts.fonts.some(f=>f.isCustomFont&&f.familyName.includes('OrcaQuestionWoodblock')&&f.glyphCount>=1),JSON.stringify(fonts));
     }
-    if(output)await page.screenshot({path:path.join(output,'actual-song-question.png'),fullPage:true});
+    if(output)await page.screenshot({path:path.join(output,'actual-woodblock-question.png'),fullPage:true});
     await context.close();
   });
 
   await test('share waits for question glyph subsets instead of exporting fallback text',async()=>{
     const {page,context}=await reading({spread:'1'});
     let release,requested=0;const gate=new Promise(resolve=>release=resolve);
-    await context.route('**/fonts/question-song/*.woff2',async route=>{if(route.request().url().includes('song-ui.'))return route.continue();requested++;await gate;await route.continue()});
-    await page.locator('#questionInput').fill('龘');await pick(page,['M01']);await flip(page);await page.locator('#shareBtn').click();
+    await context.route('**/fonts/question-woodblock/*.woff2',async route=>{requested++;await gate;await route.continue()});
+    await setQuestion(page,'龘');await pick(page,['M01']);await flip(page);await page.locator('#shareBtn').click();
     await page.waitForFunction(()=>document.fonts.status==='loading');await page.waitForTimeout(200);
     assert.ok(requested>0);assert.equal(await page.locator('#shareOv').isVisible(),false);
     release();await page.locator('#shareOv').waitFor({state:'visible'});
     assert.ok((await page.locator('#shareImg').getAttribute('src')).startsWith('data:image/png;'));
-    const faces=await page.evaluate(()=>document.fonts.load('600 22px OrcaQuestionSong','龘'));assert.ok(faces.length>0);
+    const faces=await page.evaluate(()=>document.fonts.load('400 22px OrcaQuestionWoodblock','龘'));assert.ok(faces.length>0);
     await context.close();
   });
 

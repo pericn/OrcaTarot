@@ -1,0 +1,1425 @@
+{
+  "family": "OrcaQuestionWoodblock",
+  "upstream": "https://github.com/LingDong-/qiji-font/releases/tag/0.0.4",
+  "source_sha256": "f842291b039e9c5ae69edfe924edbe28b3cfba91bcac95791bf1fbc11db330cf",
+  "license": "OFL-1.1",
+  "modifications": "QiJi Combo subset by 128-code-point blocks, renamed. Core UI glyphs reuse OrcaWoodblockSubset including New Tegomin Latin supplement. Unsupported characters use platform serif; emoji retain platform color glyphs.",
+  "files": [
+    {
+      "file": "woodblock-0060.woff2",
+      "bytes": 468,
+      "sha256": "0a20613d06b472a466c0161258231b7bf40374c34ae829d2ab6fd18a7e4b3dbb",
+      "unicode_range": "U+3000"
+    },
+    {
+      "file": "woodblock-006b.woff2",
+      "bytes": 2652,
+      "sha256": "6984086f33b0cf1995e666270d9e9ef3fdbac93bee11f31344d0693f890f0ab6",
+      "unicode_range": "U+35D6,U+35F8"
+    },
+    {
+      "file": "woodblock-006c.woff2",
+      "bytes": 1864,
+      "sha256": "1973fb6b5fabb374c9300564b7ab124f7fec06c7659e1ca939ab15ddf029cab5",
+      "unicode_range": "U+366C"
+    },
+    {
+      "file": "woodblock-006e.woff2",
+      "bytes": 5232,
+      "sha256": "30d134532ae9094ef0b1b9a0a1bbfe0727668af89dc9a6c075b19c16fb0e8ed7",
+      "unicode_range": "U+3754,U+3757,U+3760,U+3771"
+    },
+    {
+      "file": "woodblock-0072.woff2",
+      "bytes": 1912,
+      "sha256": "446d4cc60d853b15d043d73edaf6e1a20233428120b79035527438f8cdd13554",
+      "unicode_range": "U+3944"
+    },
+    {
+      "file": "woodblock-0073.woff2",
+      "bytes": 4524,
+      "sha256": "dbe280ed98653ba2ab7d1ce5e09cdec5fbb68ec2eb58731b7edb8aaec144f171",
+      "unicode_range": "U+39B2,U+39CA,U+39D3,U+39EA"
+    },
+    {
+      "file": "woodblock-0074.woff2",
+      "bytes": 4488,
+      "sha256": "6a7af1a8da54a0c551f10b7fb76bdaeb6e5c2639addeca379158913a4e42d89f",
+      "unicode_range": "U+3A43,U+3A4C,U+3A74"
+    },
+    {
+      "file": "woodblock-0075.woff2",
+      "bytes": 3792,
+      "sha256": "2c20104cdf6bd9b72dbc17fcbea9c856a6732d221c92eb63dd363c55aea09db1",
+      "unicode_range": "U+3A8D,U+3AC4,U+3AD6"
+    },
+    {
+      "file": "woodblock-0077.woff2",
+      "bytes": 3824,
+      "sha256": "65616ebbe322120be502aa3d4e576276424b1b8685ad651b974df16be5e9f41a",
+      "unicode_range": "U+3B86,U+3BE8"
+    },
+    {
+      "file": "woodblock-0079.woff2",
+      "bytes": 1584,
+      "sha256": "c813e6b3ba5a268ed7d1e5fa24e3511be83c6dfef0da80054029ef0b18eecd4f",
+      "unicode_range": "U+3CC2"
+    },
+    {
+      "file": "woodblock-007b.woff2",
+      "bytes": 2188,
+      "sha256": "adb70e56eea0563c1304388ed60de04e0c93bd44bbae233764e13e97a416ceaa",
+      "unicode_range": "U+3DBF"
+    },
+    {
+      "file": "woodblock-007c.woff2",
+      "bytes": 3108,
+      "sha256": "5aed7c029d15b0ecdec58787213d8b2a25a9d34e6e37a11cbe3dea039a9a3cae",
+      "unicode_range": "U+3E4B,U+3E4E"
+    },
+    {
+      "file": "woodblock-007d.woff2",
+      "bytes": 1880,
+      "sha256": "5c52c78ff53bb739f5f61ac4c0fcd02812014facd5b3d927ce2885f7015f9c33",
+      "unicode_range": "U+3E84"
+    },
+    {
+      "file": "woodblock-0080.woff2",
+      "bytes": 1844,
+      "sha256": "1e268ee481c2db6cd06d10fa0b192196b0adc9cc26346f39297c47f3989b506c",
+      "unicode_range": "U+405F"
+    },
+    {
+      "file": "woodblock-0081.woff2",
+      "bytes": 2048,
+      "sha256": "afb31cbeffe6baa1300d011707adb784233acd3a0f01603671d57386c117b4ed",
+      "unicode_range": "U+40FA"
+    },
+    {
+      "file": "woodblock-0083.woff2",
+      "bytes": 1732,
+      "sha256": "1fc136b8e20097ee45591f63c22f008b2e2507295a61ea5766f826596a210ccd",
+      "unicode_range": "U+4192"
+    },
+    {
+      "file": "woodblock-0084.woff2",
+      "bytes": 2112,
+      "sha256": "d2af419d613953f8d74ffd7fe8fe1c8ae1999a52e923deefdbfa73fa29223689",
+      "unicode_range": "U+4225"
+    },
+    {
+      "file": "woodblock-0086.woff2",
+      "bytes": 3796,
+      "sha256": "a996e86e6949441eece2207942e748b76b96d9f59a69d0fe84ced0425b8bcbb6",
+      "unicode_range": "U+4328,U+4361"
+    },
+    {
+      "file": "woodblock-0087.woff2",
+      "bytes": 2052,
+      "sha256": "3842c95d83d3d3c6d780fbefc604d0106dd48244cba3f59caa73dd3c2f1196d3",
+      "unicode_range": "U+439A"
+    },
+    {
+      "file": "woodblock-0089.woff2",
+      "bytes": 1396,
+      "sha256": "dd2143054c7fafa072ee824e32a143a7a7cadf4ae4830c278ad717b7cad8e898",
+      "unicode_range": "U+44A0"
+    },
+    {
+      "file": "woodblock-008a.woff2",
+      "bytes": 1836,
+      "sha256": "4e79f611404e6006c53f05061d91cdfbadf53f0b7ce1350d4f4ecca1bad1ee39",
+      "unicode_range": "U+4532"
+    },
+    {
+      "file": "woodblock-008b.woff2",
+      "bytes": 1856,
+      "sha256": "4a23758de3bc9b0ba73939f09bc2e8d7fba258a6fd1eaa446cc132f02a25c4d3",
+      "unicode_range": "U+45D3"
+    },
+    {
+      "file": "woodblock-008c.woff2",
+      "bytes": 4408,
+      "sha256": "d0588b68af857897f955c567dffce2fa28eeeaae6677062a844cc15aab300488",
+      "unicode_range": "U+4616,U+462E,U+4632"
+    },
+    {
+      "file": "woodblock-008d.woff2",
+      "bytes": 2112,
+      "sha256": "e905560ea862917c0177cdf34e04454cc2480ef1b44911756ba615d3c7b07fa6",
+      "unicode_range": "U+46A9"
+    },
+    {
+      "file": "woodblock-008e.woff2",
+      "bytes": 2096,
+      "sha256": "db9472a15d829c938ac32c206bb5ee21ac8dd69c20f04116bef689f436f7f778",
+      "unicode_range": "U+4749"
+    },
+    {
+      "file": "woodblock-008f.woff2",
+      "bytes": 1816,
+      "sha256": "bf9b98b68a269bde24f87b91853e7b26b2dc2cd69609314e036c9d858d6c807b",
+      "unicode_range": "U+47C3"
+    },
+    {
+      "file": "woodblock-0092.woff2",
+      "bytes": 3224,
+      "sha256": "248ef5de4784a5a05de6c54b459456d619972b99993f361ea269860ee9421058",
+      "unicode_range": "U+4904,U+493F"
+    },
+    {
+      "file": "woodblock-0094.woff2",
+      "bytes": 1876,
+      "sha256": "2e9d6c7fd17d3015b4db8a4921fd31b1b1faba451ccb0058b72b053fecb93800",
+      "unicode_range": "U+4A49"
+    },
+    {
+      "file": "woodblock-0095.woff2",
+      "bytes": 2268,
+      "sha256": "8c96789a2bcbaf05d2f2d3ccd60923cac8d162d4cb80ab6c6f7ff79778e0f39b",
+      "unicode_range": "U+4ACF"
+    },
+    {
+      "file": "woodblock-009a.woff2",
+      "bytes": 2140,
+      "sha256": "944440fa1ec8895a921610f42fb149c93330ab135e0c9eb1f96365ce9fa783c9",
+      "unicode_range": "U+4D7B"
+    },
+    {
+      "file": "woodblock-009c.woff2",
+      "bytes": 82516,
+      "sha256": "4fbd613b2ee2595b3b8714f7515a75c2c6c9ca9004f12c24912b2ec4b4cec45a",
+      "unicode_range": "U+4E01-4E02,U+4E04-4E08,U+4E0C,U+4E0E-4E15,U+4E17-4E19,U+4E1B-4E29,U+4E2B-4E2C,U+4E2E-4E39,U+4E3C-4E44,U+4E46-4E48,U+4E4A,U+4E4C-4E5C,U+4E5E-4E65,U+4E67-4E7F"
+    },
+    {
+      "file": "woodblock-009d.woff2",
+      "bytes": 78904,
+      "sha256": "69265544ba893e73779f15ff50bfcf10fedefecaf98feae4ab7bbadfd56f04e3",
+      "unicode_range": "U+4E80-4E85,U+4E87-4E8B,U+4E8D,U+4E8F-4E93,U+4E95-4EA0,U+4EA2-4EAA,U+4EAC-4EAD,U+4EAF-4EB9,U+4EBB-4EC4,U+4EC6-4ECD,U+4ECF-4EE4,U+4EE6-4EFC,U+4EFE-4EFF"
+    },
+    {
+      "file": "woodblock-009e.woff2",
+      "bytes": 96172,
+      "sha256": "03329c86fef791b93d635187cf18877dab2172ee53c07b2f6ccfaa77183262c7",
+      "unicode_range": "U+4F00-4F1F,U+4F21-4F4C,U+4F4E-4F52,U+4F54-4F5B,U+4F5D-4F5F,U+4F61-4F7E"
+    },
+    {
+      "file": "woodblock-009f.woff2",
+      "bytes": 112592,
+      "sha256": "ea40b90195ffebe5c0b751c482bef4b0ffa24fcff51be318c313c9750cd180aa",
+      "unicode_range": "U+4F80-4F8C,U+4F8E-4FDC,U+4FDE-4FED,U+4FEF-4FFF"
+    },
+    {
+      "file": "woodblock-00a0.woff2",
+      "bytes": 112068,
+      "sha256": "20a61188496b2044a33d8f38c45b4ab017048b4a9c5e2a9b4148cb6ff61a2d97",
+      "unicode_range": "U+5000-5018,U+501A-504E,U+5050-507F"
+    },
+    {
+      "file": "woodblock-00a1.woff2",
+      "bytes": 127092,
+      "sha256": "c9e3a0c82683cedb05d9d7b9a8cd5e847d5f643e6d8729fbe90d7ef2c95a02e1",
+      "unicode_range": "U+5080-50CE,U+50D0-50FF"
+    },
+    {
+      "file": "woodblock-00a2.woff2",
+      "bytes": 120436,
+      "sha256": "54c8b8fef41a00007708eee37109b329275eb4a766540b9755f867fdae393074",
+      "unicode_range": "U+5100-5142,U+5144-5164,U+5166-5167,U+5169-516A,U+516C,U+516E-5170,U+5172,U+5174-517F"
+    },
+    {
+      "file": "woodblock-00a3.woff2",
+      "bytes": 100772,
+      "sha256": "7b637fa305d55c7a6ca0e3c478fc783a347bdfbf847081af691be744cc0e6aa3",
+      "unicode_range": "U+5180-518B,U+518E-5198,U+519A-51C5,U+51C7-51F9,U+51FB-51FF"
+    },
+    {
+      "file": "woodblock-00a4.woff2",
+      "bytes": 101300,
+      "sha256": "e757aef7114dc16ec7898cd129b0057be2ccb79cf41ff7f32c1b4060ed092c37",
+      "unicode_range": "U+5200-5205,U+5208-5218,U+521A-521F,U+5221-5223,U+5225-522F,U+5231-5235,U+5238-523A,U+523C-524C,U+524E-5250,U+5252-527F"
+    },
+    {
+      "file": "woodblock-00a5.woff2",
+      "bytes": 112352,
+      "sha256": "bfabe0157d65189e4acd2c687ee518ce9f3a3bea8a0d9b08606a344103a1e746",
+      "unicode_range": "U+5280-529A,U+529C-529F,U+52A1-52A7,U+52A9-52BE,U+52C0-52FF"
+    },
+    {
+      "file": "woodblock-00a6.woff2",
+      "bytes": 91640,
+      "sha256": "981c2f15829555d9cc18f6c085ee6acf6d70dbb3ea576dae36de4ec0f3d843ed",
+      "unicode_range": "U+5300-5315,U+5317-5322,U+5324-533D,U+533F-5340,U+5342-5354,U+5356-5360,U+5362-5372,U+5374-537F"
+    },
+    {
+      "file": "woodblock-00a7.woff2",
+      "bytes": 90572,
+      "sha256": "897772e0947f8429e9af68809b8d5f7b8595721616a7fbf4482693616a1091b4",
+      "unicode_range": "U+5380-5385,U+5387-539E,U+53A0-53CA,U+53CE-53D0,U+53D2-53D5,U+53D7-53E2,U+53E4-53E9,U+53EB-53EE,U+53F0-53F1,U+53F4-53F6,U+53F9-53FF"
+    },
+    {
+      "file": "woodblock-00a8.woff2",
+      "bytes": 90300,
+      "sha256": "db1003f91b3869c214e432b47f3a121671990ae347576f1e6a06c4644bedde7e",
+      "unicode_range": "U+5400-5403,U+5405-5409,U+540B-540D,U+540F-5410,U+5412-542A,U+542C-542E,U+5430-547C,U+547E-547F"
+    },
+    {
+      "file": "woodblock-00a9.woff2",
+      "bytes": 101640,
+      "sha256": "556338b68433b0442046844f524264f9c4f40b87d81ffb2530c7383bc6caf0c6",
+      "unicode_range": "U+5480-548B,U+548D-54FF"
+    },
+    {
+      "file": "woodblock-00aa.woff2",
+      "bytes": 111900,
+      "sha256": "74d8f3d5e66cd80a22de25e291cdeb55b3bfecc126d64d6724dd80d7e1b87604",
+      "unicode_range": "U+5500-557F"
+    },
+    {
+      "file": "woodblock-00ab.woff2",
+      "bytes": 121388,
+      "sha256": "e9e470782d9b2f160f77ed59593d6236a22a36164c4f4182d755d9ee58d26368",
+      "unicode_range": "U+5580-55FF"
+    },
+    {
+      "file": "woodblock-00ac.woff2",
+      "bytes": 131120,
+      "sha256": "91a829b0d0d2b9a0bf6c2e5829e15b8bdb6b3ff689e66ae90fa775f0f87f8241",
+      "unicode_range": "U+5600-5667,U+5669-567F"
+    },
+    {
+      "file": "woodblock-00ad.woff2",
+      "bytes": 127076,
+      "sha256": "abb8fe0782881a2eab199b6ff4f65b00ed023735554ad7b1e8ae24a44ccd6c73",
+      "unicode_range": "U+5680-56DA,U+56DC-56DD,U+56DF-56FC,U+56FF"
+    },
+    {
+      "file": "woodblock-00ae.woff2",
+      "bytes": 101116,
+      "sha256": "f7350912d6c81cbb7823be7624d317b6e76a8a08ec74430b358363fa0289cac5",
+      "unicode_range": "U+5700-5722,U+5724-5727,U+5729-572F,U+5731-573F,U+5741-577F"
+    },
+    {
+      "file": "woodblock-00af.woff2",
+      "bytes": 105880,
+      "sha256": "6a1944d05116b2fcd5abeeefc7c8cc4d5452dc2fff1b4959296073084e092bc0",
+      "unicode_range": "U+5780-57FF"
+    },
+    {
+      "file": "woodblock-00b0.woff2",
+      "bytes": 116696,
+      "sha256": "429e0a11375884b9ffc7add60392b9b26810703ec7e1430bbe11b68881c925c6",
+      "unicode_range": "U+5800-5805,U+5807-5853,U+5855-586A,U+586C-587F"
+    },
+    {
+      "file": "woodblock-00b1.woff2",
+      "bytes": 126756,
+      "sha256": "e3132715cd4018f8bdb121e5dd9831be793bce500ceca0fd27b59dd0f85de08c",
+      "unicode_range": "U+5880-58A7,U+58A9-58EA,U+58EC-58FF"
+    },
+    {
+      "file": "woodblock-00b2.woff2",
+      "bytes": 103456,
+      "sha256": "ec6cd61955b4b3f19d314e32baebec09f336a39ee60905545dbecdcdc38f84a3",
+      "unicode_range": "U+5900-5906,U+5908-5919,U+591B-5929,U+592B-5930,U+5932-5972,U+5974-597C,U+597E-597F"
+    },
+    {
+      "file": "woodblock-00b3.woff2",
+      "bytes": 114332,
+      "sha256": "f600bc13a1710c9faa59bcf39604758111720555b0f04d7448fc2879f37a912a",
+      "unicode_range": "U+5980-59CA,U+59CC-59FF"
+    },
+    {
+      "file": "woodblock-00b4.woff2",
+      "bytes": 121736,
+      "sha256": "daa86ef008aa1fdfbb17cc27ab94908264f3674721608f8f4c17c231e7946bf4",
+      "unicode_range": "U+5A00-5A7F"
+    },
+    {
+      "file": "woodblock-00b5.woff2",
+      "bytes": 130944,
+      "sha256": "f54f57931523fe215011f9bd2c2b5e9c349765a2147945ab42a7ec1d74f9c694",
+      "unicode_range": "U+5A80-5AFF"
+    },
+    {
+      "file": "woodblock-00b6.woff2",
+      "bytes": 127700,
+      "sha256": "f542f3923184fed1697fd7e450c9a1f22491a48fd98b664c36013d20339392ce",
+      "unicode_range": "U+5B00-5B4F,U+5B51-5B56,U+5B59-5B7F"
+    },
+    {
+      "file": "woodblock-00b7.woff2",
+      "bytes": 104832,
+      "sha256": "14954317acd183dde08e2eb08b7b0c1574f2f3b4b5b31efa1e73993a693a0f6d",
+      "unicode_range": "U+5B80-5B88,U+5B8A-5B8B,U+5B8D-5B9C,U+5B9E-5BA0,U+5BA2-5BAA,U+5BAC-5BF8,U+5BFA-5BFB,U+5BFD-5BFF"
+    },
+    {
+      "file": "woodblock-00b8.woff2",
+      "bytes": 101864,
+      "sha256": "1034cffe38f86259d109628d05da253a109bfec24fad692e061909bd1115f37f",
+      "unicode_range": "U+5C00-5C05,U+5C07-5C0E,U+5C10-5C13,U+5C15-5C19,U+5C1B-5C30,U+5C32-5C41,U+5C43-5C4E,U+5C50-5C7F"
+    },
+    {
+      "file": "woodblock-00b9.woff2",
+      "bytes": 107204,
+      "sha256": "167051ae211350ce44c3337ddfa77ff982e45e89c1c9786c70047db86f6ed560",
+      "unicode_range": "U+5C80-5CFF"
+    },
+    {
+      "file": "woodblock-00ba.woff2",
+      "bytes": 120464,
+      "sha256": "cfa480c9fc3edb829918c7b75c58245a2bc4cae668468175ed5318c9c57a720a",
+      "unicode_range": "U+5D00-5D7F"
+    },
+    {
+      "file": "woodblock-00bb.woff2",
+      "bytes": 128044,
+      "sha256": "566d8c09fec4584878f885ed100ba5c272da151f5060b56f93efa94fd5406414",
+      "unicode_range": "U+5D80-5DE5,U+5DE7-5DF1,U+5DF3-5DFF"
+    },
+    {
+      "file": "woodblock-00bc.woff2",
+      "bytes": 110288,
+      "sha256": "acf5012a911f3db4baaad38b037da67f5fe2a74b0736b37a37b412b77129288f",
+      "unicode_range": "U+5E00,U+5E02-5E07,U+5E09-5E1C,U+5E1E-5E54,U+5E56-5E73,U+5E75-5E7F"
+    },
+    {
+      "file": "woodblock-00bd.woff2",
+      "bytes": 111172,
+      "sha256": "67daf3baf28327fcf188e02b2acb65d3f6e752cf64f6ca626d56ef5eb9d62304",
+      "unicode_range": "U+5E80-5E93,U+5E95-5EF6,U+5EF8-5EFF"
+    },
+    {
+      "file": "woodblock-00be.woff2",
+      "bytes": 104320,
+      "sha256": "a81ad2ac444eb893c69469dd1540b372d0afbdf6dc2366747ba83dd7e9e68f89",
+      "unicode_range": "U+5F01-5F14,U+5F16-5F1F,U+5F21-5F51,U+5F54,U+5F56-5F61,U+5F63-5F7F"
+    },
+    {
+      "file": "woodblock-00bf.woff2",
+      "bytes": 108248,
+      "sha256": "b6afc6a7ad323205eb5b67379d388a3480bb3dd9df6874b8eb515041865e0ee0",
+      "unicode_range": "U+5F80-5FA0,U+5FA2-5FC2,U+5FC4-5FC5,U+5FC7-5FFF"
+    },
+    {
+      "file": "woodblock-00c0.woff2",
+      "bytes": 109344,
+      "sha256": "4d7926ba9ac38d5c2b2e28b859ada488b51a635dd3e14654cef2ae65582d0128",
+      "unicode_range": "U+6000,U+6002-6026,U+6028-604A,U+604C-6075,U+6077-607F"
+    },
+    {
+      "file": "woodblock-00c1.woff2",
+      "bytes": 116588,
+      "sha256": "38e2c93802a67eeb7bf83b0bec1e7a298a3c2e1bc4ff952abd4c28027da72142",
+      "unicode_range": "U+6080-60F2,U+60F4-60FF"
+    },
+    {
+      "file": "woodblock-00c2.woff2",
+      "bytes": 129984,
+      "sha256": "f21315c8d8909e5d3595befa32029af62a31bcecc678526e8bd114a6ddff2e15",
+      "unicode_range": "U+6100-6119,U+611B-611E,U+6120-617F"
+    },
+    {
+      "file": "woodblock-00c3.woff2",
+      "bytes": 135296,
+      "sha256": "aa54b5e71085dcadbad281456bb1b6ffb3998c2f2fda91096d7a983f461aa49a",
+      "unicode_range": "U+6180-61FF"
+    },
+    {
+      "file": "woodblock-00c4.woff2",
+      "bytes": 104768,
+      "sha256": "1a0bba9b4fb675d940c9256865da816518bedc3ef0fd04b79b56b7520a16e344",
+      "unicode_range": "U+6200-620F,U+6211-6215,U+6217,U+6219-6229,U+622B-6232,U+6234-6246,U+6248-624A,U+624C-6252,U+6254-627D,U+627F"
+    },
+    {
+      "file": "woodblock-00c5.woff2",
+      "bytes": 105412,
+      "sha256": "bae45a66176c91220455414357ed122a77c8edce9512d53dac502489d3ff19bd",
+      "unicode_range": "U+6280-6289,U+628B-62BC,U+62BE-62E8,U+62EA-62FF"
+    },
+    {
+      "file": "woodblock-00c6.woff2",
+      "bytes": 115060,
+      "sha256": "c12d08952187dd769bb0b5c98c5c2ac153d925a19c866f3cd885dc3e2530d81d",
+      "unicode_range": "U+6300,U+6302-6308,U+630A-6361,U+6363-636D,U+636F-637F"
+    },
+    {
+      "file": "woodblock-00c7.woff2",
+      "bytes": 124876,
+      "sha256": "81896c9de3805b7b21dc5f997f3e489c9c1a56ea48d89cf11144b2d08006feff",
+      "unicode_range": "U+6380-63A4,U+63A6-63CF,U+63D1-63EC,U+63EE-63FF"
+    },
+    {
+      "file": "woodblock-00c8.woff2",
+      "bytes": 132316,
+      "sha256": "b4704943d05c61ac1df61d969396d5069004cd9987a9193c2ddeaaba623c742b",
+      "unicode_range": "U+6400-647F"
+    },
+    {
+      "file": "woodblock-00c9.woff2",
+      "bytes": 141340,
+      "sha256": "f1237b4c22940e5dd7843b9e3759ff24b6e1ca81ed862535f691cc4f6cdc3b8b",
+      "unicode_range": "U+6480-64A3,U+64A5-64CC,U+64CE-64FF"
+    },
+    {
+      "file": "woodblock-00ca.woff2",
+      "bytes": 129244,
+      "sha256": "eb0f6337b1bf2452e39fd601c93a40a30f42c02b9bc01fa9a88558ce8f107fb0",
+      "unicode_range": "U+6500-6538,U+653A-653D,U+653F-6547,U+6549-6558,U+655A-656F,U+6571-6573,U+6575-657F"
+    },
+    {
+      "file": "woodblock-00cb.woff2",
+      "bytes": 111916,
+      "sha256": "f99421e23f462962f963a205030b5f13eff6626901aa413ee1d8be700785947d",
+      "unicode_range": "U+6580-65AF,U+65B1-65B8,U+65BA-65CA,U+65CC-65DF,U+65E1-65E4,U+65E6-65F5,U+65F7-65FF"
+    },
+    {
+      "file": "woodblock-00cc.woff2",
+      "bytes": 105044,
+      "sha256": "82ead7361086ec89a1d40acded07507f3a66349de6c077f30561cdf094987866",
+      "unicode_range": "U+6600-660D,U+660F-661E,U+6620-662E,U+6630-663D,U+663F-667F"
+    },
+    {
+      "file": "woodblock-00cd.woff2",
+      "bytes": 128092,
+      "sha256": "1b73c0053e735e7aff0f149704e0a5eb5b42f236fbd5f931d857ef027f2c6b2e",
+      "unicode_range": "U+6680-6681,U+6683-6696,U+6698-66F3,U+66F5-66FF"
+    },
+    {
+      "file": "woodblock-00ce.woff2",
+      "bytes": 94532,
+      "sha256": "e65826e8a171b5833ae31100ad3f042bf94ad16b3a1454d342cd92bf716f6519",
+      "unicode_range": "U+6701-6707,U+670A,U+670C-671E,U+6720-6727,U+6729,U+672B,U+672D-672E,U+6730-6739,U+673B-6742,U+6744-6755,U+6757-6760,U+6762-676E,U+6770-677E"
+    },
+    {
+      "file": "woodblock-00cf.woff2",
+      "bytes": 111796,
+      "sha256": "96a59f60d13d81fa4a151cf90ff6222fca22fa183d1bdbea656fa77d9cbea521",
+      "unicode_range": "U+6780-67E4,U+67E6-67FF"
+    },
+    {
+      "file": "woodblock-00d0.woff2",
+      "bytes": 113536,
+      "sha256": "a2d556b986b3b0141b035deec7a8c3f6ef0ff844c19e2ad509798ea96a4fc8ef",
+      "unicode_range": "U+6800-6806,U+6808-680E,U+6810-6836,U+6838-683B,U+683D-684B,U+684D-6862,U+6864-687F"
+    },
+    {
+      "file": "woodblock-00d1.woff2",
+      "bytes": 120804,
+      "sha256": "332dfd34c0429edde68ff7373aadb49dc13bc1768b699f049339bb6a9a295c17",
+      "unicode_range": "U+6880-68FF"
+    },
+    {
+      "file": "woodblock-00d2.woff2",
+      "bytes": 122412,
+      "sha256": "ac35b307b98dd0ab8dae9353ff3b239d06928727a4fa7b90fd44672801b56858",
+      "unicode_range": "U+6900-697F"
+    },
+    {
+      "file": "woodblock-00d3.woff2",
+      "bytes": 131336,
+      "sha256": "840abe4ecfbe58c418828e02248a17dd346da4914a894a3d3b026fd7eb1c74b1",
+      "unicode_range": "U+6980-69FF"
+    },
+    {
+      "file": "woodblock-00d4.woff2",
+      "bytes": 138484,
+      "sha256": "f4ccb27c19b83c81b7dcd60622df880f0c0e5aeae5991049b0dce66f086d5d5c",
+      "unicode_range": "U+6A00-6A7F"
+    },
+    {
+      "file": "woodblock-00d5.woff2",
+      "bytes": 145860,
+      "sha256": "e2c92f7ecb0df64ca59c174eb8c2206e08991df49649f781900c4538d2858d3f",
+      "unicode_range": "U+6A80-6AFF"
+    },
+    {
+      "file": "woodblock-00d6.woff2",
+      "bytes": 127456,
+      "sha256": "401f84704a9b1fe7093c90030d4b0ca571bfb43deb201cdc6ac029329df9b922",
+      "unicode_range": "U+6B00-6B20,U+6B22-6B62,U+6B65-6B7A,U+6B7C-6B7F"
+    },
+    {
+      "file": "woodblock-00d7.woff2",
+      "bytes": 122780,
+      "sha256": "1c3197a28dcf40485ba1365d0496c39d5a21ddfa36ad7d54e7be9db60998d494",
+      "unicode_range": "U+6B80-6BFF"
+    },
+    {
+      "file": "woodblock-00d8.woff2",
+      "bytes": 101316,
+      "sha256": "2807337f7386209b0274d3f4324f43142049a60f5490804d99ce1446e24b1b4d",
+      "unicode_range": "U+6C00-6C33,U+6C35-6C7F"
+    },
+    {
+      "file": "woodblock-00d9.woff2",
+      "bytes": 105148,
+      "sha256": "495f13e770e66528088812fe95811709f5c33d3a259b1a82b626d2941a8191d0",
+      "unicode_range": "U+6C80-6CD4,U+6CD6-6CFF"
+    },
+    {
+      "file": "woodblock-00da.woff2",
+      "bytes": 104980,
+      "sha256": "7ce8197e53b4f3275bb4de117dbb74e954d36eca9b125636416bac8b6cf39948",
+      "unicode_range": "U+6D00-6D16,U+6D18-6D40,U+6D42-6D44,U+6D46-6D4A,U+6D4C-6D4E,U+6D50-6D6D,U+6D6F-6D7F"
+    },
+    {
+      "file": "woodblock-00db.woff2",
+      "bytes": 116228,
+      "sha256": "db04b6180bd9ea2255eb90a6715e1ac184c58701c61ca61e60ecb3e1d0ec598a",
+      "unicode_range": "U+6D80-6D87,U+6D89-6DF0,U+6DF2-6DFA,U+6DFC-6DFF"
+    },
+    {
+      "file": "woodblock-00dc.woff2",
+      "bytes": 123284,
+      "sha256": "1cbba4385c911654b5604c6d0dc5151125cd6ecf1941a749f73bf7e7c8bb1f76",
+      "unicode_range": "U+6E00-6E04,U+6E06-6E7F"
+    },
+    {
+      "file": "woodblock-00dd.woff2",
+      "bytes": 126064,
+      "sha256": "70e232cde90795c7dd1bf244a01912a3c799922e5dc8c6ddb34588b70ec788da",
+      "unicode_range": "U+6E80-6ED0,U+6ED2-6EFF"
+    },
+    {
+      "file": "woodblock-00de.woff2",
+      "bytes": 133936,
+      "sha256": "05130952e8732ab32c84846316522b6654b10cb4429a00932b9c49066164198b",
+      "unicode_range": "U+6F00-6F7F"
+    },
+    {
+      "file": "woodblock-00df.woff2",
+      "bytes": 139556,
+      "sha256": "40d32cb04e05e72e88c179b1b9ac0dcb4d47faa3e24bb212edf882d4ebc4f2fc",
+      "unicode_range": "U+6F80-6FFF"
+    },
+    {
+      "file": "woodblock-00e0.woff2",
+      "bytes": 145092,
+      "sha256": "50caa63c4131e58aed9f23e6ea0ae4d28aeb10b9fbb0c583e78abaaf446fb65f",
+      "unicode_range": "U+7000-7074,U+7076-707F"
+    },
+    {
+      "file": "woodblock-00e1.woff2",
+      "bytes": 110440,
+      "sha256": "83eabe227965a397a9e9829e62741c1f38b849e7a496acff6842324b163c777f",
+      "unicode_range": "U+7080-70B8,U+70BA-70FF"
+    },
+    {
+      "file": "woodblock-00e2.woff2",
+      "bytes": 118236,
+      "sha256": "9baf14ed7d1d89201a852c5c674a786bff7f898879702b52fe5ce40b84aaa19d",
+      "unicode_range": "U+7100-717F"
+    },
+    {
+      "file": "woodblock-00e3.woff2",
+      "bytes": 135228,
+      "sha256": "12122c97969ce455e88ce34cc5fa7444be18ac1ec0ed8bcfb2ce9be7aeeff93a",
+      "unicode_range": "U+7180-71FF"
+    },
+    {
+      "file": "woodblock-00e4.woff2",
+      "bytes": 125004,
+      "sha256": "1ce5946e48ec5854f106d24102ec9589fadb0bb4d6c29b9d1509bf694086d427",
+      "unicode_range": "U+7200-7246,U+7249-724B,U+724D-727F"
+    },
+    {
+      "file": "woodblock-00e5.woff2",
+      "bytes": 117912,
+      "sha256": "978afdd69045f7a1c972348e7cd73a4bd394933295012a8355a3ca115280c223",
+      "unicode_range": "U+7280-72B5,U+72B7-72FF"
+    },
+    {
+      "file": "woodblock-00e6.woff2",
+      "bytes": 127168,
+      "sha256": "d3c1ba4d88b33ec87f08f6b29e27bfd92cc57a1c0bc6f18fad5e0c9be5d11394",
+      "unicode_range": "U+7300-737F"
+    },
+    {
+      "file": "woodblock-00e7.woff2",
+      "bytes": 107012,
+      "sha256": "848e03844de304576139a4fc34c412de1b904ebf236c9d71f1732ed41409adc1",
+      "unicode_range": "U+7380-738A,U+738C-73AF,U+73B1-73FF"
+    },
+    {
+      "file": "woodblock-00e8.woff2",
+      "bytes": 116280,
+      "sha256": "16d876f77d86e78729a6a785cbd3851974db52513fa7bc8cee3f92071f01a224",
+      "unicode_range": "U+7400-747F"
+    },
+    {
+      "file": "woodblock-00e9.woff2",
+      "bytes": 134020,
+      "sha256": "f679c3c3e019ec376a99eace2080077c15e3fb048fc486e025810aafa6865306",
+      "unicode_range": "U+7480-74FF"
+    },
+    {
+      "file": "woodblock-00ea.woff2",
+      "bytes": 118008,
+      "sha256": "2e5c0b4204b10142ed3ec50e29c712438cbc3d5372dc14acfc8fb85f910db75f",
+      "unicode_range": "U+7500-751E,U+7520-7527,U+7529-754B,U+754D-7558,U+755A-757F"
+    },
+    {
+      "file": "woodblock-00eb.woff2",
+      "bytes": 119104,
+      "sha256": "fc499c37afc0a40bad4003f52477b94c1746a5e7af7cb06766e5405ebe34cd86",
+      "unicode_range": "U+7580-75FF"
+    },
+    {
+      "file": "woodblock-00ec.woff2",
+      "bytes": 129692,
+      "sha256": "197e9c99c7c57d3fbf42e880c4b3d8c632fa48dfe7e7df0eb3966031dba4f99a",
+      "unicode_range": "U+7600-767F"
+    },
+    {
+      "file": "woodblock-00ed.woff2",
+      "bytes": 111800,
+      "sha256": "531e5c3e16e42e2378e128cb8f0a89273fda806fc4b26543d8fc2aeaa5ecb683",
+      "unicode_range": "U+7680-7683,U+7685-7686,U+7688-76F3,U+76F5-76F7,U+76F9-76FF"
+    },
+    {
+      "file": "woodblock-00ee.woff2",
+      "bytes": 117580,
+      "sha256": "03cfecce683c1283b548128593346abdcd8f31c96287eae4ab14548994a64728",
+      "unicode_range": "U+7700-770A,U+770C-777F"
+    },
+    {
+      "file": "woodblock-00ef.woff2",
+      "bytes": 128408,
+      "sha256": "71ff93a7f758cd179a65f7d1fd62c122022cb0e9007dbbddf5788a3a7260de4e",
+      "unicode_range": "U+7780-77F2,U+77F4-77FF"
+    },
+    {
+      "file": "woodblock-00f0.woff2",
+      "bytes": 106876,
+      "sha256": "1ef07c3d93311aed2e7f4d3f67c3be61c190f4d66658033a151330d7816a3684",
+      "unicode_range": "U+7800-786D,U+786F-787F"
+    },
+    {
+      "file": "woodblock-00f1.woff2",
+      "bytes": 127900,
+      "sha256": "26199fb6c6bc6b0a286e6b7c548728ab4b6e51f39c31458086c62bc3529e92ef",
+      "unicode_range": "U+7880-78FF"
+    },
+    {
+      "file": "woodblock-00f2.woff2",
+      "bytes": 128736,
+      "sha256": "2c5c49499964b2de7547342adc3bdbe5e32999890a251873838763b2c0d9e6a4",
+      "unicode_range": "U+7900-7939,U+793B-796C,U+796E-797F"
+    },
+    {
+      "file": "woodblock-00f3.woff2",
+      "bytes": 121328,
+      "sha256": "1790bb7c9998577ea44494a097c31fa27acb85fc2cb0aec2103e27e14f3685de",
+      "unicode_range": "U+7980-79FA,U+79FC-79FF"
+    },
+    {
+      "file": "woodblock-00f4.woff2",
+      "bytes": 131908,
+      "sha256": "ba120ddcc23dd704267d7ede5a1defc16a0032e6c8a65e81ab9d6788b79e6bd0",
+      "unicode_range": "U+7A00-7A0C,U+7A0E-7A79,U+7A7B-7A7F"
+    },
+    {
+      "file": "woodblock-00f5.woff2",
+      "bytes": 114960,
+      "sha256": "65505cacb9ada23030f28a4f33674265e41a52c1b2aa2db0a9da9496755ccd41",
+      "unicode_range": "U+7A80-7A96,U+7A98-7AD8,U+7ADA-7AFF"
+    },
+    {
+      "file": "woodblock-00f6.woff2",
+      "bytes": 112220,
+      "sha256": "0c279956fd280b41e07b11761a149d02be13f6f97512dd2a4a6cd707e00aab13",
+      "unicode_range": "U+7B00-7B2B,U+7B2D-7B7D,U+7B7F"
+    },
+    {
+      "file": "woodblock-00f7.woff2",
+      "bytes": 134004,
+      "sha256": "49f3f09a6eed898d5119090f78d4a314fb3bee51b277a08721bf88a9aef71070",
+      "unicode_range": "U+7B80-7B96,U+7B98-7BFF"
+    },
+    {
+      "file": "woodblock-00f8.woff2",
+      "bytes": 144536,
+      "sha256": "289e8c09267b3c2dfa68d6cd7f509a7178e69f3b46d872162d849759aaf3e60d",
+      "unicode_range": "U+7C00-7C7F"
+    },
+    {
+      "file": "woodblock-00f9.woff2",
+      "bytes": 124972,
+      "sha256": "b68720c76f1550b6891fa0fee0a0f54ff87d00dcd104f111d8f54ffaf1c13df2",
+      "unicode_range": "U+7C80-7CFF"
+    },
+    {
+      "file": "woodblock-00fa.woff2",
+      "bytes": 124964,
+      "sha256": "2510c4e2d2abfac0d2cfcbd4b7500babc1a93e56207775bb9ece4ed8f9e872fb",
+      "unicode_range": "U+7D00-7D1F,U+7D21-7D7F"
+    },
+    {
+      "file": "woodblock-00fb.woff2",
+      "bytes": 142516,
+      "sha256": "8e17d3c2eba22db959f0a3d899d0556e37a23b67f840e8a5c3047be2550f12cd",
+      "unicode_range": "U+7D80-7DFF"
+    },
+    {
+      "file": "woodblock-00fc.woff2",
+      "bytes": 153316,
+      "sha256": "215c0788c45fda38e6c384f5896b9c04a5eda204e6e991fa001233217475ec5b",
+      "unicode_range": "U+7E00-7E7F"
+    },
+    {
+      "file": "woodblock-00fd.woff2",
+      "bytes": 129464,
+      "sha256": "ceaca5c1b524959f879f1d101563e352d4f3e7f588313803b980ccaf51ed1269",
+      "unicode_range": "U+7E80-7EA5,U+7EA7-7EB2,U+7EB4-7EC3,U+7EC5-7ED4,U+7ED6-7ED7,U+7EDA-7EDE,U+7EE0-7EE6,U+7EE8-7EEC,U+7EEE-7EFE"
+    },
+    {
+      "file": "woodblock-00fe.woff2",
+      "bytes": 125592,
+      "sha256": "5f1697b7676d3bd8e01a04f128e9e8169ed6eb4a8e0aa2a067a3d9141ab2b4f7",
+      "unicode_range": "U+7F00-7F15,U+7F17-7F39,U+7F3B-7F50,U+7F52-7F56,U+7F58-7F6D,U+7F6F-7F7F"
+    },
+    {
+      "file": "woodblock-00ff.woff2",
+      "bytes": 128796,
+      "sha256": "efb13e4411fb3421c8b2bfe1cc61b0ef24e6b5037f91de1da6bd6b04a5c09cd6",
+      "unicode_range": "U+7F80-7FFA,U+7FFC-7FFF"
+    },
+    {
+      "file": "woodblock-0100.woff2",
+      "bytes": 119564,
+      "sha256": "f65d0521fd9ca58f146440a957a1cc6ef06ea3c1f676e190d54f72f53806afde",
+      "unicode_range": "U+8000-8004,U+8006-807F"
+    },
+    {
+      "file": "woodblock-0101.woff2",
+      "bytes": 111144,
+      "sha256": "fcfdffd11221b7200504a6124b769c0ae166d38c07c61e1e6571dd1923b29058",
+      "unicode_range": "U+8080-80FF"
+    },
+    {
+      "file": "woodblock-0102.woff2",
+      "bytes": 124892,
+      "sha256": "a8f1feb155c59d2cb5916cfdbed6e838df9c41678570bae05ab96b813b4ddc2d",
+      "unicode_range": "U+8100-817F"
+    },
+    {
+      "file": "woodblock-0103.woff2",
+      "bytes": 134980,
+      "sha256": "3fc637e9655574b49aa498c88557430cbd69fb94be52f01342099eb491ec8785",
+      "unicode_range": "U+8180-81E9,U+81EB-81FF"
+    },
+    {
+      "file": "woodblock-0104.woff2",
+      "bytes": 129268,
+      "sha256": "79bab007a219c2d9100abc8b1d5ca27fd9fc3407d29e157e58ab74c94df75b6f",
+      "unicode_range": "U+8200-8229,U+822B-8271,U+8273-827F"
+    },
+    {
+      "file": "woodblock-0105.woff2",
+      "bytes": 97508,
+      "sha256": "c3e8624c67a295ffe7c418354956dda302eee5b63821c96ae5ea011e3c59f349",
+      "unicode_range": "U+8280-8281,U+8283-82D3,U+82D5-82E4,U+82E6-82FF"
+    },
+    {
+      "file": "woodblock-0106.woff2",
+      "bytes": 110984,
+      "sha256": "cbbdaeaac49b85a78b306108bb2ef28aac412762fd6504223230ba00acf2fce5",
+      "unicode_range": "U+8300-831B,U+831D-8348,U+834A-837F"
+    },
+    {
+      "file": "woodblock-0107.woff2",
+      "bytes": 113704,
+      "sha256": "d3475d7d31edf2a990c9f171fa4eb7ee4d939deda62b26fdfbf7d90e7784ee2c",
+      "unicode_range": "U+8380-83DB,U+83DD-83FF"
+    },
+    {
+      "file": "woodblock-0108.woff2",
+      "bytes": 119180,
+      "sha256": "f3fb88957ce385936abc0ec0a9caca6e928fe41cafcc8271d9123a9a39d5aebb",
+      "unicode_range": "U+8400-847F"
+    },
+    {
+      "file": "woodblock-0109.woff2",
+      "bytes": 130108,
+      "sha256": "c133031dd68b914e51cff749301fcdc341bb914702658f0e063aa4e9d77b27f0",
+      "unicode_range": "U+8480-84DC,U+84DE-84FF"
+    },
+    {
+      "file": "woodblock-010a.woff2",
+      "bytes": 133388,
+      "sha256": "e5f49eda274c6568c7cc74914d821a338dc7e37a1d15ae3ea10f48a13e26032e",
+      "unicode_range": "U+8500-857F"
+    },
+    {
+      "file": "woodblock-010b.woff2",
+      "bytes": 138872,
+      "sha256": "1323febbca3b775b09c81c90a478fbf6cfd69efa9f2ced8118079bf1b86b5e0f",
+      "unicode_range": "U+8580-85CE,U+85D0-85FF"
+    },
+    {
+      "file": "woodblock-010c.woff2",
+      "bytes": 143296,
+      "sha256": "7a7d3cdba982e28f08cd88d2a2f0efc5acd9b6072738df8cd2fd3f1dfb517f90",
+      "unicode_range": "U+8600-864D,U+864F-867F"
+    },
+    {
+      "file": "woodblock-010d.woff2",
+      "bytes": 119816,
+      "sha256": "e53d769b1664ca3adea1bb2d1cb995023e0775d8adaa61727b8dd6fdf6ebe052",
+      "unicode_range": "U+8680-86FF"
+    },
+    {
+      "file": "woodblock-010e.woff2",
+      "bytes": 136328,
+      "sha256": "b072f78d78cefa273cb3d5a348ebfa00c08417c9d257d8b4a56f073878f41a5f",
+      "unicode_range": "U+8700-877F"
+    },
+    {
+      "file": "woodblock-010f.woff2",
+      "bytes": 144996,
+      "sha256": "6840527485c58a4e2c1537eceaa930dfe5238d6c84e535eef3efabbe4cb18ac4",
+      "unicode_range": "U+8780-87FF"
+    },
+    {
+      "file": "woodblock-0110.woff2",
+      "bytes": 135464,
+      "sha256": "79899155d20417929118fb9fa4fbfbabcae40bfcb2b41be92f4f540fdf824bc3",
+      "unicode_range": "U+8800-884B,U+884D-8864,U+8866-887F"
+    },
+    {
+      "file": "woodblock-0111.woff2",
+      "bytes": 119156,
+      "sha256": "6ff8d691b4c27b9a23d65e5a13772ce8d0e085c0c605a6493401593c5e512bd8",
+      "unicode_range": "U+8880-88C4,U+88C6-88FF"
+    },
+    {
+      "file": "woodblock-0112.woff2",
+      "bytes": 135472,
+      "sha256": "ab1c79e840cec3b52e857ea8e88ab78a44d115a2597e7a7b4a7bf332862b9279",
+      "unicode_range": "U+8900-897F"
+    },
+    {
+      "file": "woodblock-0113.woff2",
+      "bytes": 122716,
+      "sha256": "0bf5abe79561d05d9fb5ad87d4e5d2de00a75156974df02cc6d0ee30656d202d",
+      "unicode_range": "U+8980-89C7,U+89CA-89FF"
+    },
+    {
+      "file": "woodblock-0114.woff2",
+      "bytes": 110412,
+      "sha256": "20917db3bd97397561092436ae404fe2550b6e45c111d19a6077d143e928c887",
+      "unicode_range": "U+8A00-8A7F"
+    },
+    {
+      "file": "woodblock-0115.woff2",
+      "bytes": 127080,
+      "sha256": "bab0d7df5f25bb011ea74730169245e5e143ce26bcaacd2f127107a9dc0f63cd",
+      "unicode_range": "U+8A80-8AFF"
+    },
+    {
+      "file": "woodblock-0116.woff2",
+      "bytes": 141820,
+      "sha256": "706abda906a36f38eeac84e70ce51221bef2e60999681b9d03b18301590b2074",
+      "unicode_range": "U+8B00-8B7F"
+    },
+    {
+      "file": "woodblock-0117.woff2",
+      "bytes": 119152,
+      "sha256": "f5c94cc90bb3dd663213f95770f5d740619f30bec171386013f83ca120ca306e",
+      "unicode_range": "U+8B80-8BA0,U+8BA2-8BA3,U+8BA5-8BA8,U+8BAA-8BAF,U+8BB1-8BBD,U+8BC0-8BD4,U+8BD6-8BEC,U+8BEE-8BF6,U+8BF8-8BFF"
+    },
+    {
+      "file": "woodblock-0118.woff2",
+      "bytes": 129988,
+      "sha256": "c301fdaefc9c6e8ec57046bfd443ae5091995f602fa8f271de39b2e460694037",
+      "unicode_range": "U+8C00-8C7F"
+    },
+    {
+      "file": "woodblock-0119.woff2",
+      "bytes": 135368,
+      "sha256": "bf4eb8bda4f2391701a859cf47d610f012703ae884f47a281fa43581b8ae2f6d",
+      "unicode_range": "U+8C80-8CFF"
+    },
+    {
+      "file": "woodblock-011a.woff2",
+      "bytes": 120888,
+      "sha256": "8797161c3b8d4ea758ed731b7da8bd5fa61bf9615f35dac770a0db997e569ede",
+      "unicode_range": "U+8D00-8D24,U+8D26-8D5A,U+8D5C-8D6C,U+8D6E-8D76,U+8D78-8D7F"
+    },
+    {
+      "file": "woodblock-011b.woff2",
+      "bytes": 122080,
+      "sha256": "af259ec8ed9862de8942bd67d5c38a8798cd639c4435cb7756ab1eaa33395711",
+      "unicode_range": "U+8D80-8D84,U+8D86-8DFF"
+    },
+    {
+      "file": "woodblock-011c.woff2",
+      "bytes": 133300,
+      "sha256": "acc48e928593cb47d485ed316e90ee58fb475e201731e633736c29a3b75fff3e",
+      "unicode_range": "U+8E00-8E7F"
+    },
+    {
+      "file": "woodblock-011d.woff2",
+      "bytes": 134880,
+      "sha256": "30f3b5a5de17fe980df9170d88b0cd245deb66096319f6cfdc207baa4cacb06b",
+      "unicode_range": "U+8E80-8EFF"
+    },
+    {
+      "file": "woodblock-011e.woff2",
+      "bytes": 139756,
+      "sha256": "157cc227b9141a07d722396c52720acc30b2be23215f2d554619b18da91bbc32",
+      "unicode_range": "U+8F00-8F65,U+8F67-8F6B,U+8F6D,U+8F6F-8F7A,U+8F7C,U+8F7E-8F7F"
+    },
+    {
+      "file": "woodblock-011f.woff2",
+      "bytes": 113932,
+      "sha256": "bc76fbee20afccdae385add7940d8aae4769e6f0de265fd5591f2b04dc1e5592",
+      "unicode_range": "U+8F80-8F90,U+8F92-8FC6,U+8FC8-8FCF,U+8FD1-8FD3,U+8FD5-8FD7,U+8FDA,U+8FDC-8FDD,U+8FDF-8FFC,U+8FFE-8FFF"
+    },
+    {
+      "file": "woodblock-0120.woff2",
+      "bytes": 126872,
+      "sha256": "3689c9898ece89126064cd4cb8780f2a9dbe9382db0838ee492b07d6a8d7035c",
+      "unicode_range": "U+9000,U+9002-9005,U+9007-9008,U+900A-907F"
+    },
+    {
+      "file": "woodblock-0121.woff2",
+      "bytes": 118480,
+      "sha256": "301a16bbada9e57b67f22bab0afa08ce6de6c8efc7b625d627efe233e200c745",
+      "unicode_range": "U+9080-90E7,U+90E9-90FF"
+    },
+    {
+      "file": "woodblock-0122.woff2",
+      "bytes": 132336,
+      "sha256": "e5b6838dfd252ecab60124f6fb2eed963cef97427040a68dd93ef1f29c5b91a0",
+      "unicode_range": "U+9100-917F"
+    },
+    {
+      "file": "woodblock-0123.woff2",
+      "bytes": 129928,
+      "sha256": "be81fa38046d2e68f3b129ad924ed1f25fac99cff1d856bea12ed12d1659b7dc",
+      "unicode_range": "U+9180-9191,U+9193-91CB,U+91CE,U+91D0-91FF"
+    },
+    {
+      "file": "woodblock-0124.woff2",
+      "bytes": 119204,
+      "sha256": "de47f9a1d3ad5fa1670dacc7a5d88053210ca36fe7b8e9906156d19ea63bfe83",
+      "unicode_range": "U+9200-927F"
+    },
+    {
+      "file": "woodblock-0125.woff2",
+      "bytes": 129208,
+      "sha256": "aa48c93f86e13ba4250c3a5661a7f2cb63bd61fc437d0f9fc4d1d7ec0c97ef53",
+      "unicode_range": "U+9280-92FF"
+    },
+    {
+      "file": "woodblock-0126.woff2",
+      "bytes": 133984,
+      "sha256": "be2a2c9a2fe3dc8214dfa8a4387b9e866c598cec46acbcaf25f63ed576394cb6",
+      "unicode_range": "U+9300-937F"
+    },
+    {
+      "file": "woodblock-0127.woff2",
+      "bytes": 144360,
+      "sha256": "7bd03e28c107fda9c6ba4f1447275fd69189839e654472026e6f8c80c1230d07",
+      "unicode_range": "U+9380-93FF"
+    },
+    {
+      "file": "woodblock-0128.woff2",
+      "bytes": 152300,
+      "sha256": "d4a217f0f7f2c6a2daf561d906074c3836cd44f7ee431b99a1b67a0a72551bb2",
+      "unicode_range": "U+9400-947F"
+    },
+    {
+      "file": "woodblock-0129.woff2",
+      "bytes": 118892,
+      "sha256": "0ef3eb52c4fc8035564a15ba0a67715e83dc3351a46810b03bc0915ab031296a",
+      "unicode_range": "U+9480-94AD,U+94AF-94B0,U+94B2-94FF"
+    },
+    {
+      "file": "woodblock-012a.woff2",
+      "bytes": 132216,
+      "sha256": "bd4b460b4e623d1a4401b87ae697982de621cec315f031c280a425dfac0fb190",
+      "unicode_range": "U+9501-952D,U+952F-957E"
+    },
+    {
+      "file": "woodblock-012b.woff2",
+      "bytes": 116584,
+      "sha256": "1c1a907e3e375aee58e65198ad7f74b0eee89312ab9310c89d4d0be8929aa9d1",
+      "unicode_range": "U+9580-95EC,U+95EF-95F3,U+95F5-95FF"
+    },
+    {
+      "file": "woodblock-012c.woff2",
+      "bytes": 109120,
+      "sha256": "08038589e1ec8e38356c32a98f39851917db8d03904d8a7d8dae9d9bad67f0b8",
+      "unicode_range": "U+9600-9631,U+9634,U+9636-963E,U+9640-9663,U+9665-967F"
+    },
+    {
+      "file": "woodblock-012d.woff2",
+      "bytes": 131996,
+      "sha256": "646868ec777cdb905a2a6fe3c86b1842f71830fbeec4bc631755d4632c303534",
+      "unicode_range": "U+9680-968E,U+9691-96FF"
+    },
+    {
+      "file": "woodblock-012e.woff2",
+      "bytes": 136864,
+      "sha256": "38ca171db2decd420fde3a3df2a34332129f61ebaadd6948a9a0d8ab9985abd4",
+      "unicode_range": "U+9701-9758,U+975A,U+975C-9761,U+9763-977F"
+    },
+    {
+      "file": "woodblock-012f.woff2",
+      "bytes": 138276,
+      "sha256": "15208270661dea484a02b901687e208aa04d7e9a27dbcb870df7554e279f67b6",
+      "unicode_range": "U+9780-97FF"
+    },
+    {
+      "file": "woodblock-0130.woff2",
+      "bytes": 124636,
+      "sha256": "4441daa30d9910da53df5748713738bfa646eef1221e3b461847afcf3f678c98",
+      "unicode_range": "U+9800-9874,U+9876-987F"
+    },
+    {
+      "file": "woodblock-0131.woff2",
+      "bytes": 137124,
+      "sha256": "63d9137fdcbd4ae562a620a9bd4b3776a44e0d4abb80e7c9a6a0d2dded043a1a",
+      "unicode_range": "U+9880-9883,U+9885-9897,U+9899-98CD,U+98CF-98DD,U+98DF-98FF"
+    },
+    {
+      "file": "woodblock-0132.woff2",
+      "bytes": 130408,
+      "sha256": "8d0a10148a970b478ef6218722135e52733dc7332128ac314f1bb2665c72c870",
+      "unicode_range": "U+9900-997F"
+    },
+    {
+      "file": "woodblock-0133.woff2",
+      "bytes": 132492,
+      "sha256": "a509d8e380d5479f82ca9b0de248392fc2ec9e58d3bb4605769291d16891ba08",
+      "unicode_range": "U+9980-9987,U+9989-9995,U+9997-99FF"
+    },
+    {
+      "file": "woodblock-0134.woff2",
+      "bytes": 145800,
+      "sha256": "101766f2fb14a85fb2bf29af9412b4ea2b814250efbeab54864975d07938d9d9",
+      "unicode_range": "U+9A00-9A6B,U+9A6D-9A7F"
+    },
+    {
+      "file": "woodblock-0135.woff2",
+      "bytes": 134004,
+      "sha256": "7c4d62e7afff31946779d9489aacf70cf6afd8e0bf7a71e40b380ab1604265c3",
+      "unicode_range": "U+9A80-9A90,U+9A92-9AD7,U+9AD9-9AFF"
+    },
+    {
+      "file": "woodblock-0136.woff2",
+      "bytes": 141080,
+      "sha256": "c9e13a80c426353b2ef9a0e21c0f0e33108bb3acccc6f0478d79c1d86c786942",
+      "unicode_range": "U+9B00-9B53,U+9B55-9B7F"
+    },
+    {
+      "file": "woodblock-0137.woff2",
+      "bytes": 138788,
+      "sha256": "7bc8b6bbc5843ff61a0e1130dec6f9345d4a0a013080c7e03afd956c62ce2c6c",
+      "unicode_range": "U+9B80-9BFF"
+    },
+    {
+      "file": "woodblock-0138.woff2",
+      "bytes": 155900,
+      "sha256": "7dad995c859b7ff2634a4906c7a14f89296e49286654023587090bf30bfe5f1a",
+      "unicode_range": "U+9C00-9C7F"
+    },
+    {
+      "file": "woodblock-0139.woff2",
+      "bytes": 138756,
+      "sha256": "f453420f255a565c5582daab359f0e9caed8627330465e4bb58425297613d6e7",
+      "unicode_range": "U+9C80-9CB7,U+9CB9-9CFF"
+    },
+    {
+      "file": "woodblock-013a.woff2",
+      "bytes": 143704,
+      "sha256": "1060aebb9ee80fcacbd049c9d2bf56a9e9ef42c1cbd5c25442e550ea1924f662",
+      "unicode_range": "U+9D00-9D7F"
+    },
+    {
+      "file": "woodblock-013b.woff2",
+      "bytes": 150860,
+      "sha256": "98d0bd5fb510df3e4b637b892a3e8e9591e9a0319b651f5379c5929abc68d2e6",
+      "unicode_range": "U+9D80-9DFF"
+    },
+    {
+      "file": "woodblock-013c.woff2",
+      "bytes": 144460,
+      "sha256": "2e242cb9cba7785c00873271f759a0633e348ffb986114c723327256eb3c43c8",
+      "unicode_range": "U+9E00-9E7F"
+    },
+    {
+      "file": "woodblock-013d.woff2",
+      "bytes": 148140,
+      "sha256": "6a8a449680e1855523c5d14f2f14bce7cf35532afd83b64018956311e109d9ab",
+      "unicode_range": "U+9E80-9EFF"
+    },
+    {
+      "file": "woodblock-013e.woff2",
+      "bytes": 146288,
+      "sha256": "b7366b27ab2bd9fa407a915d283501d3cf4c73b5badc96b4bc092e8c3199b5b8",
+      "unicode_range": "U+9F00-9F7F"
+    },
+    {
+      "file": "woodblock-013f.woff2",
+      "bytes": 101956,
+      "sha256": "2882c5fb83e56f4aa579f7276b3dbae8bbf3d9e7336ccd520a22005b7327f038",
+      "unicode_range": "U+9F80-9FEA"
+    },
+    {
+      "file": "woodblock-0400.woff2",
+      "bytes": 1752,
+      "sha256": "7eddb69e21c94f1641dbf3d9d33c540215f0a15c14c14eb931b6b58a3a050124",
+      "unicode_range": "U+20057"
+    },
+    {
+      "file": "woodblock-0404.woff2",
+      "bytes": 1468,
+      "sha256": "4de336f77457ae0538366a4d2892c1c995b1aa32631ac9820e14f8fbd3f184e3",
+      "unicode_range": "U+20210"
+    },
+    {
+      "file": "woodblock-0405.woff2",
+      "bytes": 1616,
+      "sha256": "95af17bb5d73dab0ab2a8d6d6c5e6b36c0530b080ad0189bdaa6ae86e758f790",
+      "unicode_range": "U+20293"
+    },
+    {
+      "file": "woodblock-0407.woff2",
+      "bytes": 1824,
+      "sha256": "79c8899e48cf8b2c4a5cf792fab614c813e2c232bf16464ea86468114a5e40b9",
+      "unicode_range": "U+203C9"
+    },
+    {
+      "file": "woodblock-040a.woff2",
+      "bytes": 1688,
+      "sha256": "e86a05192f9889b382e6845e8bd634e79b144a9f935869209a55526ef959e6b2",
+      "unicode_range": "U+2050F"
+    },
+    {
+      "file": "woodblock-040e.woff2",
+      "bytes": 1788,
+      "sha256": "a52f97f367993286b4f76fb84825782c300dfb12625f69fc77d851764f27d36d",
+      "unicode_range": "U+2073E"
+    },
+    {
+      "file": "woodblock-0413.woff2",
+      "bytes": 1200,
+      "sha256": "7e3072347f5d2d2ad7710bb815cddcc28b413621717e5149565e4e64222dae7d",
+      "unicode_range": "U+20981"
+    },
+    {
+      "file": "woodblock-041f.woff2",
+      "bytes": 1668,
+      "sha256": "03a87b420c76b47f4492ace088bc3e00ac0bfbb49c6c058549ec7e70e5b81684",
+      "unicode_range": "U+20F91"
+    },
+    {
+      "file": "woodblock-042d.woff2",
+      "bytes": 2152,
+      "sha256": "308f4596ea18952a2b357cb75150f250fda9c18c07d8d6e7abd43e4c75de0008",
+      "unicode_range": "U+216A4"
+    },
+    {
+      "file": "woodblock-0434.woff2",
+      "bytes": 1656,
+      "sha256": "54f33d016e83818613cbe8ec626b4291fc94dc097eefbd885828237d2cb8ec97",
+      "unicode_range": "U+21A15"
+    },
+    {
+      "file": "woodblock-045b.woff2",
+      "bytes": 3772,
+      "sha256": "3331c43d0376e368f4d0a6a4747bbd04faefd70c03326fd430ffaa9cd38d4fe2",
+      "unicode_range": "U+22DD8,U+22DE4"
+    },
+    {
+      "file": "woodblock-0468.woff2",
+      "bytes": 2620,
+      "sha256": "79b8f6b8fbde245289aee29cacf38a6d90d6db0d5ec0d4f9b8bae96f8c93e9a4",
+      "unicode_range": "U+23431,U+23471"
+    },
+    {
+      "file": "woodblock-046c.woff2",
+      "bytes": 2032,
+      "sha256": "207a3a4c57e40cb4884be016b85601656f809a9f47d4c5ad55d43c51f21a2bd6",
+      "unicode_range": "U+23659"
+    },
+    {
+      "file": "woodblock-046f.woff2",
+      "bytes": 1904,
+      "sha256": "bd6c1495fd963b6928d9e483c07234e88b0b165bcf254ecb70454eaf6fd3097e",
+      "unicode_range": "U+23780"
+    },
+    {
+      "file": "woodblock-0485.woff2",
+      "bytes": 1888,
+      "sha256": "b09b740deccd76128187c29a1d7114e68edc58ce13142b81fcc8aa6b163e9fee",
+      "unicode_range": "U+242CE"
+    },
+    {
+      "file": "woodblock-0486.woff2",
+      "bytes": 2136,
+      "sha256": "1df3aa078c61e1f93f8464eb2c25445487b6f27da154cc22bee78f3431c0b22e",
+      "unicode_range": "U+24342"
+    },
+    {
+      "file": "woodblock-0487.woff2",
+      "bytes": 1764,
+      "sha256": "39191fed3e7097d9ae8b49accb95e5f67c89e5354f057fa510ba7492d207a832",
+      "unicode_range": "U+24386"
+    },
+    {
+      "file": "woodblock-048a.woff2",
+      "bytes": 1924,
+      "sha256": "ec08402a47c2ac957a2faa2dbc8051670157454a8b3bab8bbd51b122d06ee23e",
+      "unicode_range": "U+24564"
+    },
+    {
+      "file": "woodblock-048d.woff2",
+      "bytes": 1916,
+      "sha256": "7949efaaca0b4b6f9986ecd5ec107db976a53f977c9cb57707eeb8f1ba2a1185",
+      "unicode_range": "U+246DB"
+    },
+    {
+      "file": "woodblock-04ae.woff2",
+      "bytes": 2208,
+      "sha256": "684fb6241105eabee6244354b451202292211243edd7eaac2b95187fc826b14b",
+      "unicode_range": "U+2574A"
+    },
+    {
+      "file": "woodblock-04b4.woff2",
+      "bytes": 1960,
+      "sha256": "ed65990ca218f5394d4b4336ee34af2173e4df1b0f043b66a6bca83f08a11601",
+      "unicode_range": "U+25A2F"
+    },
+    {
+      "file": "woodblock-04b9.woff2",
+      "bytes": 1940,
+      "sha256": "0be408b3c01a06e6b3c16942c00359543c60f2161290d95355f8c42a0be2dede",
+      "unicode_range": "U+25CA4"
+    },
+    {
+      "file": "woodblock-04bc.woff2",
+      "bytes": 1884,
+      "sha256": "3837e4095cd8a118cb6d7a4438588414e6c8b389f2974febc62ed7fb7138741a",
+      "unicode_range": "U+25E05"
+    },
+    {
+      "file": "woodblock-04c3.woff2",
+      "bytes": 2916,
+      "sha256": "9ec842a96f5311f776f506c0cf68eeae87f4a638f30a6f0711a09183af5bff7a",
+      "unicode_range": "U+261E0"
+    },
+    {
+      "file": "woodblock-04c4.woff2",
+      "bytes": 2068,
+      "sha256": "fb5546d53ba3a657652f4df9b7dcfc8804e7cccaf473581663055294c8b823f3",
+      "unicode_range": "U+26222,U+2627E"
+    },
+    {
+      "file": "woodblock-04c5.woff2",
+      "bytes": 1636,
+      "sha256": "77b1f46c1ad3e5a1d535a6274744d937c9d45aada1397f6dfdcd99d6ae5d4a37",
+      "unicode_range": "U+262FA"
+    },
+    {
+      "file": "woodblock-04c6.woff2",
+      "bytes": 1908,
+      "sha256": "2a5f9ba335dea55df798c84c0f93f1776187f531328f3ba625f98075c7499b45",
+      "unicode_range": "U+26309"
+    },
+    {
+      "file": "woodblock-04cc.woff2",
+      "bytes": 1324,
+      "sha256": "4037f335c34fbdc9e4051939ad8bd43321e35e8be1346e1f347578aad6838539",
+      "unicode_range": "U+2667C"
+    },
+    {
+      "file": "woodblock-04ce.woff2",
+      "bytes": 1748,
+      "sha256": "160c658e6ab41424f44c234bc59b401b18b228c7171fa6b16735cd681ff78b0d",
+      "unicode_range": "U+26762"
+    },
+    {
+      "file": "woodblock-04d2.woff2",
+      "bytes": 1316,
+      "sha256": "5a1c02886297e8abb7406b363bc713e38e0a79f69a0cbae223f10e871e7edb53",
+      "unicode_range": "U+2695B"
+    },
+    {
+      "file": "woodblock-04d3.woff2",
+      "bytes": 2212,
+      "sha256": "a82651909c1567d18ef53f22ff9f86645bd76aef74174930c25ea5c977e6f674",
+      "unicode_range": "U+269BB"
+    },
+    {
+      "file": "woodblock-04e9.woff2",
+      "bytes": 3476,
+      "sha256": "e70b2755b89c3ce1d2d17d7763f76f7e70bbebe763d91afa5c19d24e450c68a6",
+      "unicode_range": "U+27483,U+274C8"
+    },
+    {
+      "file": "woodblock-04f8.woff2",
+      "bytes": 2088,
+      "sha256": "a511a0520d2a2cc830ee301b98a7075c331a1a4bae984ab8b7ff4a51f7bdb0be",
+      "unicode_range": "U+27C49"
+    },
+    {
+      "file": "woodblock-04fe.woff2",
+      "bytes": 1940,
+      "sha256": "929acc8a4953bc53f8f901f948a1b2df1be3d1b72284a268c63214de5b03fdce",
+      "unicode_range": "U+27F7C"
+    },
+    {
+      "file": "woodblock-0507.woff2",
+      "bytes": 3572,
+      "sha256": "c57cc5d0771427275434a16995bcd404d4587cb4650a8532e7a9428e4db7834f",
+      "unicode_range": "U+2838C,U+283C8"
+    },
+    {
+      "file": "woodblock-0537.woff2",
+      "bytes": 2388,
+      "sha256": "6524803d099d1949908fa425e9975d8787c51eb1e3bce860a8c2299970f3ccb8",
+      "unicode_range": "U+29BED"
+    },
+    {
+      "file": "woodblock-0539.woff2",
+      "bytes": 1940,
+      "sha256": "7e53f9a662526c8a3f62b7433db32a48af1422b2547b56607f35c4960af05c53",
+      "unicode_range": "U+29CB8"
+    },
+    {
+      "file": "woodblock-056e.woff2",
+      "bytes": 1608,
+      "sha256": "e22caaff323f1318ce64eb99741f1b1625c311b06eb7e6fc572c04e385377dfb",
+      "unicode_range": "U+2B757"
+    },
+    {
+      "file": "woodblock-0574.woff2",
+      "bytes": 1660,
+      "sha256": "b96d896321c0cdfd0f7c942b1afc0918c7ed458cbe6e4d2cd2d9afb5e8e1d13b",
+      "unicode_range": "U+2BA67"
+    },
+    {
+      "file": "woodblock-058d.woff2",
+      "bytes": 2080,
+      "sha256": "ebf18fc086952b14d7562150ec895140a6373b6b760a44f84d7ce5718d3be70e",
+      "unicode_range": "U+2C6DC"
+    },
+    {
+      "file": "woodblock-05ac.woff2",
+      "bytes": 1660,
+      "sha256": "883a8596c61e9cd213c7cdc630dde31b9b9f4cfded58e2c8e259759e2e66cbe2",
+      "unicode_range": "U+2D627"
+    },
+    {
+      "file": "woodblock-05d7.woff2",
+      "bytes": 1536,
+      "sha256": "ba6fc0c08dff0b82fa148d6ac58941295879e0d7b5c3ad35c1be65f2853954d0",
+      "unicode_range": "U+2EBB0"
+    }
+  ]
+}
