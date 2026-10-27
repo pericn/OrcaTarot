@@ -524,7 +524,11 @@ async function run(browser, url, output) {
 
   await test('loading shows eight real breath frames, honors saved theme, and stays visible for the one-second complete cycle',async()=>{
     const context=await browser.newContext({viewport:{width:402,height:874},colorScheme:'light'});
-    await context.addInitScript(()=>localStorage.setItem('lx-theme','dark'));
+    await context.addInitScript(()=>{
+      localStorage.setItem('lx-theme','dark');
+      const decode=HTMLImageElement.prototype.decode;
+      HTMLImageElement.prototype.decode=function(){const ready=decode.call(this);return this.src.startsWith('data:image/webp;')?ready.then(()=>new Promise(resolve=>{window.releaseLoadingBack=resolve})):ready};
+    });
     let release;const gate=new Promise(resolve=>release=resolve);
     await context.route('**/js/app.js',async route=>{await gate;await route.continue()});
     const page=await context.newPage();const navigation=page.goto(url,{waitUntil:'commit'});
@@ -532,6 +536,10 @@ async function run(browser, url, output) {
     await page.locator('.whale-breath').evaluate(async el=>{
       const img=new Image();img.src=getComputedStyle(el).backgroundImage.slice(5,-2);await img.decode();
     });
+    await page.waitForFunction(()=>typeof window.releaseLoadingBack==='function');
+    assert.equal(await page.locator('#appLoading').evaluate(el=>el.classList.contains('is-ready')),false);
+    await page.evaluate(()=>window.releaseLoadingBack());
+    await page.waitForFunction(()=>document.querySelector('#appLoading.is-ready .whale-breath')?.getAnimations().some(a=>a.animationName==='whale-breath'));
     assert.equal((await page.locator('#appLoading').innerText()).trim(),'让直觉，浮出水面');
     assert.equal(await page.locator('#appLoading').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(25, 33, 61)');
     const hashes=[];
