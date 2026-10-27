@@ -72,8 +72,9 @@ def build(output):
                     replacements[relative]=asset(str(Path(relative).with_suffix('.webp')),buf.getvalue())
             elif relative == 'assets/app-icon-orca-dark.png':
                 with Image.open(path) as original:
-                    artwork=original.convert('RGBA');artwork.thumbnail((256,256),Image.Resampling.LANCZOS)
-                    buf=io.BytesIO();artwork.save(buf,'PNG',optimize=True)
+                    artwork=original.convert('RGBA');artwork.thumbnail((224,224),Image.Resampling.LANCZOS)
+                    canvas=Image.new('RGBA',(256,256));canvas.alpha_composite(artwork,((256-artwork.width)//2,(256-artwork.height)//2))
+                    buf=io.BytesIO();canvas.save(buf,'PNG',optimize=True)
                     replacements[relative]=asset(relative,buf.getvalue())
             elif relative == 'assets/app-icon-orca-engraved.png':
                 # Keep the full-resolution artwork in source; ship sizes for

@@ -15,6 +15,8 @@ function imageCache(){
   })();
   return cachePromise;
 }
+// Open storage during startup; the first selected card need not open it on demand.
+imageCache();
 async function fetchImage(src,retry){
   const url=new URL(src,document.baseURI).href;
   const controller=new AbortController();
@@ -58,8 +60,33 @@ export function whenLoaded(src,{retry=false}={}){
 }
 export function getLoadedImage(src){return images.get(src)?.image;}
 
-export function hydrateCardImages(container){
-  const pending=new Map();
+// A selected card owns its actual DOM image from selection through the flip.
+// Decoding a separate cached Image alone does not prepare a later DOM node.
+function imageBinding(img){
+  if(boundImages.has(img))return boundImages.get(img);
+  const entry={state:'idle',promise:null,listeners:new Set(),load:null};
+  const notify=()=>entry.listeners.forEach(fn=>fn(entry.state));
+  entry.load=(retry=false)=>{
+    if(entry.promise&&!retry)return entry.promise;
+    entry.state='pending';img.hidden=true;notify();
+    entry.promise=(async()=>{
+      const loaded=await whenLoaded(img.dataset.cardSrc,{retry});
+      if(loaded){
+        img.decoding='async';img.src=loaded.src;
+        try{await img.decode();entry.state='ready';img.hidden=false;notify();return true;}catch{}
+      }
+      entry.state='failed';notify();return false;
+    })();
+    return entry.promise;
+  };
+  boundImages.set(img,entry);return entry;
+}
+export function prepareCardImage(src){
+  const img=new Image();img.dataset.cardSrc=src;img.hidden=true;img.draggable=false;
+  imageBinding(img).load(true);return img;
+}
+export function hydrateCardImages(container,{prepared=[]}={}){
+  const pending=new Map(),unsubscribers=[];
   const observer='IntersectionObserver' in window?new IntersectionObserver(entries=>{
     for(const entry of entries){
       if(!entry.isIntersecting)continue;
@@ -67,37 +94,26 @@ export function hydrateCardImages(container){
       pending.delete(entry.target);observer.unobserve(entry.target);load?.();
     }
   }):null;
-  container.querySelectorAll('img[data-card-src]').forEach(img=>{
-    const card=img.closest('.rcard');
-    const status=card?.querySelector('.card-image-status');
-    const retry=card?.querySelector('.image-retry');
-    let active=null;
-    const load=(retryLoad=false)=>{
-      if(active&&!retryLoad)return active;
-      active=(async()=>{
-        if(retry)retry.hidden=true;
-        if(status){status.hidden=false;status.textContent='牌面加载中…';}
-        const loaded=await whenLoaded(img.dataset.cardSrc,{retry:retryLoad});
-        if(!img.isConnected)return false;
-        if(loaded){
-          img.decoding='async';img.src=loaded.src;
-          try{await img.decode();}catch{if(status)status.textContent='牌面暂时无法加载';if(retry)retry.hidden=false;return false;}
-          if(!img.isConnected)return false;
-          img.hidden=false;card?.classList.add('front-ready');if(status)status.hidden=true;return true;
-        }
-        if(status)status.textContent='牌面暂时无法加载';
-        if(retry)retry.hidden=false;
-        return false;
-      })();
-      return active;
+  container.querySelectorAll('img[data-card-src]').forEach((placeholder,index)=>{
+    const img=prepared[index]||placeholder;
+    if(img!==placeholder){
+      for(const name of ['class','alt','draggable'])if(placeholder.hasAttribute(name))img.setAttribute(name,placeholder.getAttribute(name));
+      placeholder.replaceWith(img);
+    }
+    const card=img.closest('.rcard'),status=card?.querySelector('.card-image-status'),retry=card?.querySelector('.image-retry');
+    const entry=imageBinding(img);
+    const paint=state=>{
+      card?.classList.toggle('front-ready',state==='ready');
+      if(status){status.hidden=state==='ready';status.textContent=state==='failed'?'牌面暂时无法加载':'牌面加载中…';}
+      if(retry)retry.hidden=state!=='failed';
     };
-    card?.classList.remove('front-ready');boundImages.set(img,load);
-    if(retry)retry.onclick=e=>{e.stopPropagation();load(true);};
-    if(img.loading==='lazy'&&observer){
-      pending.set(img,load);observer.observe(img);
-    }else load();
+    entry.listeners.add(paint);unsubscribers.push(()=>entry.listeners.delete(paint));paint(entry.state);
+    if(retry)retry.onclick=e=>{e.stopPropagation();entry.load(true);};
+    if(img.loading==='lazy'&&observer&&entry.state==='idle'){
+      img.hidden=true;const target=img.closest('.hd-thumb')||img;pending.set(target,()=>entry.load());observer.observe(target);
+    }else entry.load();
   });
-  return ()=>{observer?.disconnect();pending.clear();};
+  return ()=>{observer?.disconnect();pending.clear();unsubscribers.forEach(fn=>fn());};
 }
-
-export function prepareCardFace(card){const img=card.querySelector('img[data-card-src]');return boundImages.get(img)?.()||Promise.resolve(false);}
+export function cardFaceReady(card){return boundImages.get(card.querySelector('img[data-card-src]'))?.state==='ready';}
+export function prepareCardFace(card){const img=card.querySelector('img[data-card-src]');return boundImages.get(img)?.load()||Promise.resolve(false);}

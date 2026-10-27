@@ -2,7 +2,7 @@
 import { IMG } from './images.js';
 import { DECK, MAJOR_NUM, BIRTHDAY_POSITIONS, dsum, toMajor, toDigit } from './deck.js';
 import { compose, whenLoaded } from './share.js';
-import { hydrateCardImages, primeImage, prepareCardFace } from './card-images.js';
+import { hydrateCardImages, primeImage, prepareCardImage, cardFaceReady, prepareCardFace } from './card-images.js';
 import { icon, spreadIcon } from './icons.js';
 
 await window.orcaStylesReady;
@@ -64,7 +64,9 @@ const historyClear=document.getElementById('historyClear'), historyCount=documen
 /* ---------- 状态 ---------- */
 let spread=Object.hasOwn(SPREADS,prefs.spread)?prefs.spread:'3';
 let count=SPREADS[spread].n;
-let picks=[], hidden=null, busy=false, recorded=false;
+let picks=[], hidden=null, busy=false, recorded=false, pendingHiddenImage=null;
+const preparedImages=new WeakMap();
+function preparePick(p){preparedImages.set(p,prepareCardImage(IMG[p.key]));}
 let readingId=null, readingTs=Date.now(), drawRevision=0, readingQuestion='';
 function cleanQuestion(value){return Array.from(String(value??'').replace(/\s+/gu,' ').trim()).slice(0,120).join('');}
 function escapeText(value){return value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
@@ -206,8 +208,8 @@ function pickFan(i){
   const fr=fEl.getBoundingClientRect();   // 在隐藏之前记录飞牌起点
   fEl.classList.add('gone');fEl.style.visibility='hidden';
   picks.push({...fanPool[i],rev:tRev.checked&&Math.random()<0.4,flipped:false});
-  whenLoaded(IMG[fanPool[i].key],{retry:true});
-  if(picks.length===count){const c=computeHidden();if(c)whenLoaded(IMG[c.key],{retry:true});}
+  preparePick(picks.at(-1));
+  if(picks.length===count){const c=computeHidden();if(c)pendingHiddenImage=prepareCardImage(IMG[c.key]);}
   markNext();
   updatePrompt();
   flyToSlot(fEl,fr,slotEl,()=>{
@@ -247,7 +249,7 @@ function renderReveal(){
   rvRow.dataset.n=String(count);
   rvRow.innerHTML=picks.slice(0,count).map(cardMarkup).join('');
   rvCards=Array.from(rvRow.children);
-  hydrateCardImages(rvRow);
+  hydrateCardImages(rvRow,{prepared:picks.slice(0,count).map(p=>preparedImages.get(p))});
   rvRow.classList.add('pre');
   rvExtra.hidden=true;rvExtra.replaceChildren();
   hidden=null;rvHidden.hidden=true;hCard.innerHTML='';
@@ -284,10 +286,10 @@ function syncWheel(){
     const card=pool[Math.floor(Math.random()*pool.length)];
     if(!card)return;
     picks.push({...card,rev:tRev.checked&&Math.random()<.4,flipped:false,extra:true});
-    whenLoaded(IMG[card.key],{retry:true});
+    preparePick(picks.at(-1));
     button.remove();
     rvExtra.hidden=false;rvExtra.innerHTML='<div class="rvh-cap">追加牌</div>'+cardMarkup(picks.at(-1),picks.length-1);
-    hydrateCardImages(rvExtra);
+    hydrateCardImages(rvExtra,{prepared:[preparedImages.get(picks.at(-1))]});
     rvExtra.querySelector('.rcard').classList.add('guide');
     updateRvPrompt();buzz(12);
   };
@@ -309,10 +311,12 @@ async function flipReadingCard(e){
   const c=e.target.closest('.rcard');
   if(!c||c.classList.contains('flipped')||c.dataset.flipPending)return;
   const p=picks[+c.dataset.i]; if(!p)return;
-  const revision=drawRevision;c.dataset.flipPending='1';c.querySelector('.flip').setAttribute('aria-busy','true');
-  await prepareCardFace(c);
-  c.querySelector('.flip').removeAttribute('aria-busy');delete c.dataset.flipPending;
-  if(!c.isConnected||revision!==drawRevision)return;
+  if(!cardFaceReady(c)){
+    const revision=drawRevision;c.dataset.flipPending='1';c.querySelector('.flip').setAttribute('aria-busy','true');
+    await prepareCardFace(c);
+    c.querySelector('.flip').removeAttribute('aria-busy');delete c.dataset.flipPending;
+    if(!c.isConnected||revision!==drawRevision)return;
+  }
   c.classList.add('flipped');
   c.querySelector('.flip').setAttribute('aria-label',(p.position?p.position+'牌，':'')+p.cn+(p.rev?'，逆位':''));
   p.flipped=true;
@@ -337,10 +341,12 @@ rvExtra.addEventListener('click',flipReadingCard);
 hCard.addEventListener('click',async e=>{
   if(e.target.closest('.wheel-action,.image-retry,.straighten'))return;
   if(!hidden||hidden.flipped||hCard.classList.contains('flipped')||hCard.dataset.flipPending)return;
-  const target=hidden,revision=drawRevision;hCard.dataset.flipPending='1';hCard.querySelector('.flip').setAttribute('aria-busy','true');
-  await prepareCardFace(hCard);
-  if(hidden!==target||revision!==drawRevision)return;
-  hCard.querySelector('.flip')?.removeAttribute('aria-busy');delete hCard.dataset.flipPending;
+  if(!cardFaceReady(hCard)){
+    const target=hidden,revision=drawRevision;hCard.dataset.flipPending='1';hCard.querySelector('.flip').setAttribute('aria-busy','true');
+    await prepareCardFace(hCard);
+    if(hidden!==target||revision!==drawRevision)return;
+    hCard.querySelector('.flip')?.removeAttribute('aria-busy');delete hCard.dataset.flipPending;
+  }
   hCard.classList.add('flipped');
   hidden.flipped=true;
   hCard.querySelector('button').setAttribute('aria-label',hidden.cn+'，隐藏牌');
@@ -363,7 +369,7 @@ function showHidden(){
     +'<span class="face back"><span class="back-art" aria-hidden="true"></span></span>'
     +frontMarkup(hidden)
     +'</span></button>'+retryMarkup()+'<div class="rname">'+hidden.cn+'</div>';
-  hydrateCardImages(hCard);
+  hydrateCardImages(hCard,{prepared:[pendingHiddenImage||prepareCardImage(IMG[hidden.key])]});
   rvHidden.hidden=false;
   setTimeout(()=>{if(hidden&&!hidden.flipped)hCard.classList.add('guide');},420);
   updateRvPrompt();
@@ -454,7 +460,7 @@ bStart.onclick=()=>{
   const kc=DECK[k];
   const fc=DECK[toDigit(dsum(nowY)+m+d)]; // 当年年份各位之和 + 出生月 + 出生日，归约到 1–9
   picks=[yc,mc,dc,kc,fc].map((c,i)=>({...c,rev:false,flipped:false,position:BIRTHDAY_POSITIONS[i]}));
-  picks.forEach(c=>whenLoaded(IMG[c.key],{retry:true}));
+  picks.forEach(preparePick);
   closeSheet();
   renderSlots();
   updatePrompt();
@@ -467,7 +473,7 @@ function resetDraw(){
   readingQuestion='';questionEditor.hidden=false;questionText.hidden=true;questionText.textContent='';
   drawRevision++;readingId=null;readingTs=Date.now();recorded=false;fanzone.hidden=false;drawSection.hidden=false;revealSection.hidden=true;
   document.querySelectorAll('.flyghost').forEach(el=>el.remove());
-  picks=[]; hidden=null; busy=false;
+  picks=[]; hidden=null; pendingHiddenImage=null; busy=false;
   renderSlots();
   renderReveal();
   if(spread==='bday'){

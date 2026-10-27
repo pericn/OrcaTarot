@@ -522,7 +522,7 @@ async function run(browser, url, output) {
     await context.close();
   });
 
-  await test('loading shows eight real breath frames, honors saved theme, and stays visible for the one-second complete cycle',async()=>{
+  await test('loading shows eight real breath frames, honors saved theme, and stays visible for the one-and-a-half-second complete cycle',async()=>{
     const context=await browser.newContext({viewport:{width:402,height:874},colorScheme:'light'});
     await context.addInitScript(()=>{
       localStorage.setItem('lx-theme','dark');
@@ -545,7 +545,7 @@ async function run(browser, url, output) {
     const hashes=[];
     for(let frame=0;frame<8;frame++){
       await page.locator('.whale-breath').evaluate(async(el,frame)=>{
-        const animation=el.getAnimations()[0];animation.pause();animation.currentTime=frame*125+20;
+        const animation=el.getAnimations()[0];animation.pause();animation.currentTime=frame*187.5+20;
         await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
       },frame);
       const snapshot=await page.locator('.whale-breath').evaluate(async el=>{
@@ -560,7 +560,7 @@ async function run(browser, url, output) {
     }
     assert.equal(new Set(hashes).size,8,'Each frame must show a different drawing');
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-    await page.locator('.whale-breath').evaluate(el=>{const a=el.getAnimations()[0];a.currentTime=1000;a.play()});
+    await page.locator('.whale-breath').evaluate(el=>{const a=el.getAnimations()[0];a.currentTime=1500;a.play()});
     release();await navigation;await page.locator('#appLoading').waitFor({state:'hidden'});
     await context.close();
   });
@@ -636,13 +636,13 @@ async function run(browser, url, output) {
     await context.close();
   });
 
-  await test('slots have explicit horizontal rows, icons render locally, loading reuses one decoded inline back after a complete one-second cycle',async()=>{
+  await test('slots have explicit horizontal rows, icons render locally, loading reuses one decoded inline back after a complete one-and-a-half-second cycle',async()=>{
     const context=await browser.newContext({viewport:{width:402,height:690},isMobile:true,hasTouch:true});
     await context.addInitScript(()=>{localStorage.setItem('lx-icon-notice-v2','1');localStorage.setItem('lx-guide-done','1');
       new MutationObserver(()=>{const el=document.getElementById('appLoading');if(el?.classList.contains('is-ready')&&window.orcaCycleStarted===undefined)window.orcaCycleStarted=performance.now();if(el?.hidden&&window.orcaLoadingHiddenAt===undefined)window.orcaLoadingHiddenAt=performance.now()}).observe(document,{subtree:true,attributes:true,attributeFilter:['hidden','class']});
     });
     const page=await context.newPage();await page.goto(url);await page.locator('#appLoading').waitFor({state:'hidden'});
-    const duration=await page.evaluate(()=>window.orcaLoadingHiddenAt-window.orcaCycleStarted);assert.ok(duration>=990,JSON.stringify({duration}));
+    const duration=await page.evaluate(()=>window.orcaLoadingHiddenAt-window.orcaCycleStarted);assert.ok(duration>=1490,JSON.stringify({duration}));
     assert.equal(await page.locator('#spreadIcon use').getAttribute('href'),'#spread-3');
     assert.ok(await page.locator('#spreadIcon svg').evaluate(el=>el.getBBox().width>0));
     assert.equal(await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/icons.*\.svg/.test(r.name)).length),0);
@@ -710,6 +710,33 @@ async function run(browser, url, output) {
     await context.close();
   });
 
+  await test('selection prepares the real face nodes before results; warm clicks flip synchronously',async()=>{
+    const context=await browser.newContext({viewport:{width:402,height:760}});
+    await context.addInitScript(()=>{
+      localStorage.setItem('lx-guide-done','1');localStorage.setItem('lx-icon-notice-v2','1');localStorage.setItem('lx-prefs',JSON.stringify({spread:'3',minor:false}));
+      window.faceDecodes=[];const decode=HTMLImageElement.prototype.decode;
+      HTMLImageElement.prototype.decode=function(){if(this.hasAttribute('data-card-src'))window.faceDecodes.push({node:this,connected:this.isConnected});return decode.call(this)};
+    });
+    const page=await context.newPage();let requests=0;await context.route(/\/M0[123]\.[^/]+\.webp$/,route=>{requests++;return route.continue()});
+    await page.goto(url);await page.locator('#appLoading').waitFor({state:'hidden'});
+    await page.locator('.fcard[data-key="M01"]').dispatchEvent('click');
+    await page.waitForFunction(()=>window.faceDecodes.some(d=>d.node.dataset.cardSrc.includes('/M01.')&&d.node.complete&&d.node.naturalWidth>0));
+    assert.equal(await page.locator('#draw').isVisible(),true);
+    assert.equal(await page.evaluate(()=>window.faceDecodes.find(d=>d.node.dataset.cardSrc.includes('/M01.')).connected),false);
+    await page.waitForTimeout(350);await pick(page,['M02','M03']);
+    await page.waitForFunction(()=>[...document.querySelectorAll('#rvRow .rcard')].every(el=>el.classList.contains('front-ready')));
+    assert.equal(await page.evaluate(()=>document.querySelector('#rvRow .front img')===window.faceDecodes.find(d=>d.node.dataset.cardSrc.includes('/M01.')).node),true);
+    await page.waitForFunction(()=>window.faceDecodes.some(d=>d.node.dataset.cardSrc.includes('/M06.')));
+    const before=await page.evaluate(()=>window.faceDecodes.length);
+    const fast=await page.locator('#rvRow .rcard').first().evaluate(card=>{card.querySelector('.flip').click();return {flipped:card.classList.contains('flipped'),busy:card.querySelector('.flip').getAttribute('aria-busy')}});
+    assert.equal(fast.flipped,true);assert.equal(fast.busy,null);
+    assert.equal(await page.evaluate(()=>window.faceDecodes.length),before);assert.equal(requests,3);
+    for(const card of (await page.locator('#rvRow .rcard .flip').all()).slice(1))await card.click();
+    await page.locator('#rvHidden').waitFor({state:'visible'});
+    assert.equal(await page.evaluate(()=>document.querySelector('#hCard .front img')===window.faceDecodes.find(d=>d.node.dataset.cardSrc.includes('/M06.')).node),true);
+    await context.close();
+  });
+
   await test('dark artwork is a dedicated normal-color asset without CSS or Canvas inversion',async()=>{
     const {page,context}=await reading({spread:'1'});await page.locator('#themeBtn').click();
     const artwork=await page.locator('.brand-whale').evaluate(img=>({src:img.src,filter:getComputedStyle(img).filter,blend:getComputedStyle(img).mixBlendMode}));
@@ -733,24 +760,28 @@ async function run(browser, url, output) {
     await pick(page,['M10']);
     assert.equal(await page.locator('#readingQuestion').innerText(),expected);
     assert.equal(await page.locator('#questionEditor').isVisible(),false);
-    assert.ok((await page.locator('#readingQuestion').evaluate(el=>getComputedStyle(el).fontFamily)).includes('system-ui'));
+    assert.ok((await page.locator('#readingQuestion').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Songti SC'));
     await flip(page);const original=(await history(page))[0];assert.equal(original.question,expected);
     await page.locator('.wheel-action').click();await page.locator('#rvExtra .flip').click();
     await page.waitForFunction(()=>JSON.parse(localStorage.getItem('lx-history'))[0].cards.length===2);
     const updated=(await history(page))[0];assert.equal(updated.id,original.id);assert.equal(updated.question,expected);
-    await page.evaluate(()=>{window.textDraws=[];const original=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(text,x,y,...rest){window.textDraws.push({text,x,y,font:this.font,width:this.measureText(text).width});return original.call(this,text,x,y,...rest)}});
+    await page.evaluate(()=>{window.textDraws=[];window.shareGeometry=[];const p=CanvasRenderingContext2D.prototype,original=p.fillText,draw=p.drawImage,fill=p.fillRect;p.fillText=function(text,x,y,...rest){window.textDraws.push({text,x,y,font:this.font,width:this.measureText(text).width,height:this.canvas.height});return original.call(this,text,x,y,...rest)};p.drawImage=function(img,x,y,w,h,...rest){if(img.naturalWidth===img.naturalHeight&&img.naturalWidth>=180)window.shareGeometry.push({kind:'whale',x,y,w,h,height:this.canvas.height});return draw.call(this,img,x,y,w,h,...rest)};p.fillRect=function(x,y,w,h){if(x===556&&w===132&&h===132)window.shareGeometry.push({kind:'qr',x,y,w,h,height:this.canvas.height});return fill.call(this,x,y,w,h)}});
     await page.locator('#shareBtn').click();await page.locator('#shareOv').waitFor({state:'visible'});
     async function checkShare(){
-      const texts=await page.evaluate(()=>window.textDraws),questionLines=texts.filter(t=>t.font.includes('system-ui'));
+      const texts=await page.evaluate(()=>window.textDraws),questionLines=texts.filter(t=>t.font.includes('Songti SC'));
       assert.equal(questionLines.map(t=>t.text).join(''),expected);assert.ok(questionLines.length>1);
       assert.ok(questionLines.every(t=>t.width<=626&&t.x===375));
       assert.ok(texts.some(t=>t.text==='让直觉，浮出水面'));
+      const brands=texts.filter(t=>t.text==='鲸灵匣');assert.equal(brands.length,1);assert.ok(brands[0].y>brands[0].height-258);
+      assert.equal(texts.some(t=>t.text.includes('T A R O T')||t.text.includes('扫码')),false);
+      const geometry=await page.evaluate(()=>window.shareGeometry),whale=geometry.find(r=>r.kind==='whale'),qr=geometry.find(r=>r.kind==='qr');
+      assert.ok(whale&&qr);assert.equal(whale.y+whale.h/2,qr.y+qr.h/2);assert.equal(qr.y+qr.h/2,qr.height-160);
     }
     await checkShare();
     if(output)fs.writeFileSync(path.join(output,'question-share.png'),Buffer.from((await page.locator('#shareImg').getAttribute('src')).split(',')[1],'base64'));
     await page.locator('#shareClose').click();await page.locator('#historyBtn').click();
     assert.equal(await page.locator('.hd-question').innerText(),expected);assert.equal(await page.locator('.hd-question img').count(),0);
-    await page.evaluate(()=>window.textDraws=[]);await page.locator('.hd-share').click();await page.locator('#shareOv').waitFor({state:'visible'});await checkShare();
+    await page.evaluate(()=>{window.textDraws=[];window.shareGeometry=[]});await page.locator('.hd-share').click();await page.locator('#shareOv').waitFor({state:'visible'});await checkShare();
     await page.locator('#shareClose').click();await page.locator('#drawBtn').click();await page.locator('#reShuffle').click();
     assert.equal(await page.locator('#readingQuestion').isVisible(),false);assert.equal(await page.locator('#questionEditor').isVisible(),true);
     await page.locator('#questionInput').fill('   ');await pick(page,['M01']);await flip(page);
