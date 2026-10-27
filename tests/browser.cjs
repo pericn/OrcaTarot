@@ -528,6 +528,11 @@ async function run(browser, url, output) {
       await page.goto(url+'#guide');await page.locator('#guideOv').waitFor({state:'visible'});
       await page.locator('#guideOk').click();await page.waitForTimeout(350);
       assert.equal(await page.locator('#updateOv').isVisible(),false);
+      if(seen){
+        await page.goto(url+'?source=preview#update');await page.locator('#appLoading').waitFor({state:'hidden'});
+        assert.equal(await page.locator('#updateOv').isVisible(),true);
+        await page.keyboard.press('Escape');
+      }
       await context.close();
     }
   });

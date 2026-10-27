@@ -613,7 +613,7 @@ document.getElementById('updOk').onclick=()=>{closeUpdate();buzz(9);};
 document.getElementById('updClose').onclick=closeUpdate;
 updateOv.addEventListener('click',e=>{if(e.target===updateOv)closeUpdate();});
 function initUpdate(){
-  const forced=/(?:#|[?&])update(?:$|[=&])/.test(location.hash+location.search);
+  const forced=location.hash==='#update'||new URLSearchParams(location.search).has('update');
   if(forced){if(guideOv.hidden)openUpdate();return;}
   const standalone=navigator.standalone||matchMedia('(display-mode: standalone)').matches;
   // Only existing home-screen users need this notice. Never stack it after onboarding.
