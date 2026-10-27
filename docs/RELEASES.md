@@ -33,3 +33,16 @@ shasum -a 256 -c SHA256SUMS
 - 线上核验：`/` 与 `/js/app.js` 均为 `cache-control: must-revalidate, no-cache`；指纹字体为 `public, immutable, max-age=31536000`；带 If-Modified-Since 请求返回 304；入口 200 且 SHA 与本地构建一致
 - **已知局限**：已缓存旧副本的设备无法远程召回，`no-cache` 只对之后的请求生效；这类设备需等本地缓存自然过期或手动刷新，除非更换 URL。本次不做 URL 变更。
 - 说明：发布时远程 main CI 未完成，未宣称已通过。
+
+### v5 · 2026-10-27 14:45 CST
+
+- 线上地址：https://a17db079dfdd07afb.app.workbuddy.host
+- 应用源码：`7ebd4ed680ec5bab59a68246d15591cd2905d541`（PR #12，含 PR #11；CI 双浏览器 `chromium` 与 `webkit` 均 success）
+- 站点文件数：108（新增 `assets/whale-breath-strip.*.png` 与出处说明）
+- 入口 HTML SHA-256：`1acb9f4d8d52e3d53ccaf7339b1e17806ee5af99361e7354a7e25d4e3e392e72`
+- 本次内容：
+  - PR #11：响应式抽牌流程；图标更新提示改为「未手动关闭前持续显示」
+  - PR #12：修复 Safari 牌阵布局；新增约 2 秒的加载动画（鲸鱼出水换气帧条）
+  - 字体子集再次重跑：373 个源码汉字全部命中
+- 本地核验：`SHA256SUMS` 108 项通过；headless 加载无 JS 错误；抽牌、牌阵、记录、更新弹框、引导、鲸鱼呼吸条均渲染；新字体与鲸鱼条资源 200
+- 线上核验：入口 200、13233 B，HTML SHA 与本地构建逐字节一致；`cache-control: must-revalidate, no-cache` 生效；字体 `orca-woodblock.ca1637c9e4df.woff2`、`whale-breath-strip.f4e2b168ac33.png`、`app.js`、`share-qr.js` 均 200
