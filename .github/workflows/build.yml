@@ -12,6 +12,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
     steps:
       - uses: actions/checkout@v7
         with:
@@ -30,23 +34,23 @@ jobs:
       - name: Install browser test dependencies
         run: |
           npm install --prefix "$RUNNER_TEMP/orca-tests" playwright@1.58.0
-          "$RUNNER_TEMP/orca-tests/node_modules/.bin/playwright" install --with-deps chromium
+          "$RUNNER_TEMP/orca-tests/node_modules/.bin/playwright" install --with-deps ${{ matrix.browser }}
       - name: Browser acceptance
         run: |
-          python -m http.server 8765 --bind 127.0.0.1 --directory dist > "$RUNNER_TEMP/orca-http.log" 2>&1 &
+          python tools/serve.py 8765 --bind 127.0.0.1 --directory dist > "$RUNNER_TEMP/orca-http.log" 2>&1 &
           trap 'kill $!' EXIT
-          NODE_PATH="$RUNNER_TEMP/orca-tests/node_modules" node tests/browser.cjs http://127.0.0.1:8765/ "$RUNNER_TEMP/orca-qa"
+          BROWSER_ENGINE=${{ matrix.browser }} NODE_PATH="$RUNNER_TEMP/orca-tests/node_modules" node tests/browser.cjs http://127.0.0.1:8765/ "$RUNNER_TEMP/orca-qa"
       - name: Check complete site manifest
         run: cd dist && sha256sum -c SHA256SUMS
       - uses: actions/upload-artifact@v4
         with:
-          name: OrcaTarot-${{ github.sha }}
+          name: OrcaTarot-${{ github.sha }}-${{ matrix.browser }}
           path: dist/
           retention-days: 14
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: OrcaTarot-QA-${{ github.sha }}
+          name: OrcaTarot-QA-${{ github.sha }}-${{ matrix.browser }}
           path: ${{ runner.temp }}/orca-qa/
           retention-days: 14

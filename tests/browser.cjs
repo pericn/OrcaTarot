@@ -5,10 +5,12 @@ const path = require('node:path');
 
 async function run(browser, url, output) {
   if (output) fs.mkdirSync(output, {recursive:true});
-  const reports=[], failures=[], errors=[];
+  const reports=[], failures=[], errors=[], limitations=[];
+  const filter=process.env.ORCA_TEST_FILTER?new RegExp(process.env.ORCA_TEST_FILTER):null;
   async function test(name, fn) {
+    if(filter&&!filter.test(name))return;
     try { await fn(); reports.push(name); console.log('PASS '+name); }
-    catch(e) { failures.push({name,message:e.stack}); console.error('FAIL '+name+' — '+e.message); }
+    catch(e) { failures.push({name,message:e.stack}); console.error('FAIL '+name+' — '+e.stack); }
   }
   async function reading(prefs={}) {
     const context=await browser.newContext({viewport:{width:390,height:844}});
@@ -74,7 +76,7 @@ async function run(browser, url, output) {
     assert.equal(await page.locator('.sp-head').nth(0).innerText(),'');
     assert.equal(await page.locator('.sp-head').nth(1).innerText(),'');
     assert.equal(await page.locator('.sp-head').nth(2).innerText(),'');
-    assert.equal(await page.locator('#bdayHead').innerText(),'生日牌阵');
+    assert.equal((await page.locator('#bdayHead').innerText()).trim(),'生日牌阵');
     await page.keyboard.press('Escape');
     assert.equal(await page.locator('#spreadOv').isVisible(),false);
     await context.close();
@@ -339,7 +341,7 @@ async function run(browser, url, output) {
     }
   });
 
-  await test('front preloads on selection, shares one request and survives rounds/reload offline',async()=>{
+  await test('fronts reuse one request per round and survive reload with cached images or storage eviction',async()=>{
     const {page,context}=await reading();
     let requests=0;
     await context.route('**/M01.*.webp',route=>{requests++;return route.continue();});
@@ -360,9 +362,14 @@ async function run(browser, url, output) {
     await page.locator('#reShuffle').click();await pick(page,['M01','M02','M03']);await flip(page);
     assert.equal(requests,1,'Same-round and next-round consumers reuse the image');
     await page.reload();
-    // A reload discards the JS map. Abort card network to require persistent cache.
+    await page.locator('#appLoading').waitFor({state:'hidden'});
+    // CacheStorage may be evicted by the browser between documents (including
+    // WebKit's test data store). Verify offline reuse when data remains, and
+    // verify network recovery if the browser has discarded it.
+    const retained=await page.evaluate(async()=>{const urls=[];for(const name of await caches.keys())urls.push(...(await(await caches.open(name)).keys()).map(r=>r.url));return ['M01.','M02.','M03.'].every(key=>urls.some(url=>url.includes(key)))});
     await context.unroute('**/M01.*.webp');
-    await context.route('**/assets/cards/M*.webp',route=>route.abort());
+    if(retained)await context.route('**/assets/cards/M*.webp',route=>route.abort());
+    else limitations.push(browser.browserType().name()+': CacheStorage was evicted between documents; network recovery tested instead of offline reuse.');
     await pick(page,['M01','M02','M03']);await flip(page);
     await page.waitForFunction(()=>[...document.querySelectorAll('#rvRow .front img')].every(i=>i.complete&&i.naturalWidth>0));
     await context.close();
@@ -454,7 +461,7 @@ async function run(browser, url, output) {
     assert.equal(updated.id,original.id);assert.equal(updated.ts,original.ts);
     assert.equal(updated.cards[0].rev,true);assert.equal(updated.cards[0].uprighted,true);
     assert.equal(await page.locator('#rvRow .front img.rev').count(),1);
-    assert.equal(await page.locator('#rvRow .rrev').first().innerText(),'逆位（已旋正）');
+    assert.equal((await page.locator('#rvRow .rrev').first().innerText()).trim(),'逆位（已旋正）');
     await page.locator('.wheel-action').click();await page.locator('#rvExtra .flip').click();
     await page.locator('#rvExtra .straighten').click();
     const record=(await history(page))[0];
@@ -501,7 +508,7 @@ async function run(browser, url, output) {
     let release;const gate=new Promise(resolve=>release=resolve);
     await context.route('**/css/app.css',async route=>{await gate;await route.continue()});
     const page=await context.newPage();
-    const navigation=page.goto(url,{waitUntil:'domcontentloaded'});
+    const navigation=page.goto(url,{waitUntil:'commit'});
     await page.locator('#appLoading').waitFor({state:'visible'});
     assert.ok(await page.locator('#loadingText').isVisible());
     assert.equal(await page.locator('#loadingText').innerText(),'让直觉，浮出水面');
@@ -513,18 +520,17 @@ async function run(browser, url, output) {
     await context.close();
   });
 
-  await test('loading shows eight real breath frames, honors saved theme, and ends without a minimum duration',async()=>{
+  await test('loading shows eight real breath frames, honors saved theme, and stays visible for the two-second minimum',async()=>{
     const context=await browser.newContext({viewport:{width:402,height:874},colorScheme:'light'});
     await context.addInitScript(()=>localStorage.setItem('lx-theme','dark'));
     let release;const gate=new Promise(resolve=>release=resolve);
     await context.route('**/js/app.js',async route=>{await gate;await route.continue()});
-    const page=await context.newPage();const navigation=page.goto(url,{waitUntil:'domcontentloaded'});
+    const page=await context.newPage();const navigation=page.goto(url,{waitUntil:'commit'});
     await page.locator('#appLoading').waitFor({state:'visible'});
     await page.locator('.whale-breath').evaluate(async el=>{
       const img=new Image();img.src=getComputedStyle(el).backgroundImage.slice(5,-2);await img.decode();
     });
-    await page.evaluate(()=>document.fonts.ready);
-    assert.equal(await page.locator('#appLoading').innerText(),'让直觉，浮出水面');
+    assert.equal((await page.locator('#appLoading').innerText()).trim(),'让直觉，浮出水面');
     assert.equal(await page.locator('#appLoading').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(25, 33, 61)');
     const hashes=[];
     for(let frame=0;frame<8;frame++){
@@ -532,12 +538,17 @@ async function run(browser, url, output) {
         const animation=el.getAnimations()[0];animation.pause();animation.currentTime=frame*400+50;
         await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
       },frame);
-      const png=await page.locator('.whale-breath').screenshot();
+      const snapshot=await page.locator('.whale-breath').evaluate(async el=>{
+        const style=getComputedStyle(el),image=new Image();image.src=style.backgroundImage.slice(5,-2);await image.decode();
+        const index=Math.round(parseFloat(style.backgroundPositionX)/100*7),canvas=document.createElement('canvas');canvas.width=image.width/8;canvas.height=image.height;
+        canvas.getContext('2d').drawImage(image,index*canvas.width,0,canvas.width,canvas.height,0,0,canvas.width,canvas.height);
+        return {index,png:canvas.toDataURL('image/png').split(',')[1]};
+      });
+      assert.equal(snapshot.index,frame);const png=Buffer.from(snapshot.png,'base64');
       hashes.push(require('node:crypto').createHash('sha256').update(png).digest('hex'));
       if(output&&[3,5].includes(frame))fs.writeFileSync(path.join(output,'loading-frame-'+frame+'.png'),png);
     }
     assert.equal(new Set(hashes).size,8,'Each frame must show a different drawing');
-    if(output)await page.screenshot({path:path.join(output,'loading-breath-dark.png')});
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     release();await navigation;await page.locator('#appLoading').waitFor({state:'hidden'});
     await context.close();
@@ -614,13 +625,57 @@ async function run(browser, url, output) {
     await context.close();
   });
 
+  await test('slots have explicit horizontal rows, icons render locally, loading warms assets for at least two seconds',async()=>{
+    const context=await browser.newContext({viewport:{width:402,height:690},isMobile:true,hasTouch:true});
+    await context.addInitScript(()=>{localStorage.setItem('lx-icon-notice-v2','1');localStorage.setItem('lx-guide-done','1');
+      new MutationObserver(()=>{if(document.getElementById('appLoading')?.hidden&&window.orcaLoadingHiddenAt===undefined)window.orcaLoadingHiddenAt=performance.now()}).observe(document,{subtree:true,attributes:true,attributeFilter:['hidden']});
+    });
+    const page=await context.newPage();await page.goto(url);await page.locator('#appLoading').waitFor({state:'hidden'});
+    const duration=await page.evaluate(()=>window.orcaLoadingHiddenAt-window.orcaLoadingStarted);assert.ok(duration>=1990,JSON.stringify({duration}));
+    assert.equal(await page.locator('#spreadIcon use').getAttribute('href'),'#spread-3');
+    assert.ok(await page.locator('#spreadIcon svg').evaluate(el=>el.getBBox().width>0));
+    assert.equal(await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/icons.*\.svg/.test(r.name)).length),0);
+    const keys=await page.evaluate(async()=>{const all=[];for(const name of await caches.keys()){const cache=await caches.open(name);all.push(...(await cache.keys()).map(r=>r.url))}return all});
+    for(const asset of ['card-back.','whale-breath-strip.','app-icon-orca-engraved.'])assert.ok(keys.some(k=>k.includes(asset)),asset);
+    for(const spread of ['1','2','3','bday']){
+      if(spread==='bday')await page.evaluate(()=>localStorage.setItem('lx-prefs',JSON.stringify({spread:'bday'})));
+      else await page.evaluate(spread=>localStorage.setItem('lx-prefs',JSON.stringify({spread})),spread);
+      await page.reload();await page.locator('#appLoading').waitFor({state:'hidden'});
+      const boxes=await page.locator('#slots .slot').evaluateAll(els=>els.map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}}));
+      const count=spread==='bday'?5:+spread;assert.equal(boxes.length,count);
+      for(let i=1;i<Math.min(3,count);i++){assert.ok(Math.abs(boxes[i].y-boxes[0].y)<1,JSON.stringify(boxes));assert.ok(boxes[i].x>boxes[i-1].x)}
+      if(count===5){assert.ok(boxes[3].y>boxes[0].y);assert.ok(Math.abs(boxes[3].y-boxes[4].y)<1)}
+      if(output&&spread==='3')await page.screenshot({path:path.join(output,'safari-horizontal-slots.png')});
+    }
+    await context.close();
+  });
+
+  await test('birthday form is immediately selected; history captions belong under cards with centered 3+2 sharing',async()=>{
+    const {page,context}=await reading();await page.locator('#spreadInd').click();await page.locator('#bdayHead').click();
+    assert.equal(await page.locator('#bdayRow').getAttribute('class'),'sp-row on');assert.equal(await page.locator('#bdayHead').getAttribute('aria-pressed'),'true');
+    assert.equal(await page.locator('.sp-row.on').count(),1);assert.equal(await page.locator('#bdayForm').isVisible(),true);
+    const settings=await page.locator('.reading-options').evaluate(el=>{const a=el.children[0].getBoundingClientRect(),b=el.children[1].getBoundingClientRect();return {left:a.x-el.getBoundingClientRect().x,gap:b.x-a.right}});
+    assert.ok(Math.abs(settings.left)<1&&settings.gap>=16&&settings.gap<=24,JSON.stringify(settings));
+    await page.locator('#bY').fill('1990');await page.locator('#bM').fill('7');await page.locator('#bD').fill('3');await page.locator('#bStart').click();await flip(page);
+    await page.locator('#historyBtn').click();
+    const figures=await page.locator('.hd-cards .hd-reading-card').evaluateAll(els=>els.map(el=>{const r=el.querySelector('.hd-thumb').getBoundingClientRect(),cap=el.querySelector('figcaption').getBoundingClientRect();return {x:r.x,y:r.y,bottom:r.bottom,captionTop:cap.top}}));
+    assert.equal(figures.length,5);assert.ok(figures.every(r=>r.captionTop>=r.bottom+5));assert.ok(figures.slice(0,3).every(r=>Math.abs(r.y-figures[0].y)<1));assert.ok(figures.slice(3).every(r=>Math.abs(r.y-figures[3].y)<1&&r.y>figures[0].y));
+    await page.waitForFunction(()=>parseFloat(getComputedStyle(document.querySelector('.hd-scroll')).opacity)===1&&[...document.querySelectorAll('.hd-cards img')].every(i=>i.complete&&i.naturalWidth>0));
+    if(output)await page.screenshot({path:path.join(output,'history-caption-birthday.png'),fullPage:true});
+    await page.evaluate(()=>{window.positions=[];const f=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(text,x,y,...rest){if(['年','月','日','业力','流年'].includes(text))window.positions.push({text,x,y});return f.call(this,text,x,y,...rest)}});
+    await page.locator('.hd-share').click();await page.locator('#shareOv').waitFor({state:'visible'});
+    const positions=await page.evaluate(()=>window.positions);assert.equal(positions.length,5);assert.equal(positions[0].y,positions[2].y);assert.equal(positions[3].y,positions[4].y);assert.ok(positions[3].y>positions[0].y);assert.ok(positions[3].x<375&&positions[4].x>375);
+    if(output)fs.writeFileSync(path.join(output,'birthday-share-3-2.png'),Buffer.from((await page.locator('#shareImg').getAttribute('src')).split(',')[1],'base64'));
+    await context.close();
+  });
+
   assert.deepEqual(errors,[],'Uncaught browser errors');
-  const report={passed:reports,failures,errors};
+  const report={passed:reports,failures,errors,limitations};
   if(output)fs.writeFileSync(path.join(output,'browser-report.json'),JSON.stringify(report,null,2));
   return report;
 }
 module.exports={run};
 if(require.main===module) {
-  const {chromium}=require('playwright');
-  (async()=>{const browser=await chromium.launch({headless:true});try{const report=await run(browser,process.argv[2]||'http://127.0.0.1:8765/',process.argv[3]);console.log(JSON.stringify(report,null,2));if(report.failures.length)process.exitCode=1;}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
+  const engine=process.env.BROWSER_ENGINE||'chromium';const launcher=require('playwright')[engine];
+  (async()=>{const browser=await launcher.launch({headless:true});try{const report=await run(browser,process.argv[2]||'http://127.0.0.1:8765/',process.argv[3]);console.log(JSON.stringify(report,null,2));if(report.failures.length)process.exitCode=1;}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
 }

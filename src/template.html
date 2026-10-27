@@ -30,8 +30,9 @@ html{background:#fcfcfa;color:#252834}
 <script type="module" src="js/app.js"></script>
 </head>
 <body>
+<!-- ICON_SPRITE -->
 <div id="appLoading" class="app-loading" role="status" aria-live="polite"><div class="whale-breath" aria-hidden="true"></div><p id="loadingText">让直觉，浮出水面</p><a id="loadingRetry" href="" hidden>重新加载</a><noscript>请启用 JavaScript 后重新打开</noscript></div>
-<script>setTimeout(()=>{if(!document.getElementById('appLoading').hidden){document.getElementById('loadingText').textContent='还在准备，请稍候';document.getElementById('loadingRetry').hidden=false}},12000);</script>
+<script>window.orcaLoadingStarted=performance.now();setTimeout(()=>{if(!document.getElementById('appLoading').hidden){document.getElementById('loadingText').textContent='还在准备，请稍候';document.getElementById('loadingRetry').hidden=false}},12000);</script>
 <div class="page-motifs" aria-hidden="true"><img class="motif sun" src="assets/motifs/sun.webp" alt=""><img class="motif moon" src="assets/motifs/moon.webp" alt=""><img class="motif star s1" src="assets/motifs/star.webp" alt=""><img class="motif star s2" src="assets/motifs/star.webp" alt=""><img class="motif star s3" src="assets/motifs/star.webp" alt=""></div>
 <div class="wrap" id="appShell" aria-busy="true">
 <header class="top"><div class="brand" role="button" tabindex="0" aria-label="鲸灵匣，连续点按三次查看安装引导"><img class="brand-whale" src="assets/app-icon-orca-engraved.png" width="64" height="64" alt=""><div><h1>鲸灵匣</h1><p>TAROT DE MARSEILLE</p></div></div><button class="theme-btn" id="themeBtn" aria-label="切换明暗主题"></button></header>
