@@ -829,6 +829,46 @@ async function run(browser, url, output) {
     await context.close();
   });
 
+  await test('history thumbnails are actually visible after opening, scrolling and reopening, including deferred hidden-lazy decodes',async()=>{
+    for(const deferHiddenLazy of [false,true]){
+      const context=await browser.newContext({viewport:{width:402,height:760},isMobile:true,hasTouch:true});
+      await context.addInitScript(defer=>{
+        localStorage.setItem('lx-guide-done','1');localStorage.setItem('lx-icon-notice-v2','1');
+        const first={id:'history-main-hidden-extra',ts:Date.now(),spread:'3',cards:[{key:'M01',cn:'I · 魔术师'},{key:'M02',cn:'II · 女祭司'},{key:'M10',cn:'X · 命运之轮'},{key:'M13',cn:'XIII',hid:true},{key:'M19',cn:'XVIIII · 太阳',extra:true}]};
+        const rows=Array.from({length:12},(_,i)=>({id:'history-scroll-'+i,ts:Date.now()-60000*(i+1),spread:'1',cards:[{key:'M'+String(i+3).padStart(2,'0'),cn:'测试牌'}]}));
+        rows.unshift(first);rows.push({id:'history-birthday',ts:Date.now()-86400000,spread:'bday',cards:['年','月','日','业力','流年'].map((position,i)=>({key:'M'+String(i+15).padStart(2,'0'),cn:'测试牌',position}))});
+        localStorage.setItem('lx-history',JSON.stringify(rows));window.hiddenLazyDecodes=0;
+        if(defer){const decode=HTMLImageElement.prototype.decode;HTMLImageElement.prototype.decode=function(){if(this.closest('.hd-thumb')&&this.hidden&&this.loading==='lazy'){window.hiddenLazyDecodes++;return new Promise(()=>{})}return decode.call(this)}}
+      },deferHiddenLazy);
+      const page=await context.newPage();await page.goto(url);await page.locator('#appLoading').waitFor({state:'hidden'});
+      const original=await history(page);await page.locator('#historyBtn').click();
+      async function visibleCardImages(selector,count){
+        await page.waitForFunction(({selector,count})=>{const imgs=[...document.querySelectorAll(selector)];return imgs.length===count&&imgs.every(img=>!img.hidden&&getComputedStyle(img).display!=='none'&&img.complete&&img.naturalWidth>0&&img.getBoundingClientRect().width>0)},{selector,count},{timeout:3000});
+      }
+      await visibleCardImages('.hd-item:first-child .hd-thumb img',5);
+      assert.equal(await page.locator('.hd-item:first-child .hd-secondary img').count(),2);
+      await page.locator('#historyScroll').evaluate(el=>el.scrollTop=el.scrollHeight);
+      await visibleCardImages('.hd-item:last-of-type .hd-thumb img',5);
+      await page.locator('#historyScroll').evaluate(el=>el.scrollTop=0);await visibleCardImages('.hd-item:first-child .hd-thumb img',5);
+      await page.locator('#drawBtn').click();await page.locator('#historyBtn').click();
+      await page.locator('#historyScroll').evaluate(el=>el.scrollTop=0);await visibleCardImages('.hd-item:first-child .hd-thumb img',5);
+      assert.deepEqual(await history(page),original);assert.equal(await page.evaluate(()=>window.hiddenLazyDecodes),0);
+      if(output&&deferHiddenLazy)await page.screenshot({path:path.join(output,'history-real-visible-thumbnails.png')});
+      await context.close();
+    }
+  });
+
+  await test('history image failure offers recovery without losing the record',async()=>{
+    const {page,context}=await reading({spread:'1'});let recover=false;
+    await context.route('**/M21.*.webp',route=>recover?route.continue():route.fulfill({status:503,body:'temporary failure'}));
+    const record={id:'history-retry',ts:Date.now(),spread:'1',cards:[{key:'M21',cn:'XXI · 世界'}]};
+    await page.evaluate(r=>localStorage.setItem('lx-history',JSON.stringify([r])),record);await page.locator('#historyBtn').click();
+    await page.locator('.hd-image-retry').waitFor({state:'visible',timeout:4000});assert.deepEqual(await history(page),[record]);
+    recover=true;await page.locator('.hd-image-retry').click();await page.waitForFunction(()=>{const img=document.querySelector('.hd-thumb img');return img&&!img.hidden&&img.complete&&img.naturalWidth>0});
+    assert.equal(await page.locator('.hd-image-retry').isVisible(),false);assert.deepEqual(await history(page),[record]);
+    await context.close();
+  });
+
   assert.deepEqual(errors,[],'Uncaught browser errors');
   const report={passed:reports,failures,errors,limitations};
   if(output)fs.writeFileSync(path.join(output,'browser-report.json'),JSON.stringify(report,null,2));

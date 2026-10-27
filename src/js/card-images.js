@@ -68,7 +68,9 @@ function imageBinding(img){
   const notify=()=>entry.listeners.forEach(fn=>fn(entry.state));
   entry.load=(retry=false)=>{
     if(entry.promise&&!retry)return entry.promise;
-    entry.state='pending';img.hidden=true;notify();
+    // The observer has already chosen to load this image. Native lazy loading
+    // must not defer decode again while the image is hidden for preparation.
+    img.loading='eager';entry.state='pending';img.hidden=true;notify();
     entry.promise=(async()=>{
       const loaded=await whenLoaded(img.dataset.cardSrc,{retry});
       if(loaded){
@@ -101,8 +103,17 @@ export function hydrateCardImages(container,{prepared=[]}={}){
       placeholder.replaceWith(img);
     }
     const card=img.closest('.rcard'),status=card?.querySelector('.card-image-status'),retry=card?.querySelector('.image-retry');
-    const entry=imageBinding(img);
+    const entry=imageBinding(img),thumb=img.closest('.hd-thumb');
+    let historyRetry;
     const paint=state=>{
+      if(thumb){
+        thumb.dataset.imageState=state;
+        if(state==='failed'&&!historyRetry){
+          historyRetry=document.createElement('button');historyRetry.type='button';historyRetry.className='hd-image-retry';historyRetry.textContent='重试';historyRetry.setAttribute('aria-label','重新加载牌面');
+          historyRetry.onclick=e=>{e.stopPropagation();entry.load(true)};thumb.append(historyRetry);
+        }
+        if(historyRetry)historyRetry.hidden=state!=='failed';
+      }
       card?.classList.toggle('front-ready',state==='ready');
       if(status){status.hidden=state==='ready';status.textContent=state==='failed'?'牌面暂时无法加载':'牌面加载中…';}
       if(retry)retry.hidden=state!=='failed';
