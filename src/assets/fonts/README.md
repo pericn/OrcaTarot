@@ -13,3 +13,5 @@
 ```sh
 python3 tools/subset_font.py --chinese /path/to/qiji-combo.ttf --supplement /path/to/NewTegomin-Regular.ttf
 ```
+
+数字与拉丁补字在合并前按 0.88 比例统一缩放轮廓与字宽，匹配齐伋体的可见字身高度，避免日期中数字高于汉字。新增文案（含「载」「旋正」）必须重新子集。

@@ -1,4 +1,5 @@
 import { IMG } from './images.js';
+import { drawShareQR } from './share-qr.js';
 import { whenLoaded, getLoadedImage } from './card-images.js';
 
 function diamond(g,x,y,r,color){
@@ -65,7 +66,7 @@ function compose(cards,ts){
   const nameF=small?'400 17px '+SERIF:'400 20px '+SERIF;
   const rowH=cardH+100;
   const areaH=n===0?150:rows*rowH;
-  const headH=140, footH=70;
+  const headH=140, footH=196;
   const H=M+headH+PAD+areaH+PAD+footH+M;
   const cv=document.createElement('canvas');cv.width=W;cv.height=H;
   const g=cv.getContext('2d');
@@ -102,18 +103,31 @@ function compose(cards,ts){
         g.fillStyle=SOFT;g.font=(c.position?'18px ':small?'12px ':'13px ')+SERIF;
         g.fillText(c.position||(c.extra?'追 加 牌':'隐 藏 牌'),x+cardW/2,cy-16);
       }
-      drawCard(g,IMG[c.key]||IMG.BACK,!!c.rev,x,cy,cardW,cardH,CARDBG,INK);
+      drawCard(g,IMG[c.key]||IMG.BACK,!!c.rev&&!c.uprighted,x,cy,cardW,cardH,CARDBG,INK);
       g.fillStyle=SOFT;g.font=nameF;
       g.fillText(c.cn,x+cardW/2,cy+cardH+29,cardW+10);
       if(c.rev){
         g.fillStyle=SOFT;g.font=small?'12px '+SERIF:'14px '+SERIF;
-        g.fillText('逆 位',x+cardW/2,cy+cardH+(small?51:55));
+        g.fillText(c.uprighted?'逆位（已旋正）':'逆位',x+cardW/2,cy+cardH+(small?51:55));
       }
       x+=cardW+gap;
     });
   }
-  g.fillStyle=GOLD;g.font='15px '+SERIF;
-  diamond(g,W/2,H-M-footH/2+6,8,INK);
+  const footerY=H-M-footH;
+  g.strokeStyle=LINE;g.lineWidth=1;g.beginPath();g.moveTo(M,footerY);g.lineTo(W-M,footerY);g.stroke();
+  const whale=getLoadedImage('assets/app-icon-orca-engraved.png');
+  if(whale){
+    g.save();g.globalCompositeOperation=dark?'screen':'multiply';
+    if(dark)g.filter='invert(1)';
+    g.drawImage(whale,M+4,footerY+30,120,120);g.restore();
+  }
+  g.textAlign='left';g.fillStyle=INK;g.font='24px '+SERIF;
+  g.fillText('鲸灵匣',M+146,footerY+76);
+  g.fillStyle=SOFT;g.font='16px '+SERIF;
+  g.fillText('留一刻，听见自己',M+146,footerY+110);
+  const qrSize=drawShareQR(g,W-M-132,footerY+20);
+  g.textAlign='center';g.font='14px '+SERIF;g.fillStyle=SOFT;
+  g.fillText('扫码，来抽一张',W-M-132+qrSize/2,footerY+qrSize+38);
   return cv;
 }
 
