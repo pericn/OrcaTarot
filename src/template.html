@@ -10,20 +10,21 @@
 <title>鲸灵匣 · Tarot de Marseille</title>
 <link rel="icon" href="assets/favicon-orca-engraved.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/app-icon-orca-engraved.png">
-<link rel="preload" href="assets/whale-breath-strip.png" as="image">
 <link rel="preload" href="assets/fonts/orca-woodblock.woff2" as="font" type="font/woff2" crossorigin>
-<script>try{const saved=localStorage.getItem('lx-theme');document.documentElement.dataset.theme=(saved==='light'||saved==='dark')?saved:(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}catch{}</script>
+<script>try{const saved=localStorage.getItem('lx-theme');document.documentElement.dataset.theme=(saved==='light'||saved==='dark')?saved:(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}catch{};const atlas=document.createElement('link');atlas.rel='preload';atlas.as='image';atlas.href=document.documentElement.dataset.theme==='dark'?'assets/whale-breath-dark-strip.png':'assets/whale-breath-strip.png';document.head.append(atlas);</script>
 <style>
+:root{--card-back-image:url('__CARD_BACK_DATA__')}
 html{background:#fcfcfa;color:#252834}
 .app-loading{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 24px max(56px,env(safe-area-inset-bottom));background:#fcfcfa;color:#252834}
-.whale-breath{width:min(320px,78vw);aspect-ratio:1;background-image:url('assets/whale-breath-strip.png');background-size:800% 100%;background-repeat:no-repeat;background-position:0% 0%;animation:whale-breath 3.2s steps(1,end) infinite}
+.whale-breath{width:min(320px,78vw);aspect-ratio:1;background-image:url('assets/whale-breath-strip.png');background-size:800% 100%;background-repeat:no-repeat;background-position:0% 0%;animation:none}
 .app-loading p{margin:30px 0 0;font:400 18px/1.8 OrcaWoodblock,'Songti SC',serif;letter-spacing:2px}
 .app-loading a{color:inherit;font:14px/1.6 serif;margin-top:16px}
 .app-loading[hidden],.app-loading [hidden]{display:none}
 [data-theme=dark] .app-loading{background:#19213d;color:#f4f3ed}
-[data-theme=dark] .whale-breath{filter:invert(1) sepia(.15)}
-@keyframes whale-breath{0%,100%{background-position:0% 0%}12.5%{background-position:14.285714% 0%}25%{background-position:28.571429% 0%}37.5%{background-position:42.857143% 0%}50%{background-position:57.142857% 0%}62.5%{background-position:71.428571% 0%}75%{background-position:85.714286% 0%}87.5%{background-position:100% 0%}}
-@media(prefers-reduced-motion:reduce){.whale-breath{animation:none;background-position:14.285714% 0%}}
+[data-theme=dark] .whale-breath{background-image:url('assets/whale-breath-dark-strip.png')}
+.app-loading.is-ready .whale-breath{animation:whale-breath 1s steps(1,end) 1 both}
+@keyframes whale-breath{0%{background-position:0% 0%}12.5%{background-position:14.285714% 0%}25%{background-position:28.571429% 0%}37.5%{background-position:42.857143% 0%}50%{background-position:57.142857% 0%}62.5%{background-position:71.428571% 0%}75%{background-position:85.714286% 0%}87.5%,100%{background-position:100% 0%}}
+@media(prefers-reduced-motion:reduce){.whale-breath,.app-loading.is-ready .whale-breath{animation:none!important;background-position:14.285714% 0%}}
 </style>
 <script>window.orcaStylesReady=new Promise(resolve=>{window.orcaStylesLoaded=resolve});</script>
 <link id="appStyles" rel="stylesheet" href="css/app.css" media="print" onload="this.media='all';window.orcaStylesLoaded()">
@@ -32,13 +33,27 @@ html{background:#fcfcfa;color:#252834}
 <body>
 <!-- ICON_SPRITE -->
 <div id="appLoading" class="app-loading" role="status" aria-live="polite"><div class="whale-breath" aria-hidden="true"></div><p id="loadingText">让直觉，浮出水面</p><a id="loadingRetry" href="" hidden>重新加载</a><noscript>请启用 JavaScript 后重新打开</noscript></div>
-<script>window.orcaLoadingStarted=performance.now();setTimeout(()=>{if(!document.getElementById('appLoading').hidden){document.getElementById('loadingText').textContent='还在准备，请稍候';document.getElementById('loadingRetry').hidden=false}},12000);</script>
+<script>
+window.orcaLoadingStarted=performance.now();
+(function(){
+ const loader=document.getElementById('appLoading'),figure=loader.querySelector('.whale-breath');
+ const url=value=>value.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
+ const decode=src=>new Promise(resolve=>{const image=new Image();let settled=false;const finish=value=>{if(!settled){settled=true;clearTimeout(timer);resolve(value)}};const timer=setTimeout(()=>finish(null),4000);image.onload=()=>image.decode().then(()=>finish(image),()=>finish(null));image.onerror=()=>finish(null);image.src=src});
+ window.orcaBackReady=decode(url(getComputedStyle(document.documentElement).getPropertyValue('--card-back-image').trim())).then(image=>{window.orcaBackImage=image;return image});
+ window.orcaLoadingComplete=Promise.all([window.orcaBackReady,decode(url(getComputedStyle(figure).backgroundImage))]).then(([,image])=>new Promise(resolve=>{
+   window.orcaSpriteImage=image;
+   requestAnimationFrame(()=>{loader.classList.add('is-ready');const animation=figure.getAnimations().find(a=>a.animationName==='whale-breath');if(animation)animation.finished.then(resolve,resolve);else setTimeout(resolve,1000)});
+ }));
+})();
+setTimeout(()=>{if(!document.getElementById('appLoading').hidden){document.getElementById('loadingText').textContent='还在准备，请稍候';document.getElementById('loadingRetry').hidden=false}},12000);
+</script>
 <div class="page-motifs" aria-hidden="true"><img class="motif sun" src="assets/motifs/sun.webp" alt=""><img class="motif moon" src="assets/motifs/moon.webp" alt=""><img class="motif star s1" src="assets/motifs/star.webp" alt=""><img class="motif star s2" src="assets/motifs/star.webp" alt=""><img class="motif star s3" src="assets/motifs/star.webp" alt=""></div>
 <div class="wrap" id="appShell" aria-busy="true">
-<header class="top"><div class="brand" role="button" tabindex="0" aria-label="鲸灵匣，连续点按三次查看安装引导"><img class="brand-whale" src="assets/app-icon-orca-engraved.png" width="64" height="64" alt=""><div><h1>鲸灵匣</h1><p>TAROT DE MARSEILLE</p></div></div><button class="theme-btn" id="themeBtn" aria-label="切换明暗主题"></button></header>
+<header class="top"><div class="brand" role="button" tabindex="0" aria-label="鲸灵匣，连续点按三次查看安装引导"><img class="brand-whale" data-light="assets/app-icon-orca-engraved.png" data-dark="assets/app-icon-orca-dark.png" width="64" height="64" alt=""><div><h1>鲸灵匣</h1><p>TAROT DE MARSEILLE</p></div></div><button class="theme-btn" id="themeBtn" aria-label="切换明暗主题"></button></header>
 <main>
 <div class="reading-tools"><button class="sp-ind" id="spreadInd" aria-label="选择牌阵"><span id="spreadIcon"></span><span id="spreadName"></span><svg class="ico chevron" aria-hidden="true"><use href="assets/icons.svg#chevron"/></svg></button>
-</div>
+<div class="question-editor" id="questionEditor"><input id="questionInput" type="text" maxlength="120" autocomplete="off" placeholder="此刻的问题（选填）" aria-label="此刻的问题（选填，最多 120 字）"></div></div>
+<p class="reading-question user-text" id="readingQuestion" hidden></p>
 <section id="draw" aria-label="选牌"><div class="slotstage"><div class="slots" id="slots" data-n="3"></div></div>
 <div class="fanzone" id="fanzone"><div class="fanprompt" id="fanPrompt" aria-live="polite"></div><div id="fanMid" hidden></div><div id="fanWrap" aria-label="扇形牌堆，左右滑动或用方向键选牌"><div id="fanTrack"></div></div><div id="bdayEmpty" hidden><button class="btn" id="bdayGo">填写生日</button></div></div></section>
 <section id="reveal" aria-label="翻牌" hidden><div class="rv-prompt" id="rvPrompt" aria-live="polite"></div><div class="rv-row pre" id="rvRow" data-n="3"></div><div class="rv-supplement"><div class="rv-hidden" id="rvHidden" hidden><div class="rvh-cap">隐藏牌</div><div class="rcard hs" id="hCard"></div></div><div class="rv-extra" id="rvExtra" hidden></div></div><div class="rv-acts"><button class="btn" id="reShuffle"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#shuffle"/></svg>重新洗牌</button><button class="btn primary" id="shareBtn" hidden><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#share"/></svg>分享</button></div></section>
@@ -94,7 +109,7 @@ html{background:#fcfcfa;color:#252834}
 <div id="updateOv" role="dialog" aria-modal="true" aria-labelledby="updateTitle" hidden>
   <div class="update-card">
     <button class="gd-close" id="updClose" aria-label="关闭更新提示"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#close"/></svg></button>
-    <img class="up-icon" src="assets/app-icon-orca-engraved.png" width="88" height="88" alt="木刻风格的虎鲸图标">
+    <img class="up-icon" data-light="assets/app-icon-orca-engraved.png" data-dark="assets/app-icon-orca-dark.png" width="88" height="88" alt="木刻风格的虎鲸图标">
     <p class="gd-kicker">鲸灵匣 · 更新</p><h2 id="updateTitle">一只新的桌面虎鲸</h2>
     <p>桌面图标换成了这只木刻虎鲸。现有入口可以继续使用，无需重新安装。</p>
     <p class="up-note">想添加新图标，可在 Safari 打开本站，选择「共享 → 添加到主屏幕」。抽牌记录保存在当前浏览器或网页 App 中，请保留原入口。</p>

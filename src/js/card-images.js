@@ -1,7 +1,14 @@
 // One decoded image/promise per content-hashed URL, shared by cards and shares.
 const images=new Map();
 const cacheName='orca-card-images-v1:'+new URL('.',import.meta.url).pathname;
-let cachePromise;
+let cachePromise,trimScheduled=false;
+const boundImages=new WeakMap();
+export function primeImage(src,image){if(image?.naturalWidth)images.set(src,{image,promise:Promise.resolve(image),failed:false});}
+function trimCacheLater(cache){
+  if(trimScheduled)return;trimScheduled=true;
+  const trim=async()=>{try{const keys=await cache.keys();await Promise.all(keys.slice(0,Math.max(0,keys.length-160)).map(key=>cache.delete(key)))}catch{}};
+  if(window.requestIdleCallback)requestIdleCallback(trim,{timeout:5000});else setTimeout(trim,2000);
+}
 function imageCache(){
   if(!cachePromise)cachePromise=(async()=>{
     try{return await caches.open(cacheName);}catch{return null;}
@@ -19,7 +26,6 @@ async function fetchImage(src,retry){
     const cached=!retry&&cache?await cache.match(url).catch(()=>null):null;
     const response=cached||await fetch(url,{signal:controller.signal,cache:retry?'reload':'force-cache'});
     if(!response.ok)throw new Error('Image HTTP '+response.status);
-    const saved=response.clone();
     const blob=await response.blob();
     const img=new Image();
     objectURL=URL.createObjectURL(blob);img.src=objectURL;
@@ -27,10 +33,7 @@ async function fetchImage(src,retry){
     if(!img.naturalWidth)throw new Error('Empty image');
     if(cache&&!cached){
       // Storage failure must never prevent a successful draw. Limit old versions.
-      cache.put(url,saved).then(async()=>{
-        const keys=await cache.keys();
-        await Promise.all(keys.slice(0,Math.max(0,keys.length-160)).map(key=>cache.delete(key)));
-      }).catch(()=>{});
+      cache.put(url,new Response(blob,{status:response.status,statusText:response.statusText,headers:response.headers})).then(()=>trimCacheLater(cache)).catch(()=>{});
     }
     return img;
   }catch(error){
@@ -68,17 +71,27 @@ export function hydrateCardImages(container){
     const card=img.closest('.rcard');
     const status=card?.querySelector('.card-image-status');
     const retry=card?.querySelector('.image-retry');
-    const load=async(retryLoad=false)=>{
-      if(retry)retry.hidden=true;
-      if(status){status.hidden=false;status.textContent='牌面加载中…';}
-      const loaded=await whenLoaded(img.dataset.cardSrc,{retry:retryLoad});
-      if(!img.isConnected)return;
-      if(loaded){img.src=loaded.src;img.hidden=false;if(status)status.hidden=true;}
-      else{
+    let active=null;
+    const load=(retryLoad=false)=>{
+      if(active&&!retryLoad)return active;
+      active=(async()=>{
+        if(retry)retry.hidden=true;
+        if(status){status.hidden=false;status.textContent='牌面加载中…';}
+        const loaded=await whenLoaded(img.dataset.cardSrc,{retry:retryLoad});
+        if(!img.isConnected)return false;
+        if(loaded){
+          img.decoding='async';img.src=loaded.src;
+          try{await img.decode();}catch{if(status)status.textContent='牌面暂时无法加载';if(retry)retry.hidden=false;return false;}
+          if(!img.isConnected)return false;
+          img.hidden=false;card?.classList.add('front-ready');if(status)status.hidden=true;return true;
+        }
         if(status)status.textContent='牌面暂时无法加载';
         if(retry)retry.hidden=false;
-      }
+        return false;
+      })();
+      return active;
     };
+    card?.classList.remove('front-ready');boundImages.set(img,load);
     if(retry)retry.onclick=e=>{e.stopPropagation();load(true);};
     if(img.loading==='lazy'&&observer){
       pending.set(img,load);observer.observe(img);
@@ -86,3 +99,5 @@ export function hydrateCardImages(container){
   });
   return ()=>{observer?.disconnect();pending.clear();};
 }
+
+export function prepareCardFace(card){const img=card.querySelector('img[data-card-src]');return boundImages.get(img)?.()||Promise.resolve(false);}

@@ -201,6 +201,7 @@ async function run(browser, url, output) {
 
   await test('birthday validity, five calculated cards in 3+2 layout, saved preferences',async()=>{
     const {page,context}=await reading();
+    await page.clock.setFixedTime(new Date('2026-07-03T12:00:00Z'));
     await page.locator('#spreadInd').click();await page.locator('#bdayHead').click();
     for(const [id,value] of [['bY','1990'],['bM','2'],['bD','30']])await page.locator('#'+id).fill(value);
     await page.locator('#bStart').click();assert.equal(await page.locator('#bErr').isVisible(),true);
@@ -216,7 +217,7 @@ async function run(browser, url, output) {
     const record=(await history(page))[0];
     assert.deepEqual(record.cards.map(c=>c.position),['年','月','日','业力','流年']);
     const digit=n=>{while(n>9)n=String(n).split('').reduce((sum,d)=>sum+Number(d),0);return n;};
-    assert.equal(record.cards[4].key,'M'+String(digit(new Date().getFullYear())).padStart(2,'0'));
+    assert.equal(record.cards[4].key,'M'+String(digit(2026+7+3)).padStart(2,'0'));
     if(output)await page.screenshot({path:path.join(output,'birthday.png'),fullPage:true});
     await page.evaluate(()=>{window.drawn=[];const f=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(t,...a){window.drawn.push(t);return f.call(this,t,...a)}});
     await page.locator('#shareBtn').click();await page.locator('#shareOv').waitFor({state:'visible'});
@@ -225,7 +226,8 @@ async function run(browser, url, output) {
     const legacy={...record,cards:record.cards.map(({position,...card})=>card)};
     await page.evaluate(record=>localStorage.setItem('lx-history',JSON.stringify([record])),legacy);
     await page.locator('#historyBtn').click();
-    assert.ok((await page.locator('.hd-names').innerText()).includes('流年：'));
+    assert.ok((await page.locator('.hd-kind').allTextContents()).includes('流年'));
+    assert.equal(await page.locator('.hd-kind').evaluateAll(els=>els.some(el=>/[：:]/.test(el.textContent))),false);
     await page.evaluate(()=>window.drawn=[]);
     await page.locator('.hd-share').click();await page.locator('#shareOv').waitFor({state:'visible'});
     for(const position of ['年','月','日','业力','流年'])assert.ok((await page.evaluate(()=>window.drawn)).includes(position));
@@ -520,7 +522,7 @@ async function run(browser, url, output) {
     await context.close();
   });
 
-  await test('loading shows eight real breath frames, honors saved theme, and stays visible for the two-second minimum',async()=>{
+  await test('loading shows eight real breath frames, honors saved theme, and stays visible for the one-second complete cycle',async()=>{
     const context=await browser.newContext({viewport:{width:402,height:874},colorScheme:'light'});
     await context.addInitScript(()=>localStorage.setItem('lx-theme','dark'));
     let release;const gate=new Promise(resolve=>release=resolve);
@@ -535,7 +537,7 @@ async function run(browser, url, output) {
     const hashes=[];
     for(let frame=0;frame<8;frame++){
       await page.locator('.whale-breath').evaluate(async(el,frame)=>{
-        const animation=el.getAnimations()[0];animation.pause();animation.currentTime=frame*400+50;
+        const animation=el.getAnimations()[0];animation.pause();animation.currentTime=frame*125+20;
         await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
       },frame);
       const snapshot=await page.locator('.whale-breath').evaluate(async el=>{
@@ -550,6 +552,7 @@ async function run(browser, url, output) {
     }
     assert.equal(new Set(hashes).size,8,'Each frame must show a different drawing');
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+    await page.locator('.whale-breath').evaluate(el=>{const a=el.getAnimations()[0];a.currentTime=1000;a.play()});
     release();await navigation;await page.locator('#appLoading').waitFor({state:'hidden'});
     await context.close();
   });
@@ -625,18 +628,18 @@ async function run(browser, url, output) {
     await context.close();
   });
 
-  await test('slots have explicit horizontal rows, icons render locally, loading warms assets for at least two seconds',async()=>{
+  await test('slots have explicit horizontal rows, icons render locally, loading reuses one decoded inline back after a complete one-second cycle',async()=>{
     const context=await browser.newContext({viewport:{width:402,height:690},isMobile:true,hasTouch:true});
     await context.addInitScript(()=>{localStorage.setItem('lx-icon-notice-v2','1');localStorage.setItem('lx-guide-done','1');
-      new MutationObserver(()=>{if(document.getElementById('appLoading')?.hidden&&window.orcaLoadingHiddenAt===undefined)window.orcaLoadingHiddenAt=performance.now()}).observe(document,{subtree:true,attributes:true,attributeFilter:['hidden']});
+      new MutationObserver(()=>{const el=document.getElementById('appLoading');if(el?.classList.contains('is-ready')&&window.orcaCycleStarted===undefined)window.orcaCycleStarted=performance.now();if(el?.hidden&&window.orcaLoadingHiddenAt===undefined)window.orcaLoadingHiddenAt=performance.now()}).observe(document,{subtree:true,attributes:true,attributeFilter:['hidden','class']});
     });
     const page=await context.newPage();await page.goto(url);await page.locator('#appLoading').waitFor({state:'hidden'});
-    const duration=await page.evaluate(()=>window.orcaLoadingHiddenAt-window.orcaLoadingStarted);assert.ok(duration>=1990,JSON.stringify({duration}));
+    const duration=await page.evaluate(()=>window.orcaLoadingHiddenAt-window.orcaCycleStarted);assert.ok(duration>=990,JSON.stringify({duration}));
     assert.equal(await page.locator('#spreadIcon use').getAttribute('href'),'#spread-3');
     assert.ok(await page.locator('#spreadIcon svg').evaluate(el=>el.getBBox().width>0));
     assert.equal(await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/icons.*\.svg/.test(r.name)).length),0);
-    const keys=await page.evaluate(async()=>{const all=[];for(const name of await caches.keys()){const cache=await caches.open(name);all.push(...(await cache.keys()).map(r=>r.url))}return all});
-    for(const asset of ['card-back.','whale-breath-strip.','app-icon-orca-engraved.'])assert.ok(keys.some(k=>k.includes(asset)),asset);
+    const core=await page.evaluate(async()=>{const {IMG}=await import('./js/images.js'),{getLoadedImage}=await import('./js/card-images.js');return {same:getLoadedImage(IMG.BACK)===window.orcaBackImage,width:window.orcaBackImage?.naturalWidth,backRequests:performance.getEntriesByType('resource').filter(r=>/card-back\./.test(r.name)).length,iterations:getComputedStyle(document.querySelector('.whale-breath')).animationIterationCount}});
+    assert.equal(core.same,true);assert.ok(core.width>0);assert.equal(core.backRequests,0);assert.equal(core.iterations,'1');
     for(const spread of ['1','2','3','bday']){
       if(spread==='bday')await page.evaluate(()=>localStorage.setItem('lx-prefs',JSON.stringify({spread:'bday'})));
       else await page.evaluate(spread=>localStorage.setItem('lx-prefs',JSON.stringify({spread})),spread);
@@ -658,6 +661,11 @@ async function run(browser, url, output) {
     assert.ok(Math.abs(settings.left)<1&&settings.gap>=16&&settings.gap<=24,JSON.stringify(settings));
     await page.locator('#bY').fill('1990');await page.locator('#bM').fill('7');await page.locator('#bD').fill('3');await page.locator('#bStart').click();await flip(page);
     await page.locator('#historyBtn').click();
+    assert.deepEqual(await page.locator('.hd-cards .hd-kind').allTextContents(),['年','月','日','业力','流年']);
+    assert.equal(await page.locator('.hd-kind').evaluateAll(els=>els.some(el=>/[：:]/.test(el.textContent))),false);
+    assert.equal(await page.locator('.hd-date').evaluateAll(els=>els.some(el=>/[：:]/.test(el.textContent))),false);
+    const positionBounds=await page.locator('.hd-reading-card').evaluateAll(els=>els.map(el=>({label:el.querySelector('.hd-kind').getBoundingClientRect().bottom,card:el.querySelector('.hd-thumb').getBoundingClientRect().top})));
+    assert.ok(positionBounds.every(r=>r.label<r.card));
     const figures=await page.locator('.hd-cards .hd-reading-card').evaluateAll(els=>els.map(el=>{const r=el.querySelector('.hd-thumb').getBoundingClientRect(),cap=el.querySelector('figcaption').getBoundingClientRect();return {x:r.x,y:r.y,bottom:r.bottom,captionTop:cap.top}}));
     assert.equal(figures.length,5);assert.ok(figures.every(r=>r.captionTop>=r.bottom+5));assert.ok(figures.slice(0,3).every(r=>Math.abs(r.y-figures[0].y)<1));assert.ok(figures.slice(3).every(r=>Math.abs(r.y-figures[3].y)<1&&r.y>figures[0].y));
     await page.waitForFunction(()=>parseFloat(getComputedStyle(document.querySelector('.hd-scroll')).opacity)===1&&[...document.querySelectorAll('.hd-cards img')].every(i=>i.complete&&i.naturalWidth>0));
@@ -666,6 +674,81 @@ async function run(browser, url, output) {
     await page.locator('.hd-share').click();await page.locator('#shareOv').waitFor({state:'visible'});
     const positions=await page.evaluate(()=>window.positions);assert.equal(positions.length,5);assert.equal(positions[0].y,positions[2].y);assert.equal(positions[3].y,positions[4].y);assert.ok(positions[3].y>positions[0].y);assert.ok(positions[3].x<375&&positions[4].x>375);
     if(output)fs.writeFileSync(path.join(output,'birthday-share-3-2.png'),Buffer.from((await page.locator('#shareImg').getAttribute('src')).split(',')[1],'base64'));
+    await context.close();
+  });
+
+  await test('card backs need no network during fan, flight, slots and reveal; faces decode before flipping',async()=>{
+    const context=await browser.newContext({viewport:{width:402,height:760}});
+    await context.addInitScript(()=>{
+      localStorage.setItem('lx-guide-done','1');localStorage.setItem('lx-icon-notice-v2','1');localStorage.setItem('lx-prefs',JSON.stringify({spread:'3',minor:false}));
+      const decode=HTMLImageElement.prototype.decode;let held=false;
+      HTMLImageElement.prototype.decode=function(){const ready=decode.call(this);if(this.hasAttribute('data-card-src')&&!held){held=true;return ready.then(()=>new Promise(resolve=>{window.releaseFace=resolve}))}return ready};
+    });
+    let backRequests=0;await context.route('**/card-back.*.webp',route=>{backRequests++;return route.abort()});
+    const page=await context.newPage();await page.goto(url);await page.locator('#appLoading').waitFor({state:'hidden'});
+    assert.equal(await page.locator('.fcard img').count(),0);
+    await page.locator('.fcard[data-key="M01"]').dispatchEvent('click');
+    assert.equal(await page.locator('.flyghost .back-art').evaluate(el=>getComputedStyle(el).backgroundImage.includes('data:image/webp;base64,')),true);
+    await page.waitForTimeout(510);assert.equal(await page.locator('.slot.done .back-art').count(),1);
+    await pick(page,['M02','M03']);await page.waitForFunction(()=>typeof window.releaseFace==='function');
+    const card=page.locator('#rvRow .rcard').first();await card.locator('.flip').click();
+    assert.equal(await card.locator('.flip').getAttribute('aria-busy'),'true');assert.equal(await card.evaluate(el=>el.classList.contains('flipped')),false);
+    assert.equal(await card.locator('.face.back .back-art').evaluate(el=>getComputedStyle(el).backgroundImage.includes('data:image/webp;base64,')),true);
+    await page.evaluate(()=>window.releaseFace());await card.locator('.front img').waitFor({state:'visible'});await page.waitForFunction(()=>document.querySelector('#rvRow .rcard').classList.contains('flipped'));
+    assert.equal(await card.evaluate(el=>el.classList.contains('front-ready')),true);
+    assert.equal(await card.locator('.front img').evaluate(el=>el.complete&&el.naturalWidth>0),true);
+    assert.equal(backRequests,0);
+    if(output)await page.screenshot({path:path.join(output,'decoded-back-and-face.png')});
+    await context.close();
+  });
+
+  await test('dark artwork is a dedicated normal-color asset without CSS or Canvas inversion',async()=>{
+    const {page,context}=await reading({spread:'1'});await page.locator('#themeBtn').click();
+    const artwork=await page.locator('.brand-whale').evaluate(img=>({src:img.src,filter:getComputedStyle(img).filter,blend:getComputedStyle(img).mixBlendMode}));
+    assert.ok(artwork.src.includes('app-icon-orca-dark.'));assert.equal(artwork.filter,'none');assert.equal(artwork.blend,'normal');
+    assert.ok((await page.locator('.whale-breath').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('whale-breath-dark-strip.'));
+    assert.equal(await page.locator('.whale-breath').evaluate(el=>getComputedStyle(el).filter),'none');
+    await pick(page,['M19']);await flip(page);
+    await page.evaluate(()=>{window.inversions=[];const proto=CanvasRenderingContext2D.prototype;for(const key of ['filter','globalCompositeOperation']){const original=Object.getOwnPropertyDescriptor(proto,key);if(original?.set)Object.defineProperty(proto,key,{...original,set(value){if(String(value).includes('invert')||value==='screen')window.inversions.push(value);original.set.call(this,value)}})}});
+    await page.locator('#shareBtn').click();await page.locator('#shareOv').waitFor({state:'visible'});assert.deepEqual(await page.evaluate(()=>window.inversions),[]);
+    if(output)fs.writeFileSync(path.join(output,'normal-dark-art-share.png'),Buffer.from((await page.locator('#shareImg').getAttribute('src')).split(',')[1],'base64'));
+    await context.close();
+  });
+
+
+  await test('questions stay local, wrap with native fonts, and persist through extra cards, history and shares',async()=>{
+    const {page,context}=await reading({spread:'1'});
+    const question=('转职 & 去留 <img src=x onerror=alert(1)> 🐋，接下来应该怎么做？').repeat(3);
+    const expected=question.slice(0,120);
+    const fontsBefore=await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/\.woff2?/.test(r.name)).length);
+    await page.locator('#questionInput').fill(question);
+    await pick(page,['M10']);
+    assert.equal(await page.locator('#readingQuestion').innerText(),expected);
+    assert.equal(await page.locator('#questionEditor').isVisible(),false);
+    assert.ok((await page.locator('#readingQuestion').evaluate(el=>getComputedStyle(el).fontFamily)).includes('system-ui'));
+    await flip(page);const original=(await history(page))[0];assert.equal(original.question,expected);
+    await page.locator('.wheel-action').click();await page.locator('#rvExtra .flip').click();
+    await page.waitForFunction(()=>JSON.parse(localStorage.getItem('lx-history'))[0].cards.length===2);
+    const updated=(await history(page))[0];assert.equal(updated.id,original.id);assert.equal(updated.question,expected);
+    await page.evaluate(()=>{window.textDraws=[];const original=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(text,x,y,...rest){window.textDraws.push({text,x,y,font:this.font,width:this.measureText(text).width});return original.call(this,text,x,y,...rest)}});
+    await page.locator('#shareBtn').click();await page.locator('#shareOv').waitFor({state:'visible'});
+    async function checkShare(){
+      const texts=await page.evaluate(()=>window.textDraws),questionLines=texts.filter(t=>t.font.includes('system-ui'));
+      assert.equal(questionLines.map(t=>t.text).join(''),expected);assert.ok(questionLines.length>1);
+      assert.ok(questionLines.every(t=>t.width<=626&&t.x===375));
+      assert.ok(texts.some(t=>t.text==='让直觉，浮出水面'));
+    }
+    await checkShare();
+    if(output)fs.writeFileSync(path.join(output,'question-share.png'),Buffer.from((await page.locator('#shareImg').getAttribute('src')).split(',')[1],'base64'));
+    await page.locator('#shareClose').click();await page.locator('#historyBtn').click();
+    assert.equal(await page.locator('.hd-question').innerText(),expected);assert.equal(await page.locator('.hd-question img').count(),0);
+    await page.evaluate(()=>window.textDraws=[]);await page.locator('.hd-share').click();await page.locator('#shareOv').waitFor({state:'visible'});await checkShare();
+    await page.locator('#shareClose').click();await page.locator('#drawBtn').click();await page.locator('#reShuffle').click();
+    assert.equal(await page.locator('#readingQuestion').isVisible(),false);assert.equal(await page.locator('#questionEditor').isVisible(),true);
+    await page.locator('#questionInput').fill('   ');await pick(page,['M01']);await flip(page);
+    assert.equal(await page.locator('#readingQuestion').isVisible(),false);assert.equal((await history(page))[0].question,undefined);
+    await page.locator('#historyBtn').click();assert.equal(await page.locator('.hd-item').first().locator('.hd-question').count(),0);
+    const fontsAfter=await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/\.woff2?/.test(r.name)).length);assert.equal(fontsAfter,fontsBefore);
     await context.close();
   });
 
