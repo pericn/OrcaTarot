@@ -10,16 +10,27 @@
 <title>鲸灵匣 · Tarot de Marseille</title>
 <link rel="icon" href="assets/favicon-orca-engraved.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/app-icon-orca-engraved.png">
+<link rel="preload" href="assets/whale-breath-strip.png" as="image">
 <link rel="preload" href="assets/fonts/orca-woodblock.woff2" as="font" type="font/woff2" crossorigin>
+<script>try{const saved=localStorage.getItem('lx-theme');document.documentElement.dataset.theme=(saved==='light'||saved==='dark')?saved:(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}catch{}</script>
 <style>
-html{background:#fcfcfa;color:#252834}.app-loading{position:fixed;inset:0;z-index:200;display:grid;place-content:center;justify-items:center;gap:18px;background:#fcfcfa;font:16px/1.6 serif}.app-loading img{width:112px;height:112px;mix-blend-mode:multiply}.app-loading p{margin:0}.app-loading a{color:inherit;font-size:14px}.app-loading[hidden],.app-loading [hidden]{display:none}@media(prefers-color-scheme:dark){html,.app-loading{background:#19213d;color:#f4f3ed}.app-loading img{filter:invert(1);mix-blend-mode:screen}}
+html{background:#fcfcfa;color:#252834}
+.app-loading{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 24px max(56px,env(safe-area-inset-bottom));background:#fcfcfa;color:#252834}
+.whale-breath{width:min(320px,78vw);aspect-ratio:1;background-image:url('assets/whale-breath-strip.png');background-size:800% 100%;background-repeat:no-repeat;background-position:0% 0%;animation:whale-breath 3.2s steps(1,end) infinite}
+.app-loading p{margin:30px 0 0;font:400 18px/1.8 OrcaWoodblock,'Songti SC',serif;letter-spacing:2px}
+.app-loading a{color:inherit;font:14px/1.6 serif;margin-top:16px}
+.app-loading[hidden],.app-loading [hidden]{display:none}
+[data-theme=dark] .app-loading{background:#19213d;color:#f4f3ed}
+[data-theme=dark] .whale-breath{filter:invert(1) sepia(.15)}
+@keyframes whale-breath{0%,100%{background-position:0% 0%}12.5%{background-position:14.285714% 0%}25%{background-position:28.571429% 0%}37.5%{background-position:42.857143% 0%}50%{background-position:57.142857% 0%}62.5%{background-position:71.428571% 0%}75%{background-position:85.714286% 0%}87.5%{background-position:100% 0%}}
+@media(prefers-reduced-motion:reduce){.whale-breath{animation:none;background-position:14.285714% 0%}}
 </style>
 <script>window.orcaStylesReady=new Promise(resolve=>{window.orcaStylesLoaded=resolve});</script>
 <link id="appStyles" rel="stylesheet" href="css/app.css" media="print" onload="this.media='all';window.orcaStylesLoaded()">
 <script type="module" src="js/app.js"></script>
 </head>
 <body>
-<div id="appLoading" class="app-loading" role="status" aria-live="polite"><img src="assets/app-icon-orca-engraved.png" alt="" width="112" height="112"><p id="loadingText">鲸灵匣 · 加载中</p><a id="loadingRetry" href="" hidden>重新加载</a><noscript>请启用 JavaScript 后重新打开</noscript></div>
+<div id="appLoading" class="app-loading" role="status" aria-live="polite"><div class="whale-breath" aria-hidden="true"></div><p id="loadingText">让直觉，浮出水面</p><a id="loadingRetry" href="" hidden>重新加载</a><noscript>请启用 JavaScript 后重新打开</noscript></div>
 <script>setTimeout(()=>{if(!document.getElementById('appLoading').hidden){document.getElementById('loadingText').textContent='还在准备，请稍候';document.getElementById('loadingRetry').hidden=false}},12000);</script>
 <div class="page-motifs" aria-hidden="true"><img class="motif sun" src="assets/motifs/sun.webp" alt=""><img class="motif moon" src="assets/motifs/moon.webp" alt=""><img class="motif star s1" src="assets/motifs/star.webp" alt=""><img class="motif star s2" src="assets/motifs/star.webp" alt=""><img class="motif star s3" src="assets/motifs/star.webp" alt=""></div>
 <div class="wrap" id="appShell" aria-busy="true">
@@ -78,7 +89,7 @@ html{background:#fcfcfa;color:#252834}.app-loading{position:fixed;inset:0;z-inde
   </div>
 </div>
 
-<!-- 仅向已使用桌面版的访客提示一次；#update 可预览。 -->
+<!-- 图标提醒：未关闭过就显示；关闭后本机记忆。#update 可预览。 -->
 <div id="updateOv" role="dialog" aria-modal="true" aria-labelledby="updateTitle" hidden>
   <div class="update-card">
     <button class="gd-close" id="updClose" aria-label="关闭更新提示"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#close"/></svg></button>

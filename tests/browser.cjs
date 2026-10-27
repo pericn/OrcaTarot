@@ -15,6 +15,7 @@ async function run(browser, url, output) {
     await context.addInitScript(p=>{
       localStorage.setItem('lx-prefs',JSON.stringify({minor:false,rev:false,spread:'3',...p}));
       localStorage.setItem('lx-guide-done','1');
+      localStorage.setItem('lx-icon-notice-v2','1');
     },prefs);
     const page=await context.newPage();
     page.on('pageerror',e=>errors.push(e.message));
@@ -323,8 +324,11 @@ async function run(browser, url, output) {
         const nav=document.querySelector('.main-nav').getBoundingClientRect();
         const cards=[...document.querySelectorAll('.fcard')].filter(el=>getComputedStyle(el).visibility==='visible').map(el=>el.getBoundingClientRect());
         const center=cards.sort((a,b)=>Math.abs(a.x+a.width/2-(fan.x+fan.width/2))-Math.abs(b.x+b.width/2-(fan.x+fan.width/2)))[0];
-        return {fanTop:fan.top,fanBottom:fan.bottom,navTop:nav.top,cardTop:center.top,cardBottom:center.bottom,overflow:document.documentElement.scrollWidth>innerWidth};
+        const slots=document.getElementById('slots').getBoundingClientRect();
+        const prompt=document.getElementById('fanPrompt').getBoundingClientRect();
+        return {slotFanGap:prompt.top-slots.bottom,fanTop:fan.top,fanBottom:fan.bottom,navTop:nav.top,cardTop:center.top,cardBottom:center.bottom,overflow:document.documentElement.scrollWidth>innerWidth};
       });
+      if(height>=500)assert.ok(view.slotFanGap>=6&&view.slotFanGap<=100,'Avoid a large empty block below slots: '+JSON.stringify({width,height,...view}));
       assert.ok(view.navTop-view.cardBottom<=50,'The fan should sit close to navigation: '+JSON.stringify({width,height,...view}));
       assert.ok(view.fanBottom<=view.navTop,JSON.stringify({width,height,...view}));
       assert.ok(view.cardTop>=view.fanTop&&view.cardBottom<=view.fanBottom,JSON.stringify(view));
@@ -500,41 +504,114 @@ async function run(browser, url, output) {
     const navigation=page.goto(url,{waitUntil:'domcontentloaded'});
     await page.locator('#appLoading').waitFor({state:'visible'});
     assert.ok(await page.locator('#loadingText').isVisible());
+    assert.equal(await page.locator('#loadingText').innerText(),'让直觉，浮出水面');
+    const still=await page.locator('.whale-breath').evaluate(el=>({animation:getComputedStyle(el).animationName,position:getComputedStyle(el).backgroundPositionX}));
+    assert.equal(still.animation,'none');assert.ok(Math.abs(parseFloat(still.position)-14.285714)<.001);
     release();await navigation;await page.locator('#appLoading').waitFor({state:'hidden'});
     assert.equal(await page.locator('#appShell').getAttribute('aria-busy'),'false');
     assert.equal(await page.locator('.brand-whale').evaluate(img=>img.naturalWidth>0),true);
     await context.close();
   });
 
-  await test('icon update only reaches returning standalone users, closes with Escape and never follows guide',async()=>{
-    for(const [returning,standalone,seen,expected] of [[false,false,false,false],[true,false,false,false],[false,true,false,false],[true,true,false,true],[true,true,true,false]]){
+  await test('loading shows eight real breath frames, honors saved theme, and ends without a minimum duration',async()=>{
+    const context=await browser.newContext({viewport:{width:402,height:874},colorScheme:'light'});
+    await context.addInitScript(()=>localStorage.setItem('lx-theme','dark'));
+    let release;const gate=new Promise(resolve=>release=resolve);
+    await context.route('**/js/app.js',async route=>{await gate;await route.continue()});
+    const page=await context.newPage();const navigation=page.goto(url,{waitUntil:'domcontentloaded'});
+    await page.locator('#appLoading').waitFor({state:'visible'});
+    await page.locator('.whale-breath').evaluate(async el=>{
+      const img=new Image();img.src=getComputedStyle(el).backgroundImage.slice(5,-2);await img.decode();
+    });
+    await page.evaluate(()=>document.fonts.ready);
+    assert.equal(await page.locator('#appLoading').innerText(),'让直觉，浮出水面');
+    assert.equal(await page.locator('#appLoading').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(25, 33, 61)');
+    const hashes=[];
+    for(let frame=0;frame<8;frame++){
+      await page.locator('.whale-breath').evaluate(async(el,frame)=>{
+        const animation=el.getAnimations()[0];animation.pause();animation.currentTime=frame*400+50;
+        await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      },frame);
+      const png=await page.locator('.whale-breath').screenshot();
+      hashes.push(require('node:crypto').createHash('sha256').update(png).digest('hex'));
+      if(output&&[3,5].includes(frame))fs.writeFileSync(path.join(output,'loading-frame-'+frame+'.png'),png);
+    }
+    assert.equal(new Set(hashes).size,8,'Each frame must show a different drawing');
+    if(output)await page.screenshot({path:path.join(output,'loading-breath-dark.png')});
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+    release();await navigation;await page.locator('#appLoading').waitFor({state:'hidden'});
+    await context.close();
+  });
+
+  await test('icon notice displays for missing/zero flag in every browser and only dismissal persists one',async()=>{
+    for(const [stored,returning,standalone,expected] of [[null,false,false,true],['0',true,false,true],['1',false,false,false],[null,true,true,true],['1',true,true,false]]){
       const context=await browser.newContext();
-      await context.addInitScript(({returning,standalone,seen})=>{
-        if(returning)localStorage.setItem('lx-visited','1');
-        if(seen)localStorage.setItem('lx-upd-2026-10a','1');
-        localStorage.setItem('lx-guide-done','1');
+      await context.addInitScript(({stored,returning,standalone})=>{
+        if(!localStorage.getItem('test-notice-seeded')){
+          localStorage.setItem('test-notice-seeded','1');
+          if(stored!==null)localStorage.setItem('lx-icon-notice-v2',stored);
+          if(returning)localStorage.setItem('lx-visited','1');
+          localStorage.setItem('lx-upd-2026-10a','1'); // The old gate cannot suppress v2.
+          localStorage.setItem('lx-guide-done','1');
+        }
         Object.defineProperty(navigator,'standalone',{value:standalone});
-      },{returning,standalone,seen});
+      },{stored,returning,standalone});
       const page=await context.newPage();await page.goto(url);await page.locator('#appLoading').waitFor({state:'hidden'});
       assert.equal(await page.locator('#updateOv').isVisible(),expected);
-      if(expected)assert.equal(await page.evaluate(()=>document.activeElement.id),'updClose');
       if(expected){
+        assert.equal(await page.evaluate(()=>document.activeElement.id),'updClose');
+        assert.notEqual(await page.evaluate(()=>localStorage.getItem('lx-icon-notice-v2')),'1','Opening alone must not mark seen');
         if(output)await page.screenshot({path:path.join(output,'update.png')});
-        await page.keyboard.press('Escape');assert.equal(await page.locator('#updateOv').isVisible(),false);
-        assert.equal(await page.evaluate(()=>localStorage.getItem('lx-upd-2026-10a')),'1');
+        await page.locator('#updClose').click();assert.equal(await page.locator('#updateOv').isVisible(),false);
+        assert.equal(await page.evaluate(()=>localStorage.getItem('lx-icon-notice-v2')),'1');
         await page.reload();await page.locator('#appLoading').waitFor({state:'hidden'});
         assert.equal(await page.locator('#updateOv').isVisible(),false);
       }
       await page.goto(url+'#guide');await page.locator('#guideOv').waitFor({state:'visible'});
-      await page.locator('#guideOk').click();await page.waitForTimeout(350);
+      await page.locator('#guideOk').click();await page.waitForTimeout(100);
       assert.equal(await page.locator('#updateOv').isVisible(),false);
-      if(seen){
+      if(stored==='1'){
         await page.goto(url+'?source=preview#update');await page.locator('#appLoading').waitFor({state:'hidden'});
-        assert.equal(await page.locator('#updateOv').isVisible(),true);
-        await page.keyboard.press('Escape');
+        assert.equal(await page.locator('#updateOv').isVisible(),true);await page.keyboard.press('Escape');
       }
       await context.close();
     }
+  });
+
+  await test('first iOS onboarding yields to the unseen icon notice, then both stay dismissed',async()=>{
+    const context=await browser.newContext({userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Version/17.0 Mobile/15E148 Safari/604.1'});
+    const page=await context.newPage();await page.goto(url);await page.locator('#appLoading').waitFor({state:'hidden'});
+    assert.equal(await page.locator('#guideOv').isVisible(),true);assert.equal(await page.locator('#updateOv').isVisible(),false);
+    await page.locator('#guideOk').click();await page.locator('#updateOv').waitFor({state:'visible'});
+    await page.locator('#updOk').click();
+    assert.equal(await page.evaluate(()=>localStorage.getItem('lx-icon-notice-v2')),'1');
+    await page.reload();await page.locator('#appLoading').waitFor({state:'hidden'});
+    assert.equal(await page.locator('#guideOv').isVisible(),false);assert.equal(await page.locator('#updateOv').isVisible(),false);
+    await context.close();
+  });
+
+  await test('reading names, reversed controls, supplements and actions stay in content flow across heights',async()=>{
+    const {page,context}=await reading({spread:'3',rev:true});await page.evaluate(()=>Math.random=()=>.1);
+    await pick(page,['M19','M20','M07']);await flip(page);await page.locator('#hCard .flip').click();
+    await page.locator('.wheel-action').click();await page.locator('#rvExtra .flip').click();await page.waitForTimeout(700);
+    for(const [width,height] of [[320,568],[402,874],[430,932],[844,390]]){
+      await page.setViewportSize({width,height});
+      const layout=await page.evaluate(()=>{
+        const rect=id=>document.querySelector(id).getBoundingClientRect();
+        const main=rect('#rvRow'),supplement=rect('.rv-supplement'),actions=rect('.rv-acts');
+        const overlap=[...document.querySelectorAll('#reveal .rcard')].some(card=>{
+          const name=card.querySelector('.rname').getBoundingClientRect(),flip=card.querySelector('.flip').getBoundingClientRect();
+          const controls=card.querySelector('.rrev')?.getBoundingClientRect();
+          return name.top<flip.bottom+5||(controls&&controls.top<name.bottom);
+        });
+        return {supplementGap:supplement.top-main.bottom,actionGap:actions.top-supplement.bottom,overlap,overflow:document.documentElement.scrollWidth>innerWidth};
+      });
+      assert.ok(layout.supplementGap>=23&&layout.supplementGap<=41,JSON.stringify({width,height,...layout}));
+      assert.ok(layout.actionGap>=23&&layout.actionGap<=41,JSON.stringify({width,height,...layout}));
+      assert.equal(layout.overlap,false);assert.equal(layout.overflow,false);
+      if(output&&width===402)await page.screenshot({path:path.join(output,'reading-responsive.png'),fullPage:true});
+    }
+    await context.close();
   });
 
   assert.deepEqual(errors,[],'Uncaught browser errors');
