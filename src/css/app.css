@@ -157,7 +157,9 @@ header.top{display:flex;align-items:center;justify-content:space-between;padding
 .hd-cards[data-n="1"] .hd-reading-card{grid-column:auto}
 .hd-cards[data-n="2"]{grid-template-columns:repeat(2,minmax(0,1fr));width:calc((100% - 16px)*2/3 + 8px)}
 .hd-cards[data-n="2"] .hd-reading-card{grid-column:auto}
-.hd-thumb{width:60px;aspect-ratio:540/1018;position:relative;box-shadow:0 3px 7px #0002;border-radius:5px;overflow:hidden;background:#fff}
+.hd-thumb{width:60px;aspect-ratio:540/1018;position:relative;box-shadow:0 3px 7px #0002;border-radius:5px;overflow:hidden;background:#fff var(--card-back-image) center/100% 100% no-repeat}
+.hd-thumb[data-image-state=ready]{background-image:none}
+.hd-image-retry{position:absolute;inset:0;width:100%;min-height:0;padding:2px;border:0;border-radius:inherit;background:var(--paper);color:var(--ink);font-size:var(--text-caption)}
 .hd-thumb img{width:100%;height:100%;object-fit:contain;display:block}
 .hd-thumb img.rev{transform:rotate(180deg)}
 .hd-thumb.secondary{width:32px;box-shadow:none;flex:none;opacity:.8}
