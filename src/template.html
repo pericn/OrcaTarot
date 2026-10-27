@@ -22,7 +22,7 @@ html{background:#fcfcfa;color:#252834}
 .app-loading[hidden],.app-loading [hidden]{display:none}
 [data-theme=dark] .app-loading{background:#19213d;color:#f4f3ed}
 [data-theme=dark] .whale-breath{background-image:url('assets/whale-breath-dark-strip.png')}
-.app-loading.is-ready .whale-breath{animation:whale-breath 1s steps(1,end) 1 both}
+.app-loading.is-ready .whale-breath{animation:whale-breath 1.5s steps(1,end) 1 both}
 @keyframes whale-breath{0%{background-position:0% 0%}12.5%{background-position:14.285714% 0%}25%{background-position:28.571429% 0%}37.5%{background-position:42.857143% 0%}50%{background-position:57.142857% 0%}62.5%{background-position:71.428571% 0%}75%{background-position:85.714286% 0%}87.5%,100%{background-position:100% 0%}}
 @media(prefers-reduced-motion:reduce){.whale-breath,.app-loading.is-ready .whale-breath{animation:none!important;background-position:14.285714% 0%}}
 </style>
@@ -42,7 +42,7 @@ window.orcaLoadingStarted=performance.now();
  window.orcaBackReady=decode(url(getComputedStyle(document.documentElement).getPropertyValue('--card-back-image').trim())).then(image=>{window.orcaBackImage=image;return image});
  window.orcaLoadingComplete=Promise.all([window.orcaBackReady,decode(url(getComputedStyle(figure).backgroundImage))]).then(([,image])=>new Promise(resolve=>{
    window.orcaSpriteImage=image;
-   requestAnimationFrame(()=>{loader.classList.add('is-ready');const animation=figure.getAnimations().find(a=>a.animationName==='whale-breath');if(animation)animation.finished.then(resolve,resolve);else setTimeout(resolve,1000)});
+   requestAnimationFrame(()=>{loader.classList.add('is-ready');const animation=figure.getAnimations().find(a=>a.animationName==='whale-breath');if(animation)animation.finished.then(resolve,resolve);else setTimeout(resolve,1500)});
  }));
 })();
 setTimeout(()=>{if(!document.getElementById('appLoading').hidden){document.getElementById('loadingText').textContent='还在准备，请稍候';document.getElementById('loadingRetry').hidden=false}},12000);

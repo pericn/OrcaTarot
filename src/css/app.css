@@ -21,7 +21,7 @@ main{flex:1;display:flex;flex-direction:column;min-height:0}
 .motif.s3{width:48px;top:77%;left:20%}
 header.top{display:flex;align-items:center;justify-content:space-between;padding:0 0 20px;border-bottom:2.5px solid var(--ink)}
 .brand{cursor:pointer;display:flex;align-items:center;gap:12px}
-.brand-whale{width:64px;height:64px;object-fit:contain;mix-blend-mode:multiply}
+.brand-whale{width:56px;height:56px;object-fit:contain;mix-blend-mode:multiply}
 [data-theme=dark] .brand-whale,[data-theme=dark] .up-icon{mix-blend-mode:normal}
 .brand h1{margin:0;font-size:var(--text-display);font-weight:400;line-height:1.2;letter-spacing:5px}
 .brand p{margin:8px 0 0;font-size:var(--text-caption);letter-spacing:1.8px;color:var(--ink-soft)}
@@ -61,7 +61,7 @@ header.top{display:flex;align-items:center;justify-content:space-between;padding
 .back-art,.fcard-i.back-art{display:block;width:100%;height:100%;background-color:#dbe1ef;background-image:var(--card-back-image),repeating-linear-gradient(45deg,#526f9b 0 2px,#dbe1ef 2px 5px);background-size:100% 100%;background-position:center;background-repeat:no-repeat}
 .face.front>.back-art{position:absolute;inset:0}
 .front-ready .face.front>.back-art{visibility:hidden}
-.flip[aria-busy=true]::after{content:'牌面准备中';position:absolute;left:4px;right:4px;top:45%;padding:6px;background:#fcfcfaf2;color:#252834;font-size:var(--text-caption);border-radius:5px;z-index:2}
+.flip[aria-busy=true]::after{content:'牌面加载中…';position:absolute;left:4px;right:4px;top:45%;padding:6px;background:#fcfcfaf2;color:#252834;font-size:var(--text-caption);border-radius:5px;z-index:2;animation:ink-in .2s var(--ease-out) .6s both}
 .fanzone{width:100vw;align-self:center;margin-top:0;padding-top:clamp(6px,1svh,12px);transition:opacity .3s var(--ease-out),transform .4s var(--ease-out)}
 .fanzone.exit{opacity:0;transform:translateY(25px)}
 .fanprompt{text-align:center;font-size:var(--text-label);min-height:30px;padding:4px 0;color:var(--ink-soft)}
@@ -251,11 +251,14 @@ button{transition:background-color .25s var(--ease-out),color .25s var(--ease-ou
 @media(max-height:500px) and (min-width:600px){.wrap{min-height:calc(100svh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}.fanzone{padding-top:0}.brand-whale{width:36px;height:36px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
-/* Free text uses local fonts, independent of the small woodblock UI subset. */
-.user-text,#questionInput{font-family:system-ui,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;letter-spacing:normal}
-.reading-tools:has(.question-editor:not([hidden])){flex-wrap:nowrap;justify-content:space-between}
-.question-editor{flex:1;min-width:0;max-width:360px;margin:0;text-align:left}
-#questionInput{display:block;width:100%;min-height:40px;border:0;border-bottom:1px solid var(--edge);border-radius:0;padding:7px 4px;background:transparent;font-size:16px;line-height:1.5;color:var(--ink)}
-#questionInput::placeholder{color:var(--ink-soft);font-size:var(--text-label)}
-.reading-question{font-size:var(--text-label);line-height:1.7;color:var(--ink-soft);overflow-wrap:anywhere;margin:0 auto 16px;max-width:420px;text-align:center}
-.hd-question{font-size:var(--text-label);line-height:1.7;color:var(--ink-soft);margin:12px 0 0;overflow-wrap:anywhere}
+/* Native Song/Ming faces keep free text close to the printed card typography. */
+:root{--question-font:"Songti SC","Songti TC","STSong","Noto Serif CJK SC","Noto Serif SC",SimSun,serif}
+.user-text,#questionInput{font-family:var(--question-font);font-weight:600;letter-spacing:.035em}
+.reading-tools:has(.question-editor:not([hidden])){flex-wrap:nowrap;justify-content:space-between;gap:20px}
+.question-editor{flex:1;min-width:0;max-width:360px;margin:0;text-align:left;position:relative}
+.question-editor::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--edge);transition:background-color .3s var(--ease-out)}
+.question-editor:focus-within::after{background:var(--indigo)}
+#questionInput{display:block;width:100%;min-height:40px;border:0;border-radius:0;padding:7px 3px;background:transparent;font-size:16px;line-height:1.6;color:var(--ink)}
+#questionInput::placeholder{color:var(--ink-soft);font-size:var(--text-label);font-weight:400;letter-spacing:.08em}
+.reading-question{font-size:var(--text-body);line-height:1.85;color:var(--ink);overflow-wrap:anywhere;margin:0 auto 20px;padding:2px 16px 13px;max-width:420px;text-align:center;border-bottom:1px solid var(--edge)}
+.hd-question{font-size:var(--text-label);line-height:1.85;color:var(--ink);margin:14px 0 4px;padding:0 0 0 10px;border-left:2px solid var(--edge);overflow-wrap:anywhere}
