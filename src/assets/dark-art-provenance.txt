@@ -1,0 +1,4 @@
+Dark UI variants generated with the built-in imagegen on 2026-10-27 from the existing OrcaTarot logo and approved eight-frame atlas.
+Natural charcoal/indigo back, ivory belly and eye patch, restrained blue-gray engraved edge highlights; transparent background. No CSS or Canvas inversion.
+The dark atlas retains eight poses and order. Mechanically packed from eight equal source cells with shared crop y=240..512 into eight 272px squares; no recoloring or alpha modification. Build caps loading atlases at 320px per frame and encodes lossless WebP.
+Prompts and full generated originals are kept in the local work/dark-performance review directory.

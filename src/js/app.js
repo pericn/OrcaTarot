@@ -2,10 +2,12 @@
 import { IMG } from './images.js';
 import { DECK, MAJOR_NUM, BIRTHDAY_POSITIONS, dsum, toMajor, toDigit } from './deck.js';
 import { compose, whenLoaded } from './share.js';
-import { hydrateCardImages } from './card-images.js';
+import { hydrateCardImages, primeImage, prepareCardFace } from './card-images.js';
 import { icon, spreadIcon } from './icons.js';
 
 await window.orcaStylesReady;
+const decodedBack=await window.orcaBackReady;
+if(decodedBack)primeImage(IMG.BACK,decodedBack);
 
 /* ---------- 主题 ---------- */
 const root=document.documentElement, themeBtn=document.getElementById('themeBtn');
@@ -13,6 +15,7 @@ const th=localStorage.getItem('lx-theme');
 root.dataset.theme=(th==='light'||th==='dark')?th:(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
 function paintTheme(){
   const dark=root.dataset.theme==='dark';
+  document.querySelectorAll('img[data-light][data-dark]').forEach(img=>{const src=dark?img.dataset.dark:img.dataset.light;if(img.getAttribute('src')!==src){img.style.visibility='hidden';img.onload=()=>{img.style.visibility=''};img.src=src;if(img.complete&&img.naturalWidth)img.style.visibility=''}});
   themeBtn.innerHTML=icon(dark?'sun':'moon');
   themeBtn.setAttribute('aria-label',dark?'切换浅色主题':'切换深色主题');
   document.querySelector('meta[name="theme-color"]').content=dark?'#19213d':'#fcfcfa';
@@ -37,6 +40,7 @@ function savePrefs(){localStorage.setItem('lx-prefs',JSON.stringify(
 /* ---------- 元素 ---------- */
 const tRev=document.getElementById('tRev'), tMinor=document.getElementById('tMinor');
 const drawSection=document.getElementById('draw'), revealSection=document.getElementById('reveal');
+const questionInput=document.getElementById('questionInput'),questionEditor=document.getElementById('questionEditor'),questionText=document.getElementById('readingQuestion');
 const slotsEl=document.getElementById('slots'), fanPrompt=document.getElementById('fanPrompt');
 const fanWrap=document.getElementById('fanWrap'), fanTrack=document.getElementById('fanTrack');
 const fanMid=document.getElementById('fanMid'), fanzone=document.getElementById('fanzone');
@@ -61,7 +65,9 @@ const historyClear=document.getElementById('historyClear'), historyCount=documen
 let spread=Object.hasOwn(SPREADS,prefs.spread)?prefs.spread:'3';
 let count=SPREADS[spread].n;
 let picks=[], hidden=null, busy=false, recorded=false;
-let readingId=null, readingTs=Date.now(), drawRevision=0;
+let readingId=null, readingTs=Date.now(), drawRevision=0, readingQuestion='';
+function cleanQuestion(value){return Array.from(String(value??'').replace(/\s+/gu,' ').trim()).slice(0,120).join('');}
+function escapeText(value){return value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
 let bday=prefs.bday||null;
 let fanPool=[], fanCards=[], fanRaf=0, tsx=0, tsy=0, fanMoved=false;
 let rvCards=[];
@@ -74,7 +80,7 @@ syncSpreadIcon();
 function syncSpreadIcon(){
   document.getElementById('spreadIcon').innerHTML=spreadIcon(spread);
   spreadName.textContent=spread==='bday'?'生日牌阵':'';
-  spreadInd.setAttribute('aria-label','选择牌阵：'+SPREADS[spread].name);
+  spreadInd.setAttribute('aria-label','选择牌阵 '+SPREADS[spread].name);
 }
 const rvExtra=document.getElementById('rvExtra');
 /* ---------- S1 牌位 ---------- */
@@ -84,7 +90,7 @@ function renderSlots(){
   for(let i=0;i<count;i++){
     const p=picks[i];
     if(p){
-      html+='<div class="slot done"><div class="slotcard"><img src="'+IMG.BACK+'" alt="" draggable="false"></div></div>';
+      html+='<div class="slot done"><div class="slotcard"><span class="back-art"></span></div></div>';
     }else{
       html+='<div class="slot'+(i===picks.length?' next':'')+'"><div class="ph"><span>'+['I','II','III','IIII','V'][i]+'</span></div></div>';
     }
@@ -105,8 +111,7 @@ function renderFan(){
   }
   fanTrack.innerHTML=fanPool.map((c,i)=>
     '<button type="button" class="fcard" aria-label="选择第 '+(i+1)+' 张牌" data-key="'+c.key+'" data-i="'+i+'" style="left:'+(i*STEP)+'px">'
-    +'<div class="fcard-i">'
-    +'<img src="'+IMG.BACK+'" alt="" draggable="false"></div></button>').join('');
+    +'<div class="fcard-i back-art"></div></button>').join('');
   fanCards=Array.prototype.slice.call(fanTrack.children);
   cardWidth=fanCards[0]?.offsetWidth||100;
   fanTrack.style.width=((fanPool.length-1)*STEP+cardWidth)+'px';
@@ -178,7 +183,7 @@ window.addEventListener('resize',()=>{
 function flyToSlot(fEl,fr,slotEl,done){
   const sr=slotEl.getBoundingClientRect();
   const ghost=document.createElement('div');ghost.className='flyghost';
-  const img=document.createElement('img');img.src=IMG.BACK;img.alt='';ghost.append(img);
+  const artwork=document.createElement('span');artwork.className='back-art';ghost.append(artwork);
   ghost.style.cssText='left:'+fr.left+'px;top:'+fr.top+'px;width:'+fr.width+'px;height:'+fr.height+'px';
   document.body.appendChild(ghost);
   const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -225,7 +230,7 @@ function updatePrompt(){
 
 /* ---------- S2 翻牌屏 ---------- */
 function frontMarkup(p){
-  return '<span class="face front"><img class="'+(p.rev&&!p.uprighted?'rev':'')+'" data-card-src="'+IMG[p.key]+'" alt="'+p.cn+'" draggable="false" hidden>'
+  return '<span class="face front"><span class="back-art" aria-hidden="true"></span><img class="'+(p.rev&&!p.uprighted?'rev':'')+'" data-card-src="'+IMG[p.key]+'" alt="'+p.cn+'" draggable="false" hidden>'
     +'<span class="card-image-status" role="status">牌面加载中…</span></span>';
 }
 function retryMarkup(){return '<button type="button" class="btn image-retry" hidden>重试牌面</button>';}
@@ -233,7 +238,7 @@ function cardMarkup(p,i){
   return '<div class="rcard'+(p.rev?' rev':'')+'" data-i="'+i+'">'
     +(p.position?'<div class="rposition">'+p.position+'</div>':'')
     +'<button type="button" class="flip" aria-label="翻开'+(p.position?p.position+'牌':'第 '+(i+1)+' 张牌')+'"><span class="flip-inner">'
-    +'<span class="face back"><img src="'+IMG.BACK+'" alt="牌背" draggable="false"></span>'
+    +'<span class="face back"><span class="back-art" aria-hidden="true"></span></span>'
     +frontMarkup(p)
     +'</span></button>'+retryMarkup()+'<div class="rname">'+p.cn+'</div>'
     +(p.rev?'<div class="rrev"><span>逆位</span><button type="button" class="straighten" aria-label="旋正'+p.cn+'">'+icon('rotate')+'旋正</button></div>':'')+'</div>';
@@ -246,12 +251,14 @@ function renderReveal(){
   rvRow.classList.add('pre');
   rvExtra.hidden=true;rvExtra.replaceChildren();
   hidden=null;rvHidden.hidden=true;hCard.innerHTML='';
-  hCard.classList.remove('flipped','guide');
+  hCard.classList.remove('flipped','guide','front-ready');delete hCard.dataset.flipPending;
   shareBtn.hidden=true;
   updateRvPrompt();
 }
 function goReveal(){
   if(busy||picks.length<count)return;
+  readingQuestion=cleanQuestion(questionInput.value);questionInput.blur();
+  questionEditor.hidden=true;questionText.textContent=readingQuestion;questionText.hidden=!readingQuestion;
   renderReveal();
   fanzone.hidden=true;
   drawSection.hidden=true;revealSection.hidden=false;
@@ -297,11 +304,15 @@ function afterFlip(){
     recordReading();
   }
 }
-function flipReadingCard(e){
+async function flipReadingCard(e){
   if(e.target.closest('.wheel-action,.image-retry,.straighten'))return;
   const c=e.target.closest('.rcard');
-  if(!c||c.classList.contains('flipped'))return;
+  if(!c||c.classList.contains('flipped')||c.dataset.flipPending)return;
   const p=picks[+c.dataset.i]; if(!p)return;
+  const revision=drawRevision;c.dataset.flipPending='1';c.querySelector('.flip').setAttribute('aria-busy','true');
+  await prepareCardFace(c);
+  c.querySelector('.flip').removeAttribute('aria-busy');delete c.dataset.flipPending;
+  if(!c.isConnected||revision!==drawRevision)return;
   c.classList.add('flipped');
   c.querySelector('.flip').setAttribute('aria-label',(p.position?p.position+'牌，':'')+p.cn+(p.rev?'，逆位':''));
   p.flipped=true;
@@ -323,9 +334,13 @@ revealSection.addEventListener('click',e=>{
 });
 rvRow.addEventListener('click',flipReadingCard);
 rvExtra.addEventListener('click',flipReadingCard);
-hCard.addEventListener('click',e=>{
+hCard.addEventListener('click',async e=>{
   if(e.target.closest('.wheel-action,.image-retry,.straighten'))return;
-  if(!hidden||hidden.flipped||hCard.classList.contains('flipped'))return;
+  if(!hidden||hidden.flipped||hCard.classList.contains('flipped')||hCard.dataset.flipPending)return;
+  const target=hidden,revision=drawRevision;hCard.dataset.flipPending='1';hCard.querySelector('.flip').setAttribute('aria-busy','true');
+  await prepareCardFace(hCard);
+  if(hidden!==target||revision!==drawRevision)return;
+  hCard.querySelector('.flip')?.removeAttribute('aria-busy');delete hCard.dataset.flipPending;
   hCard.classList.add('flipped');
   hidden.flipped=true;
   hCard.querySelector('button').setAttribute('aria-label',hidden.cn+'，隐藏牌');
@@ -345,7 +360,7 @@ function showHidden(){
   if(!c){updateRvPrompt();return;}
   hidden={...c,flipped:false,hidden:true};
   hCard.innerHTML='<button type="button" class="flip" aria-label="翻开隐藏牌"><span class="flip-inner">'
-    +'<span class="face back"><img src="'+IMG.BACK+'" alt="牌背" draggable="false"></span>'
+    +'<span class="face back"><span class="back-art" aria-hidden="true"></span></span>'
     +frontMarkup(hidden)
     +'</span></button>'+retryMarkup()+'<div class="rname">'+hidden.cn+'</div>';
   hydrateCardImages(hCard);
@@ -437,7 +452,7 @@ bStart.onclick=()=>{
   const dc=toMajor(d);           // 日子牌：>21 则各位再相加
   const k=toDigit(dsum(y)+dsum(m)+dsum(d)); // 业力持续归约到 1–9
   const kc=DECK[k];
-  const fc=DECK[toDigit(dsum(nowY))]; // 流年持续归约到 1–9（如 2026 → 10 → 1）
+  const fc=DECK[toDigit(dsum(nowY)+m+d)]; // 当年年份各位之和 + 出生月 + 出生日，归约到 1–9
   picks=[yc,mc,dc,kc,fc].map((c,i)=>({...c,rev:false,flipped:false,position:BIRTHDAY_POSITIONS[i]}));
   picks.forEach(c=>whenLoaded(IMG[c.key],{retry:true}));
   closeSheet();
@@ -449,6 +464,7 @@ bStart.onclick=()=>{
 /* ---------- 重新洗牌 ---------- */
 reShuffle.onclick=()=>{pulse(reShuffle);buzz(20);resetDraw();};
 function resetDraw(){
+  readingQuestion='';questionEditor.hidden=false;questionText.hidden=true;questionText.textContent='';
   drawRevision++;readingId=null;readingTs=Date.now();recorded=false;fanzone.hidden=false;drawSection.hidden=false;revealSection.hidden=true;
   document.querySelectorAll('.flyghost').forEach(el=>el.remove());
   picks=[]; hidden=null; busy=false;
@@ -494,7 +510,7 @@ function recordReading(){
 
   const cards=orderedCards().map(p=>({key:p.key,cn:p.cn,rev:!!p.rev,...(p.rev&&p.uprighted?{uprighted:true}:{}),...(p.extra?{extra:true}:{}),...(p.hidden?{hid:true}:{}),...(p.position?{position:p.position}:{})}));
   if(!readingId)readingId=Date.now()+'-'+Math.random().toString(36).slice(2,7);
-  const rec={id:readingId,ts:readingTs,spread,cards};
+  const rec={id:readingId,ts:readingTs,spread,cards,...(readingQuestion?{question:readingQuestion}:{})};
   const list=loadHistory(),index=list.findIndex(r=>r.id===readingId);
   if(index>=0){list[index]=rec;saveHistory(list)}else addHistory(rec);
   recorded=true;
@@ -502,7 +518,7 @@ function recordReading(){
 function fmtTs(ts){
   const d=new Date(ts);
   const p=n=>String(n).padStart(2,'0');
-  return (d.getFullYear()===new Date().getFullYear()?'':d.getFullYear()+'年')+(d.getMonth()+1)+'月'+d.getDate()+'日 '+p(d.getHours())+':'+p(d.getMinutes());
+  return (d.getFullYear()===new Date().getFullYear()?'':d.getFullYear()+'年')+(d.getMonth()+1)+'月'+d.getDate()+'日 '+p(d.getHours())+'时'+p(d.getMinutes())+'分';
 }
 let disposeHistoryImages=()=>{};
 function renderHistory(){
@@ -522,17 +538,18 @@ function renderHistory(){
     const thumb=(c,secondary=false)=>'<div class="hd-thumb'+(secondary?' secondary':'')+'"><img class="'+(c.rev&&!c.uprighted?'rev':'')+'" data-card-src="'+(IMG[c.key]||IMG.BACK)+'" alt="'+c.cn+'" loading="lazy" decoding="async" draggable="false"></div>';
     const label=c=>{
       const parts=c.cn.split(' · '),number=parts.length>1?parts.shift():c.cn,name=parts.join(' · ');
-      return '<figcaption class="hd-caption">'+(c.position?'<span class="hd-position">'+c.position+'：</span>':'')
+      return '<figcaption class="hd-caption">'
         +'<span class="hd-card-number">'+number+'</span>'+(name?'<span class="hd-card-name">'+name+'</span>':'')
         +(c.rev?'<span class="hd-card-state">'+(c.uprighted?'逆位（已旋正）':'逆位')+'</span>':'')+'</figcaption>';
     };
-    const figures=main.map(c=>'<figure class="hd-reading-card">'+thumb(c)+label(c)+'</figure>').join('');
+    const figures=main.map(c=>'<figure class="hd-reading-card">'+(c.position?'<span class="hd-kind">'+c.position.replace(/[：:]/g,'')+'</span>':'')+thumb(c)+label(c)+'</figure>').join('');
     const supplemental=cards.filter(c=>c.hid||c.hidden||c.extra).map(c=>'<figure class="hd-secondary"><span class="hd-kind">'+(c.extra?'追加牌':'隐藏牌')+'</span>'+thumb(c,true)+label(c)+'</figure>').join('');
     return '<article class="hd-item" data-id="'+r.id+'">'
       +'<div class="hd-meta"><span class="hd-spread">'+(SPREADS[r.spread]?SPREADS[r.spread].name:r.spread)+'</span>'
       +'<span class="hd-date">'+fmtTs(r.ts)+'</span>'
       +'<button class="hd-share" data-share="'+r.id+'" aria-label="重新分享此页">'+icon('share')+'</button>'
       +'<button class="hd-del" data-del="'+r.id+'" aria-label="删除此条">'+icon('trash')+'</button></div>'
+      +(cleanQuestion(r.question)?'<p class="hd-question user-text">'+escapeText(cleanQuestion(r.question))+'</p>':'')
       +'<div class="hd-names"><div class="hd-cards" data-n="'+main.length+'">'+figures+'</div>'
       +(supplemental?'<div class="hd-supplements">'+supplemental+'</div>':'')+'</div></article>';
   }).join('');
@@ -556,9 +573,9 @@ async function reshareRecord(rec){
   try{
     const jobs=rec.cards.map(c=>IMG[c.key]?whenLoaded(IMG[c.key],{retry:true}):Promise.resolve());
     await Promise.all(jobs);
-    await Promise.all([document.fonts.load('16px OrcaWoodblock'),whenLoaded('assets/app-icon-orca-engraved.png',{retry:true})]);
+    await Promise.all([document.fonts.load('16px OrcaWoodblock'),whenLoaded(root.dataset.theme==='dark'?'assets/app-icon-orca-dark.png':'assets/app-icon-orca-engraved.png',{retry:true})]);
     await document.fonts.ready;
-    shareImg.src=compose(orderSavedCards(cardsForRecord(rec)),rec.ts).toDataURL('image/png');
+    shareImg.src=compose(orderSavedCards(cardsForRecord(rec)),rec.ts,cleanQuestion(rec.question)).toDataURL('image/png');
     shareOv.dataset.returnTo="history";
     setHistory(false);
     shareOv.hidden=false;
@@ -654,9 +671,9 @@ async function shareNow(){
     const cards=orderedCards();
     const jobs=cards.map(c=>whenLoaded(IMG[c.key],{retry:true}));
     await Promise.all(jobs);
-    await Promise.all([document.fonts.load('16px OrcaWoodblock'),whenLoaded('assets/app-icon-orca-engraved.png',{retry:true})]);
+    await Promise.all([document.fonts.load('16px OrcaWoodblock'),whenLoaded(root.dataset.theme==='dark'?'assets/app-icon-orca-dark.png':'assets/app-icon-orca-engraved.png',{retry:true})]);
     await document.fonts.ready;
-    shareImg.src=compose(cards,readingTs).toDataURL('image/png');
+    shareImg.src=compose(cards,readingTs,readingQuestion).toDataURL('image/png');
     shareOv.dataset.returnTo="draw";
     shareOv.hidden=false;
     buzz(9);
@@ -668,17 +685,9 @@ document.getElementById('shareClose').onclick=closeShare;
 shareOv.addEventListener('click',e=>{if(e.target===shareOv)closeShare();});
 
 resetDraw();
-// Prepare the visible shell and persistent back-image cache during the two-second introduction.
-// Fronts remain lazy; a stalled decorative asset cannot hold the app indefinitely.
-const shellReady=Promise.allSettled([
-  document.fonts.load('16px OrcaWoodblock'),
-  whenLoaded(IMG.BACK),
-  ...['assets/app-icon-orca-engraved.png','assets/whale-breath-strip.png','assets/motifs/sun.webp','assets/motifs/moon.webp','assets/motifs/star.webp'].map(src=>whenLoaded(src))
-]);
-await Promise.all([
-  Promise.race([shellReady,new Promise(resolve=>setTimeout(resolve,5000))]),
-  new Promise(resolve=>setTimeout(resolve,Math.max(0,2000-(performance.now()-window.orcaLoadingStarted))))
-]);
+// Fonts and motifs continue warming without extra image fetch/decode/cache copies.
+document.fonts.load('16px OrcaWoodblock').catch(()=>{});
+await window.orcaLoadingComplete;
 document.getElementById('appLoading').hidden=true;
 document.getElementById('appShell').setAttribute('aria-busy','false');
 

@@ -45,7 +45,7 @@ function drawCard(g,src,rev,x,y,w,h,bg,ink){
   g.closePath();g.stroke();
 }
 /* 生成分享卡：cards 为已翻开的牌（含隐藏牌 hid），ts 为抽卡时间戳（重新分享历史时传入） */
-function compose(cards,ts){
+function compose(cards,ts,question=''){
   const dark=document.documentElement.getAttribute('data-theme')==='dark';
   const PAPER=dark?'#19213d':'#fcfcfa', PAPER2=PAPER;
   const INK=dark?'#f4f3ed':'#252834', SOFT=dark?'#d1d7e6':'#505665';
@@ -66,10 +66,20 @@ function compose(cards,ts){
   const nameF=small?'400 17px '+SERIF:'400 20px '+SERIF;
   const rowH=cardH+100;
   const areaH=n===0?150:rows*rowH;
-  const headH=140, footH=196;
-  const H=M+headH+PAD+areaH+PAD+footH+M;
-  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const cv=document.createElement('canvas');cv.width=W;
   const g=cv.getContext('2d');
+  const questionFont='20px system-ui,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif';
+  g.font=questionFont;
+  const questionLines=[];
+  const text=Array.from(String(question).replace(/\s+/gu,' ').trim()).slice(0,120).join('');
+  const segments=typeof Intl.Segmenter==='function'?Array.from(new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(text),part=>part.segment):Array.from(text);
+  let line='';
+  for(const char of segments){if(line&&g.measureText(line+char).width>W-2*M){questionLines.push(line);line=char;}else line+=char;}
+  if(line)questionLines.push(line);
+  const questionH=questionLines.length?questionLines.length*30+24:0;
+  const headH=140+questionH, footH=196;
+  const H=M+headH+PAD+areaH+PAD+footH+M;
+  cv.height=H;
   const bg=g.createLinearGradient(0,0,W,H);
   bg.addColorStop(0,PAPER);bg.addColorStop(1,PAPER2);
   g.fillStyle=bg;g.fillRect(0,0,W,H);
@@ -81,13 +91,15 @@ function compose(cards,ts){
   diamond(g,M-30,M-30,7,GOLD);diamond(g,W-(M-30),M-30,7,MADDER);
   diamond(g,M-30,H-(M-30),7,MOSS);diamond(g,W-(M-30),H-(M-30),7,INDIGO);
   g.textAlign='center';g.textBaseline='middle';
-  /* 全页和分享图使用同一套刻本字体 */
+  /* 固定文案用刻本字，用户问题用本机字体。 */
   drawLogo(g,W/2,M+8,160,INK);
   g.fillStyle=SOFT;g.font='12px '+SERIF;
   g.fillText('T A R O T   D E   M A R S E I L L E',W/2,M+96);
   const d=ts?new Date(ts):new Date();
   g.fillStyle=SOFT;g.font='15px '+SERIF;
   g.fillText(d.getFullYear()+' 年 '+(d.getMonth()+1)+' 月 '+d.getDate()+' 日',W/2,M+120);
+  g.fillStyle=SOFT;g.font=questionFont;
+  questionLines.forEach((line,i)=>g.fillText(line,W/2,M+158+i*30));
   const y0=M+headH+PAD;
   if(n===0){
     g.fillStyle=SOFT;g.font='15px '+SERIF;
@@ -115,16 +127,15 @@ function compose(cards,ts){
   }
   const footerY=H-M-footH;
   g.strokeStyle=LINE;g.lineWidth=1;g.beginPath();g.moveTo(M,footerY);g.lineTo(W-M,footerY);g.stroke();
-  const whale=getLoadedImage('assets/app-icon-orca-engraved.png');
+  const whale=getLoadedImage(dark?'assets/app-icon-orca-dark.png':'assets/app-icon-orca-engraved.png');
   if(whale){
-    g.save();g.globalCompositeOperation=dark?'screen':'multiply';
-    if(dark)g.filter='invert(1)';
+    g.save();if(!dark)g.globalCompositeOperation='multiply';
     g.drawImage(whale,M+4,footerY+30,120,120);g.restore();
   }
   g.textAlign='left';g.fillStyle=INK;g.font='24px '+SERIF;
   g.fillText('鲸灵匣',M+146,footerY+76);
   g.fillStyle=SOFT;g.font='16px '+SERIF;
-  g.fillText('留一刻，听见自己',M+146,footerY+110);
+  g.fillText('让直觉，浮出水面',M+146,footerY+110);
   const qrSize=drawShareQR(g,W-M-132,footerY+20);
   g.textAlign='center';g.font='14px '+SERIF;g.fillStyle=SOFT;
   g.fillText('扫码，来抽一张',W-M-132+qrSize/2,footerY+qrSize+38);

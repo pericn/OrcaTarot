@@ -6,6 +6,7 @@ import io
 import json
 import os
 import re
+import base64
 from pathlib import Path
 from PIL import Image
 
@@ -63,7 +64,18 @@ def build(output):
     for path in sorted((SRC / 'assets').rglob('*')):
         if path.is_file():
             relative = path.relative_to(SRC).as_posix()
-            if relative == 'assets/app-icon-orca-engraved.png':
+            if relative in ['assets/whale-breath-strip.png','assets/whale-breath-dark-strip.png']:
+                with Image.open(path) as original:
+                    artwork=original.convert('RGBA')
+                    if artwork.height>320:artwork=artwork.resize((8*320,320),Image.Resampling.LANCZOS)
+                    buf=io.BytesIO();artwork.save(buf,'WEBP',lossless=True,method=6)
+                    replacements[relative]=asset(str(Path(relative).with_suffix('.webp')),buf.getvalue())
+            elif relative == 'assets/app-icon-orca-dark.png':
+                with Image.open(path) as original:
+                    artwork=original.convert('RGBA');artwork.thumbnail((256,256),Image.Resampling.LANCZOS)
+                    buf=io.BytesIO();artwork.save(buf,'PNG',optimize=True)
+                    replacements[relative]=asset(relative,buf.getvalue())
+            elif relative == 'assets/app-icon-orca-engraved.png':
                 # Keep the full-resolution artwork in source; ship sizes for
                 # iOS home screens and browser tabs instead of the large master.
                 with Image.open(path) as original:
@@ -94,7 +106,8 @@ def build(output):
                 write(path.relative_to(SRC).as_posix(), replace_assets(path.read_text()))
     sprite = (SRC / 'assets/icons.svg').read_text()
     sprite = re.sub(r'<svg\b', '<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false"', sprite, count=1)
-    html = replace_assets((SRC / 'template.html').read_text().replace('<!-- ICON_SPRITE -->', sprite))
+    back_data='data:image/webp;base64,'+base64.b64encode((output/images['BACK']).read_bytes()).decode('ascii')
+    html = replace_assets((SRC / 'template.html').read_text().replace('<!-- ICON_SPRITE -->', sprite).replace('__CARD_BACK_DATA__',back_data))
     write('index.html', html)
     source_commit = os.environ.get('SOURCE_COMMIT', 'uncommitted')
     write('SOURCE_COMMIT.txt', source_commit+'\n')
