@@ -52,7 +52,7 @@ setTimeout(()=>{if(!document.getElementById('appLoading').hidden){document.getEl
 <header class="top"><div class="brand" role="button" tabindex="0" aria-label="鲸灵匣，连续点按三次查看安装引导"><img class="brand-whale" data-light="assets/app-icon-orca-engraved.png" data-dark="assets/app-icon-orca-dark.png" width="64" height="64" alt=""><div><h1>鲸灵匣</h1><p>TAROT DE MARSEILLE</p></div></div><button class="theme-btn" id="themeBtn" aria-label="切换明暗主题"></button></header>
 <main>
 <div class="reading-tools"><button class="sp-ind" id="spreadInd" aria-label="选择牌阵"><span id="spreadIcon"></span><span id="spreadName"></span><svg class="ico chevron" aria-hidden="true"><use href="assets/icons.svg#chevron"/></svg></button>
-<div class="question-editor" id="questionEditor"><input id="questionInput" type="text" maxlength="120" autocomplete="off" placeholder="此刻的问题（选填）" aria-label="此刻的问题（选填，最多 120 字）"></div></div>
+<div class="question-editor" id="questionEditor"><button id="questionOpen" class="question-open" type="button" aria-haspopup="dialog" aria-controls="questionOv">此刻的问题<span id="questionStatus">（选填）</span><svg class="ico chevron" aria-hidden="true"><use href="assets/icons.svg#chevron"/></svg></button></div></div>
 <p class="reading-question user-text" id="readingQuestion" hidden></p>
 <section id="draw" aria-label="选牌"><div class="slotstage"><div class="slots" id="slots" data-n="3"></div></div>
 <div class="fanzone" id="fanzone"><div class="fanprompt" id="fanPrompt" aria-live="polite"></div><div id="fanMid" hidden></div><div id="fanWrap" aria-label="扇形牌堆，左右滑动或用方向键选牌"><div id="fanTrack"></div></div><div id="bdayEmpty" hidden><button class="btn" id="bdayGo">填写生日</button></div></div></section>
@@ -60,6 +60,14 @@ setTimeout(()=>{if(!document.getElementById('appLoading').hidden){document.getEl
 </main>
 <nav class="main-nav" aria-label="主导航"><button id="drawBtn" aria-current="page"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#cards"/></svg>抽牌</button><button id="historyBtn"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#history"/></svg>抽牌记录</button></nav>
 </div>
+<dialog id="questionOv" aria-labelledby="questionTitle" aria-describedby="questionHint">
+  <div class="question-top"><h2 id="questionTitle">此刻的问题</h2><button class="icon-btn" id="questionClose" type="button" aria-label="取消编辑"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#close"/></svg></button></div>
+  <form id="questionForm">
+    <textarea id="questionInput" rows="5" autocomplete="off" autofocus placeholder="写下你想问的问题……" aria-label="此刻的问题（选填，最多 120 字）" aria-describedby="questionHint questionCount"></textarea>
+    <div class="question-meta"><span id="questionHint">选填 · 最多 120 字</span><output id="questionCount" for="questionInput">0 / 120</output></div>
+    <div class="question-actions"><button class="btn" id="questionCancel" type="button">取消</button><button class="btn primary" type="submit">确认</button></div>
+  </form>
+</dialog>
 <div id="spreadOv" role="dialog" aria-modal="true" aria-labelledby="spreadTitle" hidden><div class="bd" id="spreadBd"></div><div class="sh-sheet"><div class="sheet-top"><button class="icon-btn" id="spreadClose" aria-label="返回抽牌"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#back"/></svg></button><h2 id="spreadTitle">选择牌阵</h2></div><div class="spread-choices">
 <div class="sp-row" data-s="1"><button class="sp-head" aria-label="单牌阵"><svg class="spread-diagram" aria-hidden="true"><use href="assets/icons.svg#spread-1"/></svg></button></div>
 <div class="sp-row" data-s="2"><button class="sp-head" aria-label="双牌阵"><svg class="spread-diagram" aria-hidden="true"><use href="assets/icons.svg#spread-2"/></svg></button></div>

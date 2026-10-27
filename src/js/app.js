@@ -71,6 +71,42 @@ function preparePick(p){preparedImages.set(p,prepareCardImage(IMG[p.key]));}
 let readingId=null, readingTs=Date.now(), drawRevision=0, readingQuestion='';
 function cleanQuestion(value){return Array.from(String(value??'').replace(/\s+/gu,' ').trim()).slice(0,120).join('');}
 function escapeText(value){return value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
+/* ---------- 问题浮窗 ---------- */
+const questionOv=document.getElementById('questionOv'),questionOpen=document.getElementById('questionOpen');
+const questionCount=document.getElementById('questionCount'),questionStatus=document.getElementById('questionStatus');
+let savedQuestion='';
+function syncQuestion(){
+  questionStatus.textContent=savedQuestion?'（修改）':'（选填）';
+  questionOpen.classList.toggle('has-question',!!savedQuestion);
+  questionText.textContent=savedQuestion;questionText.hidden=!savedQuestion;
+}
+function countQuestion(){
+  const chars=Array.from(questionInput.value);
+  if(chars.length>120){const caret=questionInput.selectionStart;questionInput.value=chars.slice(0,120).join('');questionInput.setSelectionRange(Math.min(caret,questionInput.value.length),Math.min(caret,questionInput.value.length));}
+  questionCount.textContent=Array.from(questionInput.value).length+' / 120';
+}
+function sizeQuestion(){
+  const view=window.visualViewport;
+  questionOv.style.setProperty('--question-viewport-height',(view?.height??innerHeight)+'px');
+  questionOv.style.setProperty('--question-viewport-top',(view?.offsetTop??0)+'px');
+}
+questionOpen.onclick=()=>{
+  questionInput.value=savedQuestion;countQuestion();sizeQuestion();questionOv.showModal();
+  window.visualViewport?.addEventListener('resize',sizeQuestion);window.visualViewport?.addEventListener('scroll',sizeQuestion);
+  questionInput.focus({preventScroll:true});questionInput.setSelectionRange(questionInput.value.length,questionInput.value.length);
+};
+questionInput.addEventListener('input',e=>{if(!e.isComposing)countQuestion()});
+questionInput.addEventListener('compositionend',countQuestion);
+document.getElementById('questionForm').onsubmit=e=>{
+  e.preventDefault();countQuestion();savedQuestion=cleanQuestion(questionInput.value);syncQuestion();questionOv.close();
+};
+for(const id of ['questionClose','questionCancel'])document.getElementById(id).onclick=()=>questionOv.close();
+questionOv.addEventListener('close',()=>{
+  window.visualViewport?.removeEventListener('resize',sizeQuestion);window.visualViewport?.removeEventListener('scroll',sizeQuestion);
+  questionInput.value=savedQuestion;questionOpen.focus({preventScroll:true});
+});
+// Native dialog keeps focus and pointer input out of the page behind it.
+questionOv.addEventListener('keydown',e=>{if(e.key==='Escape')e.stopPropagation()});
 let bday=prefs.bday||null;
 let fanPool=[], fanCards=[], fanRaf=0, tsx=0, tsy=0, fanMoved=false;
 let rvCards=[];
@@ -210,7 +246,7 @@ function pickFan(i){
   fEl.classList.add('gone');fEl.style.visibility='hidden';
   picks.push({...fanPool[i],rev:tRev.checked&&Math.random()<0.4,flipped:false});
   preparePick(picks.at(-1));
-  if(picks.length===count){const c=computeHidden();if(c)pendingHiddenImage=prepareCardImage(IMG[c.key]);}
+  if(picks.length===count){questionOpen.disabled=true;const c=computeHidden();if(c)pendingHiddenImage=prepareCardImage(IMG[c.key]);}
   markNext();
   updatePrompt();
   flyToSlot(fEl,fr,slotEl,()=>{
@@ -260,7 +296,7 @@ function renderReveal(){
 }
 function goReveal(){
   if(busy||picks.length<count)return;
-  readingQuestion=cleanQuestion(questionInput.value);questionInput.blur();
+  readingQuestion=savedQuestion;
   questionEditor.hidden=true;questionText.textContent=readingQuestion;questionText.hidden=!readingQuestion;
   renderReveal();
   fanzone.hidden=true;
@@ -471,7 +507,7 @@ bStart.onclick=()=>{
 /* ---------- 重新洗牌 ---------- */
 reShuffle.onclick=()=>{pulse(reShuffle);buzz(20);resetDraw();};
 function resetDraw(){
-  readingQuestion='';questionEditor.hidden=false;questionText.hidden=true;questionText.textContent='';
+  readingQuestion='';questionEditor.hidden=false;questionOpen.disabled=false;syncQuestion();
   drawRevision++;readingId=null;readingTs=Date.now();recorded=false;fanzone.hidden=false;drawSection.hidden=false;revealSection.hidden=true;
   document.querySelectorAll('.flyghost').forEach(el=>el.remove());
   picks=[]; hidden=null; pendingHiddenImage=null; busy=false;
