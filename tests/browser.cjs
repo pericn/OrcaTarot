@@ -26,7 +26,7 @@ async function run(browser, url, output) {
     await page.locator('#appLoading').waitFor({state:'hidden'});
     return {page,context};
   }
-  async function openQuestion(page) {await (await page.locator('#questionOpen').isVisible()?page.locator('#questionOpen'):page.locator('#readingQuestion')).click();}
+  async function openQuestion(page) {await page.locator('#questionOpen').click();}
   async function setQuestion(page,text) {
     await openQuestion(page);await page.locator('#questionInput').fill(text);await page.locator('#questionForm button[type=submit]').click();
   }
@@ -755,6 +755,17 @@ async function run(browser, url, output) {
   });
 
 
+  await test('spread, question entry, empty slots and fan share one centered vertical axis',async()=>{
+    const {page,context}=await reading();
+    for(const size of [{width:390,height:844},{width:320,height:568}]){
+      await page.setViewportSize(size);await page.waitForTimeout(100);
+      const boxes=await page.evaluate(()=>['spreadInd','questionOpen','slots','fanWrap'].map(id=>{const r=document.getElementById(id).getBoundingClientRect();return {id,cx:r.x+r.width/2,y:r.y,bottom:r.bottom}}));
+      assert.ok(boxes.every(b=>Math.abs(b.cx-size.width/2)<2),JSON.stringify(boxes));
+      assert.ok(boxes.slice(1).every((b,i)=>b.y>=boxes[i].bottom-1),JSON.stringify(boxes));
+    }
+    await context.close();
+  });
+
   await test('question modal wraps long text, confirms or cancels edits, restores focus and survives small viewports',async()=>{
     const {page,context}=await reading({spread:'1'});
     assert.equal(await page.locator('#questionInput').isVisible(),false);
@@ -770,7 +781,7 @@ async function run(browser, url, output) {
     assert.ok(geometry.scrollHeight>geometry.height);assert.ok(geometry.scrollWidth<=geometry.width+1);
     await page.locator('#questionForm button[type=submit]').click();
     assert.equal(await page.locator('#questionOv').isVisible(),false);
-    assert.equal(await page.evaluate(()=>document.activeElement.id),'readingQuestion');
+    await page.waitForFunction(()=>document.activeElement.id==='questionOpen');
     assert.equal(await page.locator('#readingQuestion').innerText(),expected);
     await openQuestion(page);await page.locator('#questionInput').fill('这次取消');await page.locator('#questionCancel').click();
     assert.equal(await page.locator('#readingQuestion').innerText(),expected);
@@ -808,7 +819,7 @@ async function run(browser, url, output) {
     }
     assert.ok(before.includes('system-ui'));assert.equal(requests,0);
     for(const selector of ['#questionTitle','#questionHint','#questionCount','#questionCancel','#questionForm button[type=submit]'])assert.ok((await page.locator(selector).evaluate(el=>getComputedStyle(el).fontFamily)).includes('OrcaWoodblock'));
-    assert.ok(parseFloat(await page.locator('#questionOpen').evaluate(el=>getComputedStyle(el).fontSize))<=12);
+    assert.ok(parseFloat(await page.locator('#questionPlaceholder').evaluate(el=>getComputedStyle(el).fontSize))<=12);
     assert.equal(await page.locator('#questionOpen').evaluate(el=>getComputedStyle(el).fontFamily.includes('OrcaWoodblock')),true);
     await page.locator('#questionCancel').click();await context.close();
   });
@@ -845,7 +856,7 @@ async function run(browser, url, output) {
     assert.equal(await page.locator('.hd-question').innerText(),expected);assert.equal(await page.locator('.hd-question img').count(),0);
     await page.evaluate(()=>{window.textDraws=[];window.shareGeometry=[]});await page.locator('.hd-share').click();await page.locator('#shareOv').waitFor({state:'visible'});await checkShare();
     await page.locator('#shareClose').click();await page.locator('#drawBtn').click();await page.locator('#reShuffle').click();
-    assert.equal(await page.locator('#readingQuestion').innerText(),expected);assert.equal(await page.locator('#questionEditor').isVisible(),false);
+    assert.equal(await page.locator('#questionPreview').innerText(),expected);assert.equal(await page.locator('#questionEditor').isVisible(),true);
     await setQuestion(page,'   ');await pick(page,['M01']);await flip(page);
     assert.equal(await page.locator('#readingQuestion').isVisible(),false);assert.equal((await history(page))[0].question,undefined);
     await page.locator('#historyBtn').click();assert.equal(await page.locator('.hd-item').first().locator('.hd-question').count(),0);

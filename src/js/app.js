@@ -73,13 +73,12 @@ function cleanQuestion(value){return Array.from(String(value??'').replace(/\s+/g
 function escapeText(value){return value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
 /* ---------- 问题浮窗 ---------- */
 const questionOv=document.getElementById('questionOv'),questionOpen=document.getElementById('questionOpen');
-const questionCount=document.getElementById('questionCount'),questionStatus=document.getElementById('questionStatus');
+const questionCount=document.getElementById('questionCount'),questionPlaceholder=document.getElementById('questionPlaceholder'),questionPreview=document.getElementById('questionPreview');
 let savedQuestion='';
 function syncQuestion(){
-  questionStatus.textContent=savedQuestion?'（修改）':'（选填）';
-  questionEditor.hidden=!!savedQuestion;
-  questionText.textContent=savedQuestion;questionText.hidden=!savedQuestion;
-  questionText.setAttribute('role','button');questionText.tabIndex=0;questionText.setAttribute('aria-label','编辑此刻的问题');questionText.setAttribute('aria-haspopup','dialog');questionText.setAttribute('aria-controls','questionOv');
+  questionEditor.hidden=false;
+  questionPlaceholder.hidden=!!savedQuestion;questionPreview.hidden=!savedQuestion;questionPreview.textContent=savedQuestion;
+  questionText.textContent=savedQuestion;questionText.hidden=true;
 }
 function countQuestion(){
   const chars=Array.from(questionInput.value);
@@ -97,8 +96,6 @@ function openQuestion(){
   questionInput.focus({preventScroll:true});questionInput.setSelectionRange(questionInput.value.length,questionInput.value.length);
 }
 questionOpen.onclick=openQuestion;
-questionText.onclick=()=>{if(revealSection.hidden&&!questionOpen.disabled)openQuestion()};
-questionText.onkeydown=e=>{if(revealSection.hidden&&!questionOpen.disabled&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openQuestion()}};
 questionInput.addEventListener('input',e=>{if(!e.isComposing)countQuestion()});
 questionInput.addEventListener('compositionend',countQuestion);
 document.getElementById('questionForm').onsubmit=e=>{
@@ -107,7 +104,7 @@ document.getElementById('questionForm').onsubmit=e=>{
 for(const id of ['questionClose','questionCancel'])document.getElementById(id).onclick=()=>questionOv.close();
 questionOv.addEventListener('close',()=>{
   window.visualViewport?.removeEventListener('resize',sizeQuestion);window.visualViewport?.removeEventListener('scroll',sizeQuestion);
-  questionInput.value=savedQuestion;(savedQuestion?questionText:questionOpen).focus({preventScroll:true});
+  questionInput.value=savedQuestion;questionOpen.focus({preventScroll:true});
 });
 // Native dialog keeps focus and pointer input out of the page behind it.
 questionOv.addEventListener('keydown',e=>{if(e.key==='Escape')e.stopPropagation()});
@@ -301,7 +298,7 @@ function renderReveal(){
 function goReveal(){
   if(busy||picks.length<count)return;
   readingQuestion=savedQuestion;
-  questionEditor.hidden=true;for(const name of ['role','tabindex','aria-label','aria-haspopup','aria-controls'])questionText.removeAttribute(name);questionText.textContent=readingQuestion;questionText.hidden=!readingQuestion;
+  questionEditor.hidden=true;questionText.textContent=readingQuestion;questionText.hidden=!readingQuestion;
   renderReveal();
   fanzone.hidden=true;
   drawSection.hidden=true;revealSection.hidden=false;
