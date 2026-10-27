@@ -4,6 +4,7 @@ from pathlib import Path
 import argparse, copy, tempfile, shutil
 from fontTools import subset
 from fontTools.ttLib import TTFont
+from fontTools.ttLib.scaleUpem import scale_upem
 parser=argparse.ArgumentParser()
 parser.add_argument('--chinese',type=Path,required=True)
 parser.add_argument('--supplement',type=Path,required=True)
@@ -28,6 +29,9 @@ font.save(OUT / 'woodblock-chinese.ttf')
 # QiJi does not contain Latin letters/digits. Fill only absent code points from
 # the OFL New Tegomin serif, then publish one renamed family and both licenses.
 donor = TTFont(args.supplement)
+# Match the smaller visible body of QiJi: its 日 is about 620 units high,
+# while New Tegomin numerals are about 730. Normalize donor outlines/advances.
+scale_upem(donor, round(font['head'].unitsPerEm * .88))
 donor_sub = subset.Subsetter(options=opts)
 donor_sub.populate(unicodes=extra)
 donor_sub.subset(donor)

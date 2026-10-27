@@ -5,6 +5,9 @@ import { compose, whenLoaded } from './share.js';
 import { hydrateCardImages } from './card-images.js';
 import { icon, spreadIcon } from './icons.js';
 
+await window.orcaStylesReady;
+const returningVisitor=localStorage.getItem('lx-visited')==='1';
+
 /* ---------- 主题 ---------- */
 const root=document.documentElement, themeBtn=document.getElementById('themeBtn');
 const th=localStorage.getItem('lx-theme');
@@ -185,7 +188,7 @@ function flyToSlot(fEl,fr,slotEl,done){
   const animation=ghost.animate([
     {transform:'none',opacity:1},
     {transform:'translate('+ (sr.left-fr.left)+'px,'+(sr.top-fr.top)+'px) scale('+(sr.width/fr.width)+','+(sr.height/fr.height)+')',opacity:.9}
-  ],{duration:reduced?0:280,easing:'cubic-bezier(.3,.7,.3,1)',fill:'forwards'});
+  ],{duration:reduced?0:280,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
   animation.finished.then(()=>{ghost.remove();done();}).catch(()=>ghost.remove());
 }
 function pickFan(i){
@@ -223,7 +226,7 @@ function updatePrompt(){
 
 /* ---------- S2 翻牌屏 ---------- */
 function frontMarkup(p){
-  return '<span class="face front"><img class="'+(p.rev?'rev':'')+'" data-card-src="'+IMG[p.key]+'" alt="'+p.cn+'" draggable="false" hidden>'
+  return '<span class="face front"><img class="'+(p.rev&&!p.uprighted?'rev':'')+'" data-card-src="'+IMG[p.key]+'" alt="'+p.cn+'" draggable="false" hidden>'
     +'<span class="card-image-status" role="status">牌面加载中…</span></span>';
 }
 function retryMarkup(){return '<button type="button" class="btn image-retry" hidden>重试牌面</button>';}
@@ -234,7 +237,7 @@ function cardMarkup(p,i){
     +'<span class="face back"><img src="'+IMG.BACK+'" alt="牌背" draggable="false"></span>'
     +frontMarkup(p)
     +'</span></button>'+retryMarkup()+'<div class="rname">'+p.cn+'</div>'
-    +(p.rev?'<div class="rrev">逆位</div>':'')+'</div>';
+    +(p.rev?'<div class="rrev"><span>逆位</span><button type="button" class="straighten" aria-label="旋正'+p.cn+'">'+icon('rotate')+'旋正</button></div>':'')+'</div>';
 }
 function renderReveal(){
   rvRow.dataset.n=String(count);
@@ -270,7 +273,8 @@ function syncWheel(){
   button.onclick=()=>{
     if(picks.length>count)return;
     const used=new Set(picks.map(p=>p.key));
-    const pool=(tMinor.checked?DECK:DECK.filter(c=>c.major)).filter(p=>!used.has(p.key));
+    // The shuffled deck is fixed for this round. Conceptual hidden cards never consume it.
+    const pool=fanPool.filter(p=>!used.has(p.key));
     const card=pool[Math.floor(Math.random()*pool.length)];
     if(!card)return;
     picks.push({...card,rev:tRev.checked&&Math.random()<.4,flipped:false,extra:true});
@@ -295,7 +299,7 @@ function afterFlip(){
   }
 }
 function flipReadingCard(e){
-  if(e.target.closest('.wheel-action,.image-retry'))return;
+  if(e.target.closest('.wheel-action,.image-retry,.straighten'))return;
   const c=e.target.closest('.rcard');
   if(!c||c.classList.contains('flipped'))return;
   const p=picks[+c.dataset.i]; if(!p)return;
@@ -305,10 +309,23 @@ function flipReadingCard(e){
   buzz(9);
   afterFlip();
 }
+// Uprighting changes presentation only: the original reversed reading is retained.
+revealSection.addEventListener('click',e=>{
+  const button=e.target.closest('.straighten');if(!button)return;
+  const card=button.closest('.rcard'),p=picks[+card.dataset.i];
+  if(!p?.rev||!p.flipped||p.uprighted)return;
+  p.uprighted=true;card.classList.add('uprighted');
+  card.querySelector('.front img').classList.remove('rev');
+  button.parentElement.querySelector('span').textContent='逆位（已旋正）';
+  button.hidden=true;
+  card.querySelector('.flip').setAttribute('aria-label',p.cn+'，逆位（已旋正）');
+  if(recorded)recordReading();
+  buzz(9);
+});
 rvRow.addEventListener('click',flipReadingCard);
 rvExtra.addEventListener('click',flipReadingCard);
 hCard.addEventListener('click',e=>{
-  if(e.target.closest('.wheel-action,.image-retry'))return;
+  if(e.target.closest('.wheel-action,.image-retry,.straighten'))return;
   if(!hidden||hidden.flipped||hCard.classList.contains('flipped'))return;
   hCard.classList.add('flipped');
   hidden.flipped=true;
@@ -412,11 +429,11 @@ bStart.onclick=()=>{
   spread='bday'; count=5;
   syncSpreadIcon();
   savePrefs();
-  drawRevision++;readingId=null;readingTs=Date.now();
+  drawRevision++;readingId=null;readingTs=Date.now();recorded=false;
   const yc=toMajor(dsum(y));      // 年份牌：各位相加，<=21 分界
   const mc=DECK[m];              // 月份牌：1-12 直接对应
   const dc=toMajor(d);           // 日子牌：>21 则各位再相加
-  const k=toDigit(dsum(y)+dsum(m)+dsum(d)); // 業力持续归约到 1–9
+  const k=toDigit(dsum(y)+dsum(m)+dsum(d)); // 业力持续归约到 1–9
   const kc=DECK[k];
   const fc=DECK[toDigit(dsum(nowY))]; // 流年持续归约到 1–9（如 2026 → 10 → 1）
   picks=[yc,mc,dc,kc,fc].map((c,i)=>({...c,rev:false,flipped:false,position:BIRTHDAY_POSITIONS[i]}));
@@ -473,18 +490,17 @@ function orderSavedCards(cards){
 /* 一次完整揭示 = 一条记录（含隐藏牌，若已翻开） */
 function recordReading(){
 
-  const cards=orderedCards().map(p=>({key:p.key,cn:p.cn,rev:!!p.rev,...(p.extra?{extra:true}:{}),...(p.hidden?{hid:true}:{}),...(p.position?{position:p.position}:{})}));
+  const cards=orderedCards().map(p=>({key:p.key,cn:p.cn,rev:!!p.rev,...(p.rev&&p.uprighted?{uprighted:true}:{}),...(p.extra?{extra:true}:{}),...(p.hidden?{hid:true}:{}),...(p.position?{position:p.position}:{})}));
   if(!readingId)readingId=Date.now()+'-'+Math.random().toString(36).slice(2,7);
   const rec={id:readingId,ts:readingTs,spread,cards};
   const list=loadHistory(),index=list.findIndex(r=>r.id===readingId);
   if(index>=0){list[index]=rec;saveHistory(list)}else addHistory(rec);
   recorded=true;
 }
-const SPREAD_COLOR={'1':'var(--ink)','2':'var(--ink)','3':'var(--ink)','bday':'var(--ink)'};
 function fmtTs(ts){
   const d=new Date(ts);
   const p=n=>String(n).padStart(2,'0');
-  return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 '+p(d.getHours())+':'+p(d.getMinutes());
+  return (d.getFullYear()===new Date().getFullYear()?'':d.getFullYear()+'年')+(d.getMonth()+1)+'月'+d.getDate()+'日 '+p(d.getHours())+':'+p(d.getMinutes());
 }
 let disposeHistoryImages=()=>{};
 function renderHistory(){
@@ -500,18 +516,18 @@ function renderHistory(){
   }
   historyList.innerHTML=list.map(r=>{
     const cards=orderSavedCards(cardsForRecord(r));
-    const thumbs=cards.map(c=>
-      '<div class="hd-thumb'+(c.hid||c.hidden?' hid':'')+'"><img class="'+(c.rev?'rev':'')+'" data-card-src="'
-      +(IMG[c.key]||IMG.BACK)+'" alt="'+c.cn+'" loading="lazy" decoding="async" draggable="false"></div>').join('');
-    const names=cards.map(c=>(c.position?c.position+'：':'')+(c.hid||c.hidden?'隐藏 ':c.extra?'追加 ':'')+c.cn+(c.rev?'（逆）':'')).join(' · ');
-    return '<div class="hd-item" data-id="'+r.id+'">'
-      +'<div class="hd-meta"><span class="hd-date">'+fmtTs(r.ts)+'</span>'
-      +'<span class="hd-spread" style="color:'+(SPREAD_COLOR[r.spread]||'var(--ink-soft)')+'">'
-      +(SPREADS[r.spread]?SPREADS[r.spread].name:r.spread)+'</span>'
+    const main=cards.filter(c=>!c.hid&&!c.hidden&&!c.extra);
+    const thumb=(c,secondary=false)=>'<div class="hd-thumb'+(secondary?' secondary':'')+'"><img class="'+(c.rev&&!c.uprighted?'rev':'')+'" data-card-src="'+(IMG[c.key]||IMG.BACK)+'" alt="'+c.cn+'" loading="lazy" decoding="async" draggable="false"></div>';
+    const label=c=>'<span class="hd-card-name">'+(c.position?c.position+'：':'')+c.cn+'</span>'+(c.rev?'<span class="hd-card-state">'+(c.uprighted?'逆位（已旋正）':'逆位')+'</span>':'');
+    const names=main.map(c=>'<div class="hd-name">'+label(c)+'</div>').join('');
+    const supplemental=cards.filter(c=>c.hid||c.hidden||c.extra).map(c=>'<div class="hd-secondary">'+thumb(c,true)+'<div><span class="hd-kind">'+(c.extra?'追加牌':'隐藏牌')+'</span><div class="hd-name">'+label(c)+'</div></div></div>').join('');
+    return '<article class="hd-item" data-id="'+r.id+'">'
+      +'<div class="hd-meta"><span class="hd-spread">'+(SPREADS[r.spread]?SPREADS[r.spread].name:r.spread)+'</span>'
+      +'<span class="hd-date">'+fmtTs(r.ts)+'</span>'
       +'<button class="hd-share" data-share="'+r.id+'" aria-label="重新分享此页">'+icon('share')+'</button>'
       +'<button class="hd-del" data-del="'+r.id+'" aria-label="删除此条">'+icon('trash')+'</button></div>'
-      +'<div class="hd-cards">'+thumbs+'</div>'
-      +'<div class="hd-names">'+names+'</div></div>';
+      +'<div class="hd-cards">'+main.map(c=>thumb(c)).join('')+'</div>'
+      +'<div class="hd-names">'+names+(supplemental?'<div class="hd-supplements">'+supplemental+'</div>':'')+'</div></article>';
   }).join('');
   disposeHistoryImages=hydrateCardImages(historyList);
 }
@@ -533,7 +549,7 @@ async function reshareRecord(rec){
   try{
     const jobs=rec.cards.map(c=>IMG[c.key]?whenLoaded(IMG[c.key],{retry:true}):Promise.resolve());
     await Promise.all(jobs);
-    await document.fonts.load('16px OrcaWoodblock');
+    await Promise.all([document.fonts.load('16px OrcaWoodblock'),whenLoaded('assets/app-icon-orca-engraved.png',{retry:true})]);
     await document.fonts.ready;
     shareImg.src=compose(orderSavedCards(cardsForRecord(rec)),rec.ts).toDataURL('image/png');
     shareOv.dataset.returnTo="history";
@@ -574,8 +590,6 @@ function injectGuideImgs(){
 function closeGuide(){
   guideOv.hidden=true;
   try{localStorage.setItem(GKEY,'1');}catch(e){}
-  /* 引导关掉后接着提示版本更新，避免本次整轮跳过 */
-  try{if(!localStorage.getItem(UKEY))setTimeout(openUpdate,260);}catch(e){}
 }
 function openGuide(){injectGuideImgs();guideOv.hidden=false;}
 document.getElementById('guideOk').onclick=closeGuide;
@@ -590,7 +604,6 @@ function initGuide(force){
     guideOv.hidden=false;
   }catch(e){}
 }
-initGuide();
 /* 地址栏补 #guide 即时预览，无需刷新 */
 window.addEventListener('hashchange',()=>{if(/guide/.test(location.hash))openGuide();});/* ---------- 版本更新提示（一次性；#update 可随时预览） ---------- */
 const updateOv=document.getElementById('updateOv');
@@ -600,16 +613,13 @@ document.getElementById('updOk').onclick=()=>{closeUpdate();buzz(9);};
 document.getElementById('updClose').onclick=closeUpdate;
 updateOv.addEventListener('click',e=>{if(e.target===updateOv)closeUpdate();});
 function initUpdate(){
-  const forced=/update/.test(location.hash+location.search);
-  if(forced){openUpdate();return;}
-  try{
-    if(localStorage.getItem(UKEY))return;
-    if(!guideOv.hidden)return;          // 今天先把屏幕让给安装引导，下次再提示
-    openUpdate();
-  }catch(e){}
+  const forced=location.hash==='#update'||new URLSearchParams(location.search).has('update');
+  if(forced){if(guideOv.hidden)openUpdate();return;}
+  const standalone=navigator.standalone||matchMedia('(display-mode: standalone)').matches;
+  // Only existing home-screen users need this notice. Never stack it after onboarding.
+  try{if(returningVisitor&&standalone&&!localStorage.getItem(UKEY)&&guideOv.hidden)openUpdate();}catch{}
 }
-initUpdate();
-window.addEventListener('hashchange',()=>{if(/update/.test(location.hash))openUpdate();});
+window.addEventListener('hashchange',()=>{if(location.hash==='#update'&&guideOv.hidden)openUpdate();});
 /* 测试手势：连续点牌匾 3 次，随时预览引导 */
 (function(){
   let taps=0,timer=null;
@@ -634,7 +644,7 @@ async function shareNow(){
     const cards=orderedCards();
     const jobs=cards.map(c=>whenLoaded(IMG[c.key],{retry:true}));
     await Promise.all(jobs);
-    await document.fonts.load('16px OrcaWoodblock');
+    await Promise.all([document.fonts.load('16px OrcaWoodblock'),whenLoaded('assets/app-icon-orca-engraved.png',{retry:true})]);
     await document.fonts.ready;
     shareImg.src=compose(cards,readingTs).toDataURL('image/png');
     shareOv.dataset.returnTo="draw";
@@ -648,16 +658,23 @@ document.getElementById('shareClose').onclick=closeShare;
 shareOv.addEventListener('click',e=>{if(e.target===shareOv)closeShare();});
 
 resetDraw();
+// A slow font or artwork must not hold an otherwise usable app behind the loader.
+await Promise.race([
+  Promise.all([document.fonts.load('16px OrcaWoodblock'),document.querySelector('.brand-whale').decode().catch(()=>{})]),
+  new Promise(resolve=>setTimeout(resolve,2500))
+]);
+document.getElementById('appLoading').hidden=true;
+document.getElementById('appShell').setAttribute('aria-busy','false');
 
 // Navigation keeps the current reading intact. Dialogs return focus to the
 // opener, and Escape is the same action as each visible back control.
 document.getElementById('drawBtn').onclick=()=>{setHistory(false);};
 window.addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;
-  if(!guideOv.hidden)closeGuide();else if(!shareOv.hidden)closeShare();
+  if(!updateOv.hidden)closeUpdate();else if(!guideOv.hidden)closeGuide();else if(!shareOv.hidden)closeShare();
   else if(!spreadOv.hidden)closeSheet();else setHistory(false);
 });
-for(const overlay of [spreadOv,shareOv,historyOv,guideOv]){
+for(const overlay of [spreadOv,shareOv,historyOv,guideOv,updateOv]){
   let returnFocus=null;
   new MutationObserver(()=>{
     if(!overlay.hidden){
@@ -676,3 +693,7 @@ for(const overlay of [spreadOv,shareOv,historyOv,guideOv]){
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}
   });
 }
+
+// Bind focus restoration before an initial dialog is shown.
+initGuide();
+initUpdate();

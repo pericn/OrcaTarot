@@ -7,8 +7,8 @@ async function run(browser, url, output) {
   if (output) fs.mkdirSync(output, {recursive:true});
   const reports=[], failures=[], errors=[];
   async function test(name, fn) {
-    try { await fn(); reports.push(name); }
-    catch(e) { failures.push({name,message:e.stack}); }
+    try { await fn(); reports.push(name); console.log('PASS '+name); }
+    catch(e) { failures.push({name,message:e.stack}); console.error('FAIL '+name+' — '+e.message); }
   }
   async function reading(prefs={}) {
     const context=await browser.newContext({viewport:{width:390,height:844}});
@@ -20,6 +20,7 @@ async function run(browser, url, output) {
     page.on('pageerror',e=>errors.push(e.message));
     await page.goto(url); await page.locator('.fcard').first().waitFor({state:'attached'});
     await page.evaluate(()=>document.fonts.ready);
+    await page.locator('#appLoading').waitFor({state:'hidden'});
     return {page,context};
   }
   async function pick(page,keys) {
@@ -42,6 +43,7 @@ async function run(browser, url, output) {
     const {page,context}=await reading({minor:true});
     assert.equal(await page.locator('.fcard').count(),78);
     await page.locator('#fanWrap').evaluate(el=>el.scrollLeft=el.scrollWidth);
+    await page.locator('#spreadInd').click();
     await page.locator('#tMinor').uncheck();assert.equal(await page.locator('.fcard').count(),22);
     await page.waitForTimeout(100);
     const visible=await page.locator('.fcard').evaluateAll(els=>els.filter(el=>getComputedStyle(el).visibility==='visible').map(el=>{
@@ -52,6 +54,7 @@ async function run(browser, url, output) {
     assert.ok(visible.every(r=>r.transform),'Visible fan cards must all be positioned');
     await page.locator('#tRev').check();
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('lx-prefs')).rev),true);
+    await page.locator('#spreadClose').click();
     for(const dark of [false,true]) {
       if(dark)await page.locator('#themeBtn').click();
       const result=await page.evaluate(()=>{
@@ -140,7 +143,8 @@ async function run(browser, url, output) {
     // seen on the protected staging host instead of relying on a warm cache.
     await context.route('**/*',route=>route.continue());
     await pick(page,['M01','M02','M10']);await flip(page);
-    await page.evaluate(()=>{Math.random=()=>.54});
+    const remaining=await page.locator('.fcard').evaluateAll(els=>els.map(el=>el.dataset.key).filter(k=>!['M01','M02','M10'].includes(k)));
+    await page.evaluate(v=>Math.random=()=>v,(remaining.indexOf('M13')+.1)/remaining.length);
     await page.locator('.wheel-action').click();
     assert.equal(await page.locator('#rvExtra .rname').innerText(),'XIII');
     assert.equal(await page.locator('#hCard .rname').innerText(),'XIII');
@@ -200,6 +204,7 @@ async function run(browser, url, output) {
     await page.locator('#bM').fill('7');await page.locator('#bD').fill('3');await page.locator('#bStart').click();
     assert.equal(await page.locator('#rvRow .rcard').count(),5);
     assert.deepEqual(await page.locator('#rvRow .rposition').allTextContents(),['年','月','日','业力','流年']);
+    await page.locator('#rvRow').evaluate(el=>Promise.all(el.getAnimations({subtree:true}).map(animation=>animation.finished)));
     const boxes=await page.locator('#rvRow .rcard').evaluateAll(els=>els.map(e=>({x:e.getBoundingClientRect().x,y:e.getBoundingClientRect().y})));
     assert.equal(boxes[0].y,boxes[2].y);assert.equal(boxes[3].y,boxes[4].y);assert.ok(boxes[3].y>boxes[0].y);
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('lx-prefs')).spread),'bday');
@@ -300,6 +305,9 @@ async function run(browser, url, output) {
     const last=await page.locator('.hd-item').last().boundingBox();
     assert.ok(after.y>=last.y+last.height);
     assert.ok(after.y+after.height<=scroller.y+scroller.height+1); // scrollHeight rounds to whole pixels
+    const navTop=(await page.locator('.main-nav').boundingBox()).y;
+    assert.ok(after.y+after.height<=navTop,'Last count clears the tab bar');
+    assert.equal(await page.locator('#historyScroll').evaluate(el=>el.getBoundingClientRect().bottom),844,'History scrolls under the tab bar without a second blank strip');
     assert.equal(await page.locator('#historyCount').innerText(),'共 20 条 · 存于本机');
     await page.locator('#drawBtn').click();assert.equal(await page.locator('#draw').isVisible(),true);
     await context.close();
@@ -317,6 +325,7 @@ async function run(browser, url, output) {
         const center=cards.sort((a,b)=>Math.abs(a.x+a.width/2-(fan.x+fan.width/2))-Math.abs(b.x+b.width/2-(fan.x+fan.width/2)))[0];
         return {fanTop:fan.top,fanBottom:fan.bottom,navTop:nav.top,cardTop:center.top,cardBottom:center.bottom,overflow:document.documentElement.scrollWidth>innerWidth};
       });
+      assert.ok(view.navTop-view.cardBottom<=50,'The fan should sit close to navigation: '+JSON.stringify({width,height,...view}));
       assert.ok(view.fanBottom<=view.navTop,JSON.stringify({width,height,...view}));
       assert.ok(view.cardTop>=view.fanTop&&view.cardBottom<=view.fanBottom,JSON.stringify(view));
       assert.equal(view.overflow,false);
@@ -427,6 +436,105 @@ async function run(browser, url, output) {
     await page.locator('.brand').click({clickCount:3});assert.equal(await page.locator('#guideOv').isVisible(),true);
     await page.keyboard.press('Escape');assert.equal(await page.locator('#guideOv').isVisible(),false);
     await context.close();
+  });
+
+  await test('uprighting preserves reversal and record identity, including extra cards and historical shares',async()=>{
+    const {page,context}=await reading({minor:true,rev:true,spread:'2'});
+    await page.evaluate(()=>Math.random=()=>.1);
+    await pick(page,['M19','M10']);await flip(page);
+    const original=(await history(page))[0];
+    assert.equal(await page.locator('.straighten:visible').count(),2);
+    await page.locator('#rvRow .straighten').first().click();
+    await page.waitForTimeout(900);
+    const updated=(await history(page))[0];
+    assert.equal(updated.id,original.id);assert.equal(updated.ts,original.ts);
+    assert.equal(updated.cards[0].rev,true);assert.equal(updated.cards[0].uprighted,true);
+    assert.equal(await page.locator('#rvRow .front img.rev').count(),1);
+    assert.equal(await page.locator('#rvRow .rrev').first().innerText(),'逆位（已旋正）');
+    await page.locator('.wheel-action').click();await page.locator('#rvExtra .flip').click();
+    await page.locator('#rvExtra .straighten').click();
+    const record=(await history(page))[0];
+    assert.equal(record.cards.at(-1).uprighted,true);
+    assert.equal(new Set(record.cards.map(c=>c.key)).size,3,'Extra excludes every main card');
+    await page.locator('#historyBtn').click();
+    assert.equal(await page.locator('.hd-secondary').count(),1);
+    assert.equal(await page.locator('.hd-secondary .hd-thumb').evaluate(el=>el.offsetWidth),32);
+    assert.equal(await page.locator('.hd-cards .hd-thumb').first().evaluate(el=>el.offsetWidth),60);
+    assert.equal(await page.locator('.hd-cards img.rev').count(),1);
+    assert.ok((await page.locator('.hd-names').innerText()).includes('逆位（已旋正）'));
+    assert.ok(!(await page.locator('.hd-date').innerText()).includes(new Date().getFullYear()+'年'));
+    await page.evaluate(()=>{window.drawn=[];const f=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(t,...a){window.drawn.push(t);return f.call(this,t,...a)}});
+    await page.locator('.hd-share').click();await page.locator('#shareOv').waitFor({state:'visible'});
+    assert.ok((await page.evaluate(()=>window.drawn)).includes('逆位（已旋正）'));
+    if(output)fs.writeFileSync(path.join(output,'uprighted-share.png'),Buffer.from((await page.locator('#shareImg').getAttribute('src')).split(',')[1],'base64'));
+    await page.locator('#shareClose').click();await page.locator('#drawBtn').click();
+    await page.locator('#themeBtn').click();await page.locator('#shareBtn').click();
+    await page.locator('#shareOv').waitFor({state:'visible'});
+    if(output)fs.writeFileSync(path.join(output,'uprighted-share-dark.png'),Buffer.from((await page.locator('#shareImg').getAttribute('src')).split(',')[1],'base64'));
+    assert.deepEqual(await history(page),[record]);
+    await context.close();
+  });
+
+  await test('hidden cards stay eligible in the remaining deck and do not recalculate after an extra',async()=>{
+    const {page,context}=await reading({spread:'3'});
+    await pick(page,['M01','M02','M10']);await flip(page); // hidden = M13
+    await page.locator('#hCard .flip').click();
+    const hname=await page.locator('#hCard .rname').innerText();
+    // The same extra draw can choose the conceptual hidden card, but never a primary.
+    const remaining=await page.locator('.fcard').evaluateAll(els=>els.map(el=>el.dataset.key).filter(k=>!['M01','M02','M10'].includes(k)));
+    const random=(remaining.indexOf('M13')+.1)/remaining.length;
+    await page.evaluate(v=>Math.random=()=>v,random);
+    await page.locator('.wheel-action').click();await page.locator('#rvExtra .flip').click();
+    const cards=(await history(page))[0].cards;
+    assert.equal(cards[3].key,'M13');assert.equal(cards[3].hid,true);
+    assert.equal(cards[4].key,'M13');assert.equal(cards[4].extra,true);
+    assert.equal(await page.locator('#hCard .rname').innerText(),hname);
+    await context.close();
+  });
+
+  await test('loading remains visible while styles stall, then releases; reduced motion remains usable',async()=>{
+    const context=await browser.newContext({viewport:{width:402,height:874},reducedMotion:'reduce'});
+    let release;const gate=new Promise(resolve=>release=resolve);
+    await context.route('**/css/app.css',async route=>{await gate;await route.continue()});
+    const page=await context.newPage();
+    const navigation=page.goto(url,{waitUntil:'domcontentloaded'});
+    await page.locator('#appLoading').waitFor({state:'visible'});
+    assert.ok(await page.locator('#loadingText').isVisible());
+    release();await navigation;await page.locator('#appLoading').waitFor({state:'hidden'});
+    assert.equal(await page.locator('#appShell').getAttribute('aria-busy'),'false');
+    assert.equal(await page.locator('.brand-whale').evaluate(img=>img.naturalWidth>0),true);
+    await context.close();
+  });
+
+  await test('icon update only reaches returning standalone users, closes with Escape and never follows guide',async()=>{
+    for(const [returning,standalone,seen,expected] of [[false,false,false,false],[true,false,false,false],[false,true,false,false],[true,true,false,true],[true,true,true,false]]){
+      const context=await browser.newContext();
+      await context.addInitScript(({returning,standalone,seen})=>{
+        if(returning)localStorage.setItem('lx-visited','1');
+        if(seen)localStorage.setItem('lx-upd-2026-10a','1');
+        localStorage.setItem('lx-guide-done','1');
+        Object.defineProperty(navigator,'standalone',{value:standalone});
+      },{returning,standalone,seen});
+      const page=await context.newPage();await page.goto(url);await page.locator('#appLoading').waitFor({state:'hidden'});
+      assert.equal(await page.locator('#updateOv').isVisible(),expected);
+      if(expected)assert.equal(await page.evaluate(()=>document.activeElement.id),'updClose');
+      if(expected){
+        if(output)await page.screenshot({path:path.join(output,'update.png')});
+        await page.keyboard.press('Escape');assert.equal(await page.locator('#updateOv').isVisible(),false);
+        assert.equal(await page.evaluate(()=>localStorage.getItem('lx-upd-2026-10a')),'1');
+        await page.reload();await page.locator('#appLoading').waitFor({state:'hidden'});
+        assert.equal(await page.locator('#updateOv').isVisible(),false);
+      }
+      await page.goto(url+'#guide');await page.locator('#guideOv').waitFor({state:'visible'});
+      await page.locator('#guideOk').click();await page.waitForTimeout(350);
+      assert.equal(await page.locator('#updateOv').isVisible(),false);
+      if(seen){
+        await page.goto(url+'?source=preview#update');await page.locator('#appLoading').waitFor({state:'hidden'});
+        assert.equal(await page.locator('#updateOv').isVisible(),true);
+        await page.keyboard.press('Escape');
+      }
+      await context.close();
+    }
   });
 
   assert.deepEqual(errors,[],'Uncaught browser errors');

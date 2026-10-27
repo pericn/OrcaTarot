@@ -11,16 +11,22 @@
 <link rel="icon" href="assets/favicon-orca-engraved.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/app-icon-orca-engraved.png">
 <link rel="preload" href="assets/fonts/orca-woodblock.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/app.css">
+<style>
+html{background:#fcfcfa;color:#252834}.app-loading{position:fixed;inset:0;z-index:200;display:grid;place-content:center;justify-items:center;gap:18px;background:#fcfcfa;font:16px/1.6 serif}.app-loading img{width:112px;height:112px;mix-blend-mode:multiply}.app-loading p{margin:0}.app-loading a{color:inherit;font-size:14px}.app-loading[hidden],.app-loading [hidden]{display:none}@media(prefers-color-scheme:dark){html,.app-loading{background:#19213d;color:#f4f3ed}.app-loading img{filter:invert(1);mix-blend-mode:screen}}
+</style>
+<script>window.orcaStylesReady=new Promise(resolve=>{window.orcaStylesLoaded=resolve});</script>
+<link id="appStyles" rel="stylesheet" href="css/app.css" media="print" onload="this.media='all';window.orcaStylesLoaded()">
 <script type="module" src="js/app.js"></script>
 </head>
 <body>
+<div id="appLoading" class="app-loading" role="status" aria-live="polite"><img src="assets/app-icon-orca-engraved.png" alt="" width="112" height="112"><p id="loadingText">鲸灵匣 · 加载中</p><a id="loadingRetry" href="" hidden>重新加载</a><noscript>请启用 JavaScript 后重新打开</noscript></div>
+<script>setTimeout(()=>{if(!document.getElementById('appLoading').hidden){document.getElementById('loadingText').textContent='还在准备，请稍候';document.getElementById('loadingRetry').hidden=false}},12000);</script>
 <div class="page-motifs" aria-hidden="true"><img class="motif sun" src="assets/motifs/sun.webp" alt=""><img class="motif moon" src="assets/motifs/moon.webp" alt=""><img class="motif star s1" src="assets/motifs/star.webp" alt=""><img class="motif star s2" src="assets/motifs/star.webp" alt=""><img class="motif star s3" src="assets/motifs/star.webp" alt=""></div>
-<div class="wrap">
-<header class="top"><div class="brand" role="button" tabindex="0" aria-label="鲸灵匣，连续点按三次查看安装引导"><h1>鲸灵匣</h1><p>TAROT DE MARSEILLE</p></div><button class="theme-btn" id="themeBtn" aria-label="切换明暗主题"></button></header>
+<div class="wrap" id="appShell" aria-busy="true">
+<header class="top"><div class="brand" role="button" tabindex="0" aria-label="鲸灵匣，连续点按三次查看安装引导"><img class="brand-whale" src="assets/app-icon-orca-engraved.png" width="64" height="64" alt=""><div><h1>鲸灵匣</h1><p>TAROT DE MARSEILLE</p></div></div><button class="theme-btn" id="themeBtn" aria-label="切换明暗主题"></button></header>
 <main>
 <div class="reading-tools"><button class="sp-ind" id="spreadInd" aria-label="选择牌阵"><span id="spreadIcon"></span><span id="spreadName"></span><svg class="ico chevron" aria-hidden="true"><use href="assets/icons.svg#chevron"/></svg></button>
-<div class="reading-options"><label class="sw"><input type="checkbox" id="tMinor" checked><span>小阿尔卡纳</span></label><label class="sw"><input type="checkbox" id="tRev"><span>逆位</span></label></div></div>
+</div>
 <section id="draw" aria-label="选牌"><div class="slotstage"><div class="slots" id="slots" data-n="3"></div></div>
 <div class="fanzone" id="fanzone"><div class="fanprompt" id="fanPrompt" aria-live="polite"></div><div id="fanMid" hidden></div><div id="fanWrap" aria-label="扇形牌堆，左右滑动或用方向键选牌"><div id="fanTrack"></div></div><div id="bdayEmpty" hidden><button class="btn" id="bdayGo">填写生日</button></div></div></section>
 <section id="reveal" aria-label="翻牌" hidden><div class="rv-prompt" id="rvPrompt" aria-live="polite"></div><div class="rv-row pre" id="rvRow" data-n="3"></div><div class="rv-supplement"><div class="rv-hidden" id="rvHidden" hidden><div class="rvh-cap">隐藏牌</div><div class="rcard hs" id="hCard"></div></div><div class="rv-extra" id="rvExtra" hidden></div></div><div class="rv-acts"><button class="btn" id="reShuffle"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#shuffle"/></svg>重新洗牌</button><button class="btn primary" id="shareBtn" hidden><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#share"/></svg>分享</button></div></section>
@@ -32,7 +38,7 @@
 <div class="sp-row" data-s="2"><button class="sp-head" aria-label="双牌阵"><svg class="spread-diagram" aria-hidden="true"><use href="assets/icons.svg#spread-2"/></svg></button></div>
 <div class="sp-row" data-s="3"><button class="sp-head" aria-label="三张牌阵"><svg class="spread-diagram" aria-hidden="true"><use href="assets/icons.svg#spread-3"/></svg></button></div>
 <div class="sp-row" data-s="bday" id="bdayRow"><button class="sp-head" aria-label="生日牌阵" id="bdayHead"><svg class="spread-diagram" aria-hidden="true"><use href="assets/icons.svg#spread-bday"/></svg><span>生日牌阵</span></button></div>
-</div><span id="sp3Sub" hidden></span><div class="bday-form" id="bdayForm" hidden><div class="bf-row"><input id="bY" type="number" inputmode="numeric" placeholder="年" min="1900" max="2100" aria-label="出生年"><input id="bM" type="number" inputmode="numeric" placeholder="月" min="1" max="12" aria-label="出生月"><input id="bD" type="number" inputmode="numeric" placeholder="日" min="1" max="31" aria-label="出生日"></div><button class="btn" id="bStart">开始发牌</button><p class="bf-err" id="bErr" role="alert" hidden></p></div></div></div>
+</div><fieldset class="spread-options"><legend>抽牌设置</legend><div class="reading-options"><label class="sw"><input type="checkbox" id="tMinor" checked><span>小阿尔卡纳</span></label><label class="sw"><input type="checkbox" id="tRev"><span>逆位</span></label></div><p>更改设置后，将重新洗牌。</p></fieldset><span id="sp3Sub" hidden></span><div class="bday-form" id="bdayForm" hidden><div class="bf-row"><input id="bY" type="number" inputmode="numeric" placeholder="年" min="1900" max="2100" aria-label="出生年"><input id="bM" type="number" inputmode="numeric" placeholder="月" min="1" max="12" aria-label="出生月"><input id="bD" type="number" inputmode="numeric" placeholder="日" min="1" max="31" aria-label="出生日"></div><button class="btn" id="bStart">开始发牌</button><p class="bf-err" id="bErr" role="alert" hidden></p></div></div></div>
 <!-- ========== 分享预览浮层 ========== -->
 <div id="shareOv" hidden>
   <div class="sh-card"><img id="shareImg" alt="分享截图"></div>
@@ -68,42 +74,26 @@
         <p class="gd-warn">不开这个开关，加的只是书签，点开还在 Safari 里</p>
       </li>
     </ol>
-    <button class="btn" id="guideOk">好 的</button>
+    <button class="btn" id="guideOk">好的</button>
   </div>
 </div>
 
-<!-- ========== 版本更新提示（一次性） ========== -->
-<div id="updateOv" hidden>
-  <div class="gd-card">
-    <button class="gd-close" id="updClose" aria-label="关闭更新提示"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#back"/></svg></button>
-    <p class="gd-kicker">W H A T ' S &nbsp; N E W</p>
-    <h2 class="gd-title">鲸灵匣更新好了</h2>
-    <p class="gd-sub">桌面图标换了新的版画虎鲸，也更快了</p>
-    <div class="up-icon-wrap">
-      <img class="up-icon" src="assets/app-icon-orca-engraved.png" alt="鲸灵匣的桌面图标">
-      <p class="up-icon-cap">新的桌面图标</p>
-    </div>
-    <ol class="gd-steps">
-      <li class="gd-step">
-        <p class="gd-s-t"><b>1</b>你桌面上那枚图标<em>不会自动换新</em></p>
-      </li>
-      <li class="gd-step">
-        <p class="gd-s-t"><b>2</b>想用新图标：先<em>删掉桌面上这个图标</em>，再重新加一次</p>
-        <p class="up-note">照着第一次把它放到桌面上的那三步再做一遍就行</p>
-      </li>
-      <li class="gd-step gd-done">
-        <p class="gd-s-t"><b>3</b>删之前先<em>把抽卡记录存下来</em></p>
-        <p class="up-warn">删除桌面图标会连同里面的抽卡记录一起删掉，删了找不回来。想留的，去「抽牌记录」页，点每条右上角的分享按钮，就能存成图片。</p>
-      </li>
-    </ol>
-    <button class="btn" id="updOk">知 道 了</button>
+<!-- 仅向已使用桌面版的访客提示一次；#update 可预览。 -->
+<div id="updateOv" role="dialog" aria-modal="true" aria-labelledby="updateTitle" hidden>
+  <div class="update-card">
+    <button class="gd-close" id="updClose" aria-label="关闭更新提示"><svg class="ico" aria-hidden="true"><use href="assets/icons.svg#close"/></svg></button>
+    <img class="up-icon" src="assets/app-icon-orca-engraved.png" width="88" height="88" alt="木刻风格的虎鲸图标">
+    <p class="gd-kicker">鲸灵匣 · 更新</p><h2 id="updateTitle">一只新的桌面虎鲸</h2>
+    <p>桌面图标换成了这只木刻虎鲸。现有入口可以继续使用，无需重新安装。</p>
+    <p class="up-note">想添加新图标，可在 Safari 打开本站，选择「共享 → 添加到主屏幕」。抽牌记录保存在当前浏览器或网页 App 中，请保留原入口。</p>
+    <button class="btn" id="updOk">继续抽牌</button>
   </div>
 </div>
 
 <!-- ========== 历史抽卡记录（iOS webapp 全屏页） ========== -->
 <div id="historyOv" hidden>
   <div class="hd-head">
-    <p class="sh-title">抽 卡 记 录</p>
+    <p class="sh-title">抽牌记录</p>
     <button class="btn danger" id="historyClear" hidden>清空记录</button>
   </div>
   <div class="hd-scroll" id="historyScroll">
