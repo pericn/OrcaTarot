@@ -258,22 +258,23 @@ button{transition:background-color .25s var(--ease-out),color .25s var(--ease-ou
 :root{--question-font:OrcaQuestionWoodblock,"Songti SC","Songti TC","STSong","Noto Serif CJK SC",SimSun,serif}
 .user-text{font-family:var(--question-font);font-weight:400;letter-spacing:.035em}
 .reading-tools:has(.question-editor:not([hidden])){flex-wrap:nowrap;justify-content:space-between;gap:16px}
-.question-editor{min-width:0}
-.question-open{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:0 4px;color:var(--ink-soft);font:14px/1.6 system-ui,sans-serif}
-.question-open.has-question{color:var(--indigo)}
-.question-open .chevron{width:14px;height:14px}
-#questionOv{position:fixed;inset:auto;left:50%;top:calc(var(--question-viewport-top,0px) + var(--question-viewport-height,100dvh)/2);transform:translate(-50%,-50%);margin:0;width:min(480px,calc(100vw - 32px));max-height:calc(var(--question-viewport-height,100dvh) - 32px);padding:24px;border:1px solid var(--edge);border-radius:16px;background:var(--paper);color:var(--ink);box-shadow:var(--shadow);overflow:auto;font:400 16px/1.6 system-ui,sans-serif;overscroll-behavior:contain}
+.question-editor{min-width:0;flex:1;max-width:360px}
+.question-open{display:flex;align-items:flex-end;justify-content:center;width:100%;gap:0;padding:0 4px 2px;border-bottom:1px solid var(--edge);color:color-mix(in srgb,var(--ink-soft) 65%,var(--paper));font:400 12px/1.45 var(--serif);letter-spacing:.04em}
+#questionOv{position:fixed;inset:auto;left:50%;top:calc(var(--question-viewport-top,0px) + var(--question-viewport-height,100dvh)/2);transform:translate(-50%,-50%);margin:0;width:min(480px,calc(100vw - 32px));max-height:calc(var(--question-viewport-height,100dvh) - 32px);padding:24px;border:1px solid var(--edge);border-radius:16px;background:var(--paper);color:var(--ink);box-shadow:var(--shadow);overflow:auto;font:400 16px/1.6 var(--serif);overscroll-behavior:contain}
 #questionOv::backdrop{background:#111a35a6}
 html:has(#questionOv[open]){overflow:hidden}
 .question-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-.question-top h2{font-size:20px;font-weight:500;margin:0}
+.question-top h2{font-size:20px;font-weight:400;margin:0}
 #questionInput{display:block;width:100%;height:clamp(96px,calc(var(--question-viewport-height,100dvh)*.27),220px);min-height:80px;resize:vertical;max-height:320px;padding:12px 14px;border:1px solid var(--edge);border-radius:8px;background:var(--card);color:var(--ink);font:400 16px/1.85 system-ui,sans-serif;letter-spacing:normal;overflow:auto;overflow-wrap:anywhere;scroll-margin:12px}
 #questionInput:focus{border-color:var(--indigo);outline:2px solid var(--indigo);outline-offset:2px}
-#questionInput::placeholder{color:var(--ink-soft)}
+#questionInput::placeholder{font-family:var(--serif);font-size:14px;color:color-mix(in srgb,var(--ink-soft) 65%,var(--paper))}
 .question-meta{display:flex;justify-content:space-between;gap:12px;margin:10px 0 20px;color:var(--ink-soft);font-size:12px}
 #questionCount{font-variant-numeric:tabular-nums}
 .question-actions{display:flex;justify-content:flex-end;gap:12px}
 .question-actions .btn{font-family:inherit;min-width:88px}
 @media(max-height:430px){#questionOv{padding:16px}.question-top{margin-bottom:10px}.question-meta{margin:8px 0 12px}#questionInput{height:96px}}
-.reading-question{font-size:var(--text-body);line-height:1.85;color:var(--ink);overflow-wrap:anywhere;margin:0 auto 20px;padding:2px 16px 13px;max-width:420px;text-align:center;border-bottom:1px solid var(--edge)}
+.reading-question{font-size:var(--text-body);line-height:1.45;color:var(--ink);overflow-wrap:anywhere;margin:0 auto 20px;padding:2px 16px 2px;max-width:420px;text-align:center;border-bottom:1px solid var(--edge)}
 .hd-question{font-size:var(--text-label);line-height:1.85;color:var(--ink);margin:14px 0 4px;padding:0 0 0 10px;border-left:2px solid var(--edge);overflow-wrap:anywhere}
+
+.reading-question[role=button]{cursor:pointer}
+.reading-question[role=button]:hover{border-bottom-color:var(--indigo)}

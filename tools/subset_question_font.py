@@ -32,6 +32,10 @@ def build(source):
     def face(url, chars):
         return "@font-face{font-family:OrcaQuestionWoodblock;font-style:normal;font-weight:400;font-display:swap;src:url('"+url+"') format('woff2');unicode-range:"+unicode_ranges(chars)+"}"
     css.append(face('../assets/fonts/orca-woodblock.woff2', core))
+    source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+    previous_path = out / 'SOURCE.json'
+    previous = json.loads(previous_path.read_text()) if previous_path.exists() else {}
+    old_files = {f['file']:f for f in previous.get('files',[])} if previous.get('source_sha256') == source_hash else {}
     files = []
     options = subset.Options()
     options.flavor = 'woff2'
@@ -40,6 +44,12 @@ def build(source):
     options.name_languages = ['*']
     options.drop_tables += ['FFTM']
     for index, chars in groups.items():
+        name = f'woodblock-{index:04x}.woff2'
+        old = old_files.get(name)
+        if old and old['unicode_range'] == unicode_ranges(chars) and (out/name).exists() and hashlib.sha256((out/name).read_bytes()).hexdigest() == old['sha256']:
+            files.append(old)
+            css.append(face('../assets/fonts/question-woodblock/'+name, chars))
+            continue
         part = TTFont(source)
         sub = subset.Subsetter(options=options)
         sub.populate(unicodes=chars)
@@ -55,7 +65,7 @@ def build(source):
         css.append(face('../assets/fonts/question-woodblock/'+name, chars))
         print(name, len(data), flush=True)
     (ROOT / 'src/css/question-font.css').write_text('\n'.join(css)+'\n')
-    manifest = {'family':'OrcaQuestionWoodblock','upstream':'https://github.com/LingDong-/qiji-font/releases/tag/0.0.4','source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'license':'OFL-1.1','modifications':'QiJi Combo subset by 128-code-point blocks, renamed. Core UI glyphs reuse OrcaWoodblockSubset including New Tegomin Latin supplement. Unsupported characters use platform serif; emoji retain platform color glyphs.','files':files}
+    manifest = {'family':'OrcaQuestionWoodblock','upstream':'https://github.com/LingDong-/qiji-font/releases/tag/0.0.4','source_sha256':source_hash,'license':'OFL-1.1','modifications':'QiJi Combo subset by 128-code-point blocks, renamed. Core UI glyphs reuse OrcaWoodblockSubset including New Tegomin Latin supplement. Unsupported characters use platform serif; emoji retain platform color glyphs.','files':files}
     (out / 'SOURCE.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps({'subsets':len(files),'bytes':sum(f['bytes'] for f in files),'largest':max(f['bytes'] for f in files),'codepoints':len(codes),'core_codepoints':len(core)}))
 
