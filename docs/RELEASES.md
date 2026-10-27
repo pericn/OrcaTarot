@@ -33,3 +33,19 @@ shasum -a 256 -c SHA256SUMS
 - 线上核验：`/` 与 `/js/app.js` 均为 `cache-control: must-revalidate, no-cache`；指纹字体为 `public, immutable, max-age=31536000`；带 If-Modified-Since 请求返回 304；入口 200 且 SHA 与本地构建一致
 - **已知局限**：已缓存旧副本的设备无法远程召回，`no-cache` 只对之后的请求生效；这类设备需等本地缓存自然过期或手动刷新，除非更换 URL。本次不做 URL 变更。
 - 说明：发布时远程 main CI 未完成，未宣称已通过。
+
+### v6 · 2026-10-28 01:52 CST
+
+- 线上地址：https://a17db079dfdd07afb.app.workbuddy.host
+- 应用源码：`4bb4eec3b99cca7ae7fc0c7dff34cbe220fa1075`（PR #17，含 PR #14/#15/#16；CI `chromium` 与 `webkit` 均 success）
+- 站点文件数：351（manifest 记录 349）
+- 入口 HTML SHA-256：`c6186aee17457725940635cdce12723ad1cf734889bee7c0bb7a28cb079cc1a9`
+- 本次内容：
+  - PR #17：问题输入改为弹窗（modal）；恢复居中纵向问题入口并保留短屏牌堆布局；木刻字形子集改为按需加载
+  - PR #16：修复历史记录中懒加载图片的可见性，补回缩略图
+  - PR #15：提供真实宋体问题字形，改为懒加载自托管字体子集
+  - PR #14：选中时预建牌面节点，优化衬线分享布局
+  - 牌背图改为内联 CSS 变量（首屏少一次请求）；鲸鱼帧条转 WebP 并提供明暗两套
+- **首屏实测（沙箱 390×844 加载）**：18 个请求、仅加载 1 个字体分片、估算流量 1.20 MB（其中字体 0.38 MB）——按需分片生效，未出现 21 MB 字体全量下载
+- 本地核验：`SHA256SUMS` 全项通过；headless 加载无 JS 错误；抽牌、牌阵、记录、更新弹框、引导、问题弹窗节点均渲染
+- 线上核验：入口 200、185056 B，HTML SHA 与本地构建逐字节一致；`cache-control: must-revalidate, no-cache` 生效；字体分片 `orca-woodblock.184fee230167.woff2`、鲸鱼条 `whale-breath-strip.422881277c8b.webp`、`app.js` 均 200
