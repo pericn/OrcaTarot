@@ -5,6 +5,7 @@ import hashlib
 import io
 import json
 import os
+import re
 from pathlib import Path
 from PIL import Image
 
@@ -80,6 +81,8 @@ def build(output):
                 replacements[relative] = asset(relative, path.read_bytes())
 
     def replace_assets(text):
+        # Local fragments render immediately in Safari without an external SVG fetch.
+        text = text.replace('assets/icons.svg#', '#')
         for old, new in replacements.items():
             text = text.replace(old, new)
         return text
@@ -89,7 +92,9 @@ def build(output):
         for path in sorted((SRC / folder).glob('*')):
             if path.is_file():
                 write(path.relative_to(SRC).as_posix(), replace_assets(path.read_text()))
-    html = replace_assets((SRC / 'template.html').read_text())
+    sprite = (SRC / 'assets/icons.svg').read_text()
+    sprite = re.sub(r'<svg\b', '<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false"', sprite, count=1)
+    html = replace_assets((SRC / 'template.html').read_text().replace('<!-- ICON_SPRITE -->', sprite))
     write('index.html', html)
     source_commit = os.environ.get('SOURCE_COMMIT', 'uncommitted')
     write('SOURCE_COMMIT.txt', source_commit+'\n')

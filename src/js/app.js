@@ -364,12 +364,14 @@ function updateRvPrompt(){
 }
 
 /* ---------- 牌阵选择面板 ---------- */
-function syncRows(){
-  document.querySelectorAll('.sp-row').forEach(r=>
-    r.classList.toggle('on',r.dataset.s===spread));
+function syncRows(selected=spread){
+  document.querySelectorAll('.sp-row').forEach(r=>{
+    const active=r.dataset.s===selected;r.classList.toggle('on',active);
+    r.querySelector('.sp-head').setAttribute('aria-pressed',String(active));
+  });
 }
 function openSheet(expandBday){
-  syncRows();
+  syncRows(expandBday?'bday':spread);
   sp3Sub.textContent=tMinor.checked?'3 张':'3 张 · 含隐藏牌';
   spreadOv.hidden=false;
   if(expandBday){
@@ -390,10 +392,11 @@ document.querySelectorAll('.sp-head').forEach(h=>{
   h.onclick=()=>{
     const s=h.parentElement.dataset.s;
     if(s==='bday'){
-      bdayForm.hidden=!bdayForm.hidden;
-      if(!bdayForm.hidden&&bday){bY.value=bday.y;bM.value=bday.m;bD.value=bday.d;}
+      bdayForm.hidden=false;syncRows('bday');
+      if(bday){bY.value=bday.y;bM.value=bday.m;bD.value=bday.d;}
       return;
     }
+    bdayForm.hidden=true;
     if(s===spread){closeSheet();return;}
     spread=s; count=SPREADS[s].n;
     syncSpreadIcon();
@@ -517,16 +520,21 @@ function renderHistory(){
     const cards=orderSavedCards(cardsForRecord(r));
     const main=cards.filter(c=>!c.hid&&!c.hidden&&!c.extra);
     const thumb=(c,secondary=false)=>'<div class="hd-thumb'+(secondary?' secondary':'')+'"><img class="'+(c.rev&&!c.uprighted?'rev':'')+'" data-card-src="'+(IMG[c.key]||IMG.BACK)+'" alt="'+c.cn+'" loading="lazy" decoding="async" draggable="false"></div>';
-    const label=c=>'<span class="hd-card-name">'+(c.position?c.position+'：':'')+c.cn+'</span>'+(c.rev?'<span class="hd-card-state">'+(c.uprighted?'逆位（已旋正）':'逆位')+'</span>':'');
-    const names=main.map(c=>'<div class="hd-name">'+label(c)+'</div>').join('');
-    const supplemental=cards.filter(c=>c.hid||c.hidden||c.extra).map(c=>'<div class="hd-secondary">'+thumb(c,true)+'<div><span class="hd-kind">'+(c.extra?'追加牌':'隐藏牌')+'</span><div class="hd-name">'+label(c)+'</div></div></div>').join('');
+    const label=c=>{
+      const parts=c.cn.split(' · '),number=parts.length>1?parts.shift():c.cn,name=parts.join(' · ');
+      return '<figcaption class="hd-caption">'+(c.position?'<span class="hd-position">'+c.position+'：</span>':'')
+        +'<span class="hd-card-number">'+number+'</span>'+(name?'<span class="hd-card-name">'+name+'</span>':'')
+        +(c.rev?'<span class="hd-card-state">'+(c.uprighted?'逆位（已旋正）':'逆位')+'</span>':'')+'</figcaption>';
+    };
+    const figures=main.map(c=>'<figure class="hd-reading-card">'+thumb(c)+label(c)+'</figure>').join('');
+    const supplemental=cards.filter(c=>c.hid||c.hidden||c.extra).map(c=>'<figure class="hd-secondary"><span class="hd-kind">'+(c.extra?'追加牌':'隐藏牌')+'</span>'+thumb(c,true)+label(c)+'</figure>').join('');
     return '<article class="hd-item" data-id="'+r.id+'">'
       +'<div class="hd-meta"><span class="hd-spread">'+(SPREADS[r.spread]?SPREADS[r.spread].name:r.spread)+'</span>'
       +'<span class="hd-date">'+fmtTs(r.ts)+'</span>'
       +'<button class="hd-share" data-share="'+r.id+'" aria-label="重新分享此页">'+icon('share')+'</button>'
       +'<button class="hd-del" data-del="'+r.id+'" aria-label="删除此条">'+icon('trash')+'</button></div>'
-      +'<div class="hd-cards">'+main.map(c=>thumb(c)).join('')+'</div>'
-      +'<div class="hd-names">'+names+(supplemental?'<div class="hd-supplements">'+supplemental+'</div>':'')+'</div></article>';
+      +'<div class="hd-names"><div class="hd-cards" data-n="'+main.length+'">'+figures+'</div>'
+      +(supplemental?'<div class="hd-supplements">'+supplemental+'</div>':'')+'</div></article>';
   }).join('');
   disposeHistoryImages=hydrateCardImages(historyList);
 }
@@ -660,10 +668,16 @@ document.getElementById('shareClose').onclick=closeShare;
 shareOv.addEventListener('click',e=>{if(e.target===shareOv)closeShare();});
 
 resetDraw();
-// A slow font or artwork must not hold an otherwise usable app behind the loader.
-await Promise.race([
-  Promise.all([document.fonts.load('16px OrcaWoodblock'),document.querySelector('.brand-whale').decode().catch(()=>{})]),
-  new Promise(resolve=>setTimeout(resolve,2500))
+// Prepare the visible shell and persistent back-image cache during the two-second introduction.
+// Fronts remain lazy; a stalled decorative asset cannot hold the app indefinitely.
+const shellReady=Promise.allSettled([
+  document.fonts.load('16px OrcaWoodblock'),
+  whenLoaded(IMG.BACK),
+  ...['assets/app-icon-orca-engraved.png','assets/whale-breath-strip.png','assets/motifs/sun.webp','assets/motifs/moon.webp','assets/motifs/star.webp'].map(src=>whenLoaded(src))
+]);
+await Promise.all([
+  Promise.race([shellReady,new Promise(resolve=>setTimeout(resolve,5000))]),
+  new Promise(resolve=>setTimeout(resolve,Math.max(0,2000-(performance.now()-window.orcaLoadingStarted))))
 ]);
 document.getElementById('appLoading').hidden=true;
 document.getElementById('appShell').setAttribute('aria-busy','false');
